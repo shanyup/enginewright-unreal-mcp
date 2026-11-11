@@ -36,6 +36,7 @@ void RegisterValidationTools(FEWRegistry& R);
 void RegisterAuditTools(FEWRegistry& R);
 void RegisterMultiplayerTools(FEWRegistry& R);
 void RegisterMeasureTools(FEWRegistry& R);
+void RegisterPerfTools(FEWRegistry& R);
 void RegisterUMGTools(FEWRegistry& R);
 void RegisterGameplayTagTools(FEWRegistry& R);
 void RegisterUIRuntimeTools(FEWRegistry& R);
@@ -166,6 +167,8 @@ void FEnginewrightModule::StartupModule()
 	RegisterMultiplayerTools(Reg);
 	Reg.SetCategory(TEXT("Build"));
 	RegisterBuildTools(Reg);
+	Reg.SetCategory(TEXT("Performance"));
+	RegisterPerfTools(Reg);
 	Reg.SetCategory(TEXT("Audit"));
 	RegisterValidationTools(Reg);
 	RegisterAuditTools(Reg);
