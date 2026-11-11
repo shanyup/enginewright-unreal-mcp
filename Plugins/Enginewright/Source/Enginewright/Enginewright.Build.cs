@@ -19,7 +19,8 @@ public class Enginewright : ModuleRules
 			"BlueprintGraph", "Kismet", "KismetCompiler", "GraphEditor", "ImageWrapper", "InputCore", "EnhancedInput",
 			"MaterialEditor", "LevelEditor", "EditorSubsystem", "DataValidation", "RenderCore", "RHI", "PhysicsCore",
 			"UMG", "UMGEditor", "GameplayTags", "GameplayTagsEditor", "NavigationSystem",
-			"ToolMenus", "WorkspaceMenuStructure", "Settings", "ApplicationCore", "MeshDescription", "StaticMeshDescription"
+			"ToolMenus", "WorkspaceMenuStructure", "Settings", "ApplicationCore", "MeshDescription", "StaticMeshDescription",
+			"LevelSequence", "MovieScene", "MovieRenderPipelineCore", "MovieRenderPipelineEditor", "MovieRenderPipelineRenderPasses", "MovieRenderPipelineSettings"
 		});
 
 		if (Target.Platform == UnrealTargetPlatform.Win64)

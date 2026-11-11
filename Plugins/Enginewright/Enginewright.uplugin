@@ -22,6 +22,7 @@
   "Plugins": [
     { "Name": "EnhancedInput", "Enabled": true },
     { "Name": "DataValidation", "Enabled": true },
-    { "Name": "GameplayTagsEditor", "Enabled": true }
+    { "Name": "GameplayTagsEditor", "Enabled": true },
+    { "Name": "MovieRenderPipeline", "Enabled": true }
   ]
 }

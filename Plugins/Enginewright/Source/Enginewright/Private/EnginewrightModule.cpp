@@ -37,6 +37,7 @@ void RegisterAuditTools(FEWRegistry& R);
 void RegisterMultiplayerTools(FEWRegistry& R);
 void RegisterMeasureTools(FEWRegistry& R);
 void RegisterPerfTools(FEWRegistry& R);
+void RegisterCinematicTools(FEWRegistry& R);
 void RegisterUMGTools(FEWRegistry& R);
 void RegisterGameplayTagTools(FEWRegistry& R);
 void RegisterUIRuntimeTools(FEWRegistry& R);
@@ -169,6 +170,8 @@ void FEnginewrightModule::StartupModule()
 	RegisterBuildTools(Reg);
 	Reg.SetCategory(TEXT("Performance"));
 	RegisterPerfTools(Reg);
+	Reg.SetCategory(TEXT("Cinematics"));
+	RegisterCinematicTools(Reg);
 	Reg.SetCategory(TEXT("Audit"));
 	RegisterValidationTools(Reg);
 	RegisterAuditTools(Reg);
