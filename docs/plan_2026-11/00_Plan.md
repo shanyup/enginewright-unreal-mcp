@@ -13,6 +13,7 @@ Yeniden başlatılırsan: ilk boş kutudan devam et. Her çıktı tek başına y
 - [x] Gunpoint Parole: `docs/Icerik_Sistemi/` yalnız `00_Plan.md` içeriyor (kart sürüyor) → `ParoleLoop_TaskList.md` + GDD
 - [x] RagnaCook: `Docs/Icerik_Sistemi/` yalnız `00_Plan.md` içeriyor (kart sürüyor) → `Demo_Plan/03_Yol_Haritasi.md`, `tools/art/README.md`, `Gorsel_Inceleme.md`, `Devir_Notu_16-11.md`
 - [x] Web + GitHub API: rakip ve emsal sayıları (16.11.2026)
+- [x] **İnceleme Turu 1 düzeltmeleri** (17.11): 01 rakip tablosu 25 repo + dolu hücreler + fork proxy büyüme; 02 ARPG EW-1..11 gerçek §12.3 listesi + GP/RC kaynakları yazılı; 03 araç sözleşmeleri saatlerle + eski roadmap eşleme; 04 canlı repo verisi + 20 topic hacimle + README hero EN + repo adı S-0; 05 90 gün takvim + 6 video senaryosu + hedefler 80-150/300-600/800-1500 + YAPMA listesi; SORULAR 10 soru; OZET 1 sayfa.
 
 ## Çıktılar
 
@@ -28,6 +29,7 @@ Yeniden başlatılırsan: ilk boş kutudan devam et. Her çıktı tek başına y
 ## Notlar
 
 - **Araç sayısı (kaynak sayımı, 16.11):** `Plugins/**/Tools/*.cpp` içinde 133 `Register/RegisterAsync` kaydı (129 düz desen + `game_run`, `game_run_status`, `loc_gather`, `loc_gather_status`). README 0.4.0 "124 tool" dönemi; fark = `mrq_render`, `mrq_status`, `perf_capture`, `perf_scene`, `perf_gpu_profile` + sayım farkı. Yayımlanmış 0.4.0 zip'inde bu 5 araç yok.
-- **Dal durumu:** `main` yerelde `origin/main`'den 4 commit önde (perf, MRQ, derin rakip raporları, 14.11 roadmap). Bu commit'lerde Türkçe iç belgeler var. Push edilirse public olur → `SORULAR.md` S-1.
+- **Dal durumu:** `main` yerelde `origin/main`'den 8 commit önde (8 plan belgesi commit'leri). Bu commit'lerde yalnız `docs/plan_2026-11/` değişiyor. Push edilirse public olur → `SORULAR.md` S-1.
 - **GP ve RagnaCook kaynakları:** ikisinin İçerik Sistemi kartı bitmedi. İhtiyaçlar eski belgelerden çıkarıldı. Kartlar bitince `02` yeniden gözden geçirilmeli.
-- Rakip verisi tarihi: 16.11.2026 (GitHub REST API). 10.11 derin raporları kaynak kodu okumasıdır; özellik hücreleri oradan, sayılar bugünden.
+- **Rakip verisi tarihi:** 16.11.2026 (GitHub REST API). 10.11 derin raporları kaynak kodu okumasıdır; özellik hücreleri oradan, sayılar bugünden.
+- **İnceleme Turu 1 tamamlandı:** 8 dosya düzeltilip yerel commitlendi (36cc938, 4eaedf9, 9551f31, f3348ec, 6ea3b60, a96d108, 12eef68). Push yok. Sonraki adım: `kanban_request_review`.
