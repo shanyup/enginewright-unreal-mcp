@@ -1,55 +1,125 @@
-# SORULAR — Talha'ya (en fazla 10, ilki öneri)
+# SORULAR — Karar Bekleyen 10 Soru
 
-Tarih: 16.11.2026. Her soruda öneri ilk sırada.
+Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Talha cevaplarsa `OZET.md` ve ilgili dosyalar güncellenir.
 
-## S-1 — Türkçe iç belgeler public repoda nerede dursun?
-- Öneri: `docs/plan_2026-11/` ve Türkçe iç notlar push edilmeden ayrı private repo (veya private dal); public repo yalnızca EN (README + docs-site).
-- Alternatif: public repoda `docs/internal/` altında kalsın (şeffaflık).
-- Alternatif: olduğu gibi kalsın, kimse bakmaz.
-- Etki: SEO ve ilk izlenim (04 §5); bu kartın çıktıları şu an yerelde, push yok.
+---
 
-## S-2 — Fab'a free code plugin listing? (v1.0 ile)
-- Öneri: evet, tek UE sürümü (5.8), free (kural: free sadece code plugin).
-- Alternatif: hayır, sadece GitHub.
-- Etki: Fab araması yeni kullanıcı kanalı (05 §2'ye eklenir); review süresi günler; her sürüm için ayrı zip yükü.
+## S-0: Repo adı ne olmalı? (bkz 04 §2)
 
-## S-3 — Resmi MCP Registry'ye publish (server.json repo'ya girer)
-- Öneri: evet, v1.0'da; `io.github.shanyup/enginewright`; PulseMCP buradan otomatik çeker.
-- Alternatif: sadece awesome-mcp-servers + Glama.
-- Etki: registry = en büyük liste trafiği (04 §2); repo'ya `server.json` ekleme = public değişiklik → onay gerekli.
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) `enginewright-unreal-mcp`** ← **ÖNERİ** | Marka + anahtar kelime; arama sıralaması kazanır, yönlendirme 1 yıl, Fab/Marketplace `Plugins/Enginewright` ile uyumlu | Keşfedilebilirlik ↑, marka korunur |
+| (b) `enginewright` kalsın | Marka saf; arama sıralaması düşük (198/80/34) | Keşfedilebilirlik ↓ |
+| (c) `unreal-mcp-enginewright` | Sadece anahtar kelime; marka kaybolur, çakışma riski (chongdashu, flopperam, runreal, kvick, GenOrca) | Marka ↓, risk ↑ |
 
-## S-4 — Epic resmi UE 5.8 MCP karşısında konumlandırma
-- Öneri: "oyun iş akışları" (cook/package, PIE senaryoları, ağ/replikasyon testi, görsel QA) — Epic oralarda yok (01 §5).
-- Alternatif: "daha kolay kurulum + tek komut client config" (Playwright modeli).
-- Alternatif: her ikisi (önerilen kombinasyon aslında bu).
-- Etki: README ilk cümlesi + duyuru başlıkları.
+**Gerekçe:** GitHub arama ad > açıklama > topic. "unreal mcp in:name" 247 sonuç, enginewright yok. Lider chongdashu "unreal-mcp" adıyla 2.118★. v1.0 lansmanında rename + yönlendirme en güvenli.
 
-## S-5 — Lisans ve katkı: MIT + CLA?
-- Öneri: MIT kalsın, CLA yok (tek geliştirici, sürtünme istemiyoruz).
-- Alternatif: CLA ekle (ileride şirketleşirse).
-- Etki: katkıcı havuzu; awesome listeler lisans filtresi uygulamıyor ama MIT en yaygın.
+---
 
-## S-6 — Discord sunucusu açalım mı?
-- Öneri: hayır, ilk 6 ay GitHub Discussions yeterli.
-- Alternatif: evet, lansmanda aç.
-- Etki: moderasyon yükü (tek kişi); topluluk 05 §4'te Discussions + issue ile başlar.
+## S-1: Fab / Unreal Marketplace ücretsiz listing yapılır mı?
 
-## S-7 — Demo videoları kim üretir?
-- Öneri: agent kaydı (ekran görüntüsü + senaryo), Talha onayı + ses/müzik ekler.
-- Alternatif: Talha tek başına çeker.
-- Etki: 05 §3'teki 6 videonun üretim hızı.
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Evet, UE 5.8 sürümüyle başla** ← **ÖNERİ** | Code-only plugin, MIT, her sürüm ayrı zip; Fab otomatik build, ≤15 GB. Yeni kitle (Marketplace arama) + güven damgası | Keşfedilebilirlik ↑, kurulum kolaylığı ↑ |
+| (b) Hayır, sadece GitHub | Marketplace süreci (review, versioning) yükü; GitHub yeterli | Basitlik ↑ |
 
-## S-8 — v0.5 kapsamı: önce RagnaCook demo mu, GP ağ testleri mi?
-- Öneri: RagnaCook demo (çekim + paketleme) önce — yakın tarih, somut tanık; GP ağ testleri v0.6.
-- Alternatif: GP önce (kart t_e6c46ed7 aktif).
-- Etki: 03'teki sürüm sırası.
+**Gerekçe:** Kural 1.2.4.b: free code plugin listelenebilir. Enginewright tam uyar. UE 5.8 zip'i v1.0 Release assets'ına ekle → Fab'a gönder.
 
-## S-9 — Ücretli katman / premium (blender-mcp'in premium generation modeli gibi)?
-- Öneri: hayır, saf OSS + MIT; monetizasyon kendi oyunlarımız üzerinden.
-- Alternatif: "Sponsor" GitHub Sponsors butonu (ücretsiz, pasif).
-- Etki: algı (community trust); blender-mcp telemetri/premium tepkisi dersi.
+---
 
-## S-10 — Hangi haftada HN Show HN? (tek hak)
-- Öneri: v1.0 lansman haftası (05 §2 hafta 6), signup-free, denenebilir build ile.
-- Alternatif: v0.5 demo ile erken deneme (risk: "early one-off" algısı).
-- Etki: HN tek gönderim; 2026'da Show HN kısıtlı (showlim) — mod kommentine dikkat.
+## S-2: Headless / commandlet MCP (editör kapalı import/veri) v0.6 mı 1.0 mı?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) v0.6 başlangıcı, 1.0 tam** ← **ÖNERİ** | v0.6 `headless_import` + `headless_batch` (commandlet MCP sunucusu) başlar; 1.0 `headless_datatable` + stabil CLI | ARPG EW-9, RC EW-RC-01 erken kazanım |
+| (b) Sadece 1.0 | Tek seferde tam; v0.6'ya ek yük yok | v0.6 hafif, 1.0 riskli |
+
+**Gerekçe:** ARPG §12.3 EW-9 "headless mod" 6–8 kart-gün; editör kuyruğunu açar. v0.6'da commandlet MCP başlatma (mevcut `editor_restart` altyapısı) yapılır, 1.0'da tam CLI paketlenir.
+
+---
+
+## S-3: Python exec aracı eklenir mi? (Bilinçli tercih: YOK)
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Hayır, C++ yolu devam** ← **ÖNERİ** | `console_command` + `editor_restart` + `live_coding_compile` + `headless_import` (v0.6) Python'ı kapsar; güvenlik yüklenmez | Güvenlik ↑, bakım ↓ |
+| (b) Evet, sandbox ile (1 MB, timeout) | EngineWire / UE-MCP / IvanMurzak / VibeUE hepsi var; Python betikleri için istek gelebilir | Esneklik ↑, risk ↑ |
+
+**Gerekçe:** Mevcut 129 araç + v0.6 `headless_import` + `console_command` Python kullanım alanlarını (asset işleme, veri dönüşümü) kapatır. Python exec supply-chain riski (pip, venv, sürüm çakışması) getirir.
+
+---
+
+## S-4: Çoklu UE sürümü destek (5.4–5.8) 1.0'da mı Sonra mı?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) 1.0: 5.8 tek sürüm; 5.4–5.7 Sonra** ← **ÖNERİ** | Tek binary, compat header bakımı yok; Fab listing 5.8 ile başlar; Epic 5.9/6.0 MCP büyürken takip | Odak ↑, bakım ↓ |
+| (b) 1.0: 5.4–5.8 hepsi | CI matrisi 5 sürüm × 2 config = 10 build; her araç testi 5× | Kapsam ↑, yük ↑↑ |
+
+**Gerekçe:** Epic UE 5.9/6.0'da resmi MCP genişleyecek (01 §5). Tek sürümle hızlı iterasyon, sonra resmi MCP'ye uyum.
+
+---
+
+## S-5: Discord sunucusu açılır mı?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Hayır, GitHub Discussions** ← **ÖNERİ** | Discussions: Q&A + Showcase + Ideas; SEO dostu, GitHub entegre, moderasyon az; Discord: anlık ama arama motoru indekslemez, moderasyon yükü | SEO ↑, yük ↓ |
+| (b) Evet, küçük topluluk | Anlık yardım, sesli demo; ama 2. kanal = 2. yük | Etkileşim ↑ |
+
+**Gerekçe:** MCP topluluğu GitHub/Reddit/HN merkezli. blender-mcp / playwright-mcp / unity-mcp Discord yok (GitHub Discussions + Reddit). Enginewright da aynı.
+
+---
+
+## S-6: Dokümantasyon sitesi (GitHub Pages) v1.0'da mı Sonra mı?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) v1.0'da canlı** ← **ÖNERİ** | `docs/` (EN) → GitHub Pages; 10 anahtar kelime sayfada; arama trafiği çeker | SEO ↑, keşfedilebilirlik ↑ |
+| (b) Sonra | v1.0 lansman odaklı; site sonrası | Lansman hızı ↑ |
+
+**Gerekçe:** 04 §8: 10 anahtar kelime, `tools/` her araç sayfası. v1.0 Release PR'sinde `docs/` deploy workflow eklenir.
+
+---
+
+## S-7: Lisans MIT mi kalır? (Öneri: EVET)
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Evet, MIT sabit** ← **ÖNERİ** | blender-mcp (MIT), playwright-mcp (Apache-2.0), unity-mcp (MIT), awesome-mcp-servers (MIT). MIT en permissive, ticari kullanım serbest, katkıcı çeker. | Topluluk ↑, Fab uygunluğu ↑ |
+| (b) Apache-2.0 / dual | Patent koruması; ama karmaşıklık | Koruma ↑ |
+
+**Gerekçe:** MIT zaten var, değiştirme nedeni yok. Fab free code plugin kuralı MIT/BSD/Apache kabul eder.
+
+---
+
+## S-8: Telemetri / anonim kullanım istatistiği toplanır mı?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Hayır, asla** ← **ÖNERİ** | blender-mcp telemetri ekleyince itiraz aldı, kaldırdı (GitHub issue #247). Enginewright "strict, verified" markası — telemetri zıtlık. | Güven ↑, marka tutarlı |
+| (b) Opt-in, anonim | Yine de risk; bakım yükü | Veri ↑ |
+
+**Gerekçe:** S-8 (YAPMA listesi 05 §6 maddesi 5). Şeffaf, izinli, kapalı kaynak olmaması yeterli.
+
+---
+
+## S-9: Ücretli / Pro katman planlanır mı?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Hayır, saf OSS** ← **ÖNERİ** | blender-mcp/playwright-mcp/unity-mcp/awesome-mcp-servers hepsi ücretsiz. Gelir modeli: danışmanlık / eğitim / özel geliştirme (şirket bazında), araç ücretsiz. | Topluluk ↑, basitlik ↑ |
+| (b) Evet, Pro (hosted, SLA, özel araçlar) | SaaS modeli; ama tek geliştirici için operasyon yükü yüksek | Gelir ↑ |
+
+**Gerekçe:** 05 §6 madde 3. Şirket (Shanyup Studios) danışmanlık/özel geliştirme ile gelir; araç OSS kalır.
+
+---
+
+## S-10: v0.4.1 art pipeline araçları (EW-1, EW-2) RagnaCook demo takvimine yetişir mi?
+
+| Seçenek | Açıklama | Etki |
+|---|---|---|
+| **(a) Evet, 2 hafta (30 saat) yeterli** ← **ÖNERİ** | `asset_pipeline` + `asset_import_batch` + `skeletal_import` + `image_diff` + `material_variants` = 30 saat; RagnaCook M1-5/M2-5b yakın, demo çekimi bu araçları çeker | Demo kalite ↑, doğrulama gerçek |
+| (b) Kısalt, sadece `asset_pipeline` + `skeletal_import` | 18 saat; ama `image_diff` + `material_variants` olmadan görsel QA / varyant üretimi eksik | Hız ↑, kalite ↓ |
+
+**Gerekçe:** RagnaCook `Devir_Notu_16-11.md` M1-5 (sanat hattı) ve M2-5b (demo çekimi) bu araçları doğrudan kullanır. 03 v0.4.1 tablosu bu bağımlılığı yazıyor.
