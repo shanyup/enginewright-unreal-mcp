@@ -1,0 +1,43 @@
+blender-mcp|2025-03-13|54pt|1c|BlenderMCP: Blender Model Context Protocol Integration|https://github.com/ahujasid/blender-mcp|https://news.ycombinator.com/item?id=43357112
+blender-mcp|2026-08-10|24pt|4c|Blender MCP maintainer GitHub account hacked|https://twitter.com/sidahuj/status/2086445625147793503|https://news.ycombinator.com/item?id=49238028
+blender-mcp|2025-07-20|151pt|61c|Show HN: MCP server for Blender that builds 3D scenes via natural language|https://blender-mcp-psi.vercel.app/|https://news.ycombinator.com/item?id=44622374
+blender-mcp|2026-08-23|11pt|6c|Why can AI generate Super Mario but not a wedge ramp for my robot vacuum?|None|https://news.ycombinator.com/item?id=49405520
+blender-mcp|2026-10-26|5pt|2c|Show HN: A 3D mesh playground for coding agents (three.js + manifold-3d)|https://sketchagent.dev/s/yfYU6LhT|https://news.ycombinator.com/item?id=50237291
+playwright-mcp|2025-10-20|189pt|45c|Show HN: Playwright Skill for Claude Code – Less context than playwright-MCP|https://github.com/lackeyjb/playwright-skill|https://news.ycombinator.com/item?id=45642911
+playwright-mcp|2025-04-23|9pt|0c|Aethr: Zero-script QA automation using Playwright MCP and LLM|https://github.com/autifyhq/aethr|https://news.ycombinator.com/item?id=43777138
+playwright-mcp|2025-03-24|6pt|0c|Playwright MCP Server – Snapshot based – faster and more reliable than images|https://github.com/microsoft/playwright-mcp|https://news.ycombinator.com/item?id=43465931
+playwright-mcp|2026-11-10|5pt|2c|Show HN: Mantis – Faster browser interaction than Playwright MCP|https://github.com/perzianhq/mantis/blob/main/README.md|https://news.ycombinator.com/item?id=50441765
+playwright mcp|2025-03-20|64pt|14c|Fetch-MCP: Playwright-Based MCP Server with Batch URL Fetching Support|https://github.com/jae-jae/fetch-mcp|https://news.ycombinator.com/item?id=43419713
+unity-mcp|2026-01-23|13pt|0c|Show HN: Gamekit-CLI – Use Claude Code to quickly create games in Unity|https://github.com/gamekit-agent/gamekit-cli|https://news.ycombinator.com/item?id=46734135
+unity-mcp|2016-09-08|5pt|0c|Intel Sells Majority Stake in McAfee Security Unit to TPG|http://www.nytimes.com/2016/09/08/business/dealbook/intel-sells-a-majority-stake-of-cybersecurity-unit-mcafee-to-tpg.html?_r=0|https://news.ycombinator.com/item?id=12454870
+unity mcp|2025-08-18|156pt|76c|Show HN: We started building an AI dev tool but it turned into a Sims-style game|https://www.youtube.com/watch?v=sRPnX_f2V_c|https://news.ycombinator.com/item?id=44943986
+unity mcp|2025-11-07|9pt|11c|An Elegy for Jetbrains|None|https://news.ycombinator.com/item?id=45846798
+godot mcp|2026-09-03|381pt|133c|Porting my 1993 Amiga game to Godot, with an LLM reading the 68000 assembly|https://babyloniantwins.com/blog/porting-a-1993-amiga-game-to-godot/|https://news.ycombinator.com/item?id=49550375
+godot mcp|2025-07-31|6pt|1c|Battlefield 6 map editor is *checks notes* Godot|https://bsky.app/profile/passivestar.bsky.social/post/3lvbzn5ioz222|https://news.ycombinator.com/item?id=44750774
+godot mcp|2024-11-12|15pt|18c|One of the largest Godot projects is transitioning off of Godot|https://www.youtube.com/watch?v=n_kkiNqAwIU|https://news.ycombinator.com/item?id=42111613
+unreal mcp|2026-06-16|10pt|2c|Show HN: Claireon – MCP Server for Unreal Editor|https://github.com/believer-oss/claireon|https://news.ycombinator.com/item?id=48557270
+unreal mcp|2026-06-18|8pt|2c|Unreal Engine 5.8 adds MCP server for AI agents|https://www.unrealengine.com/news/unreal-engine-5-8-is-now-available|https://news.ycombinator.com/item?id=48583236
+unreal mcp|2026-09-11|13pt|17c|Show HN: Clawfight.ai MCP-driven agentic game play|https://clawfight.ai/agents.md|https://news.ycombinator.com/item?id=49658483
+unreal mcp|2022-08-01|101pt|42c|ArcGIS Maps SDK brings geospatial data to Unity and Unreal Engine|https://spectrum.ieee.org/unreal-engine|https://news.ycombinator.com/item?id=32310842
+unreal mcp|2025-05-20|72pt|48c|Show HN: Text to 3D simulation on a map (does history pretty well)|https://mused.com/map/|https://news.ycombinator.com/item?id=44040419
+unreal mcp|2023-09-26|644pt|159c|Show HN: Unity like game editor running in pure WASM|https://raverie-us.github.io/raverie-engine/|https://news.ycombinator.com/item?id=37663270
+unreal mcp|2026-07-02|70pt|40c|Ask HN: Why are so many "AI evangelists" posting such insufferable content?|None|https://news.ycombinator.com/item?id=48765450
+unreal engine mcp|2025-10-24|5pt|2c|Show HN: Seed3D – Generate Physics-Ready 3D Models with Millimeter Precision|https://www.seed3d.xyz|https://news.ycombinator.com/item?id=45691068
+chrome-devtools-mcp|2026-03-15|604pt|234c|Chrome DevTools MCP (2025)|https://developer.chrome.com/blog/chrome-devtools-mcp-debug-your-browser-session|https://news.ycombinator.com/item?id=47390817
+chrome-devtools-mcp|2025-09-23|19pt|0c|Chrome DevTools MCP|https://developer.chrome.com/blog/chrome-devtools-mcp|https://news.ycombinator.com/item?id=45349829
+chrome-devtools-mcp|2025-09-28|11pt|0c|ChromeDevTools/Chrome-devtools-MCP: Chrome DevTools for coding agents|https://github.com/ChromeDevTools/chrome-devtools-mcp|https://news.ycombinator.com/item?id=45401756
+chrome-devtools-mcp|2025-09-26|10pt|0c|Chrome DevTools (MCP) for your AI agent|https://developer.chrome.com/blog/chrome-devtools-mcp|https://news.ycombinator.com/item?id=45382442
+chrome-devtools-mcp|2025-09-28|6pt|0c|Reverse Engineering APIs with Chrome DevTools MCP|https://posts.oztamir.com/reverse-engineering-apis-with-chrome-devtools-mcp/|https://news.ycombinator.com/item?id=45404199
+chrome-devtools-mcp|2025-12-03|5pt|2c|I Solved Chrome DevTools MCP's Authentication Gap|https://claude.ai/public/artifacts/9944a80b-d768-4ed4-9350-4f48628bb0a4|https://news.ycombinator.com/item?id=46130602
+flopperam|2025-07-09|364pt|73c|Show HN: FlopperZiro – A DIY open-source Flipper Zero clone|https://github.com/lraton/FlopperZiro|https://news.ycombinator.com/item?id=44512763
+runreal|2021-04-20|155pt|21c|Shadow Simulator – run real applications over a simulated Internet topology|https://shadow.github.io/|https://news.ycombinator.com/item?id=26869398
+runreal|2024-02-01|41pt|8c|CheerpJ 3.0: A WebAssembly JVM to run real-world applications in the browser|https://labs.leaningtech.com/blog/cheerpj-3.0|https://news.ycombinator.com/item?id=39217395
+runreal|2026-08-12|6pt|0c|Show HN: Trunchbull, run real models against any benchmark in your browser|https://trunchbull.dev|https://news.ycombinator.com/item?id=49273695
+runreal|2025-12-23|96pt|90c|Show HN: Superset – Terminal to run 10 parallel coding agents|https://superset.sh/|https://news.ycombinator.com/item?id=46368739
+coplay|2015-02-06|24pt|13c|Show HN: Coplay – synchonizing video play between browsers|https://github.com/Justineo/coplay|https://news.ycombinator.com/item?id=9007564
+coplay|2025-02-04|11pt|2c|Show HN: CoPlay – Enabling In-Room Xbox Gaming for Children's Hospitals|https://coplay.io/introducing-coplay-xm/|https://news.ycombinator.com/item?id=42938237
+coplay|2025-08-12|64pt|33c|Lessons learned from buying an open source repo|https://www.coplay.dev/blog/lessons-learned-from-buying-an-open-source-repo|https://news.ycombinator.com/item?id=44875440
+coplay|2025-05-06|40pt|4c|A Brief History of Cursor's Tab-Completion|https://www.coplay.dev/blog/a-brief-history-of-cursor-s-tab-completion|https://news.ycombinator.com/item?id=43906566
+coplay|2016-03-08|13pt|0c|Chappiecast: Mosaic video across mobile devices using Node.js and WebSockets|https://arcweb.co/play-one-video-across-multiple-device-screens-with-chappiecast/|https://news.ycombinator.com/item?id=11248268
+coplay|2022-04-19|11pt|1c|Show HN: Developer API for Granular Authorization|https://play.permify.co/play/blog|https://news.ycombinator.com/item?id=31083368
+coplay|2025-10-15|6pt|2c|AI's impact looks more like the washing machine than like the internet|https://www.coplay.dev/blog/ai-is-closer-to-washing-machines-than-the-internet|https://news.ycombinator.com/item?id=45595329

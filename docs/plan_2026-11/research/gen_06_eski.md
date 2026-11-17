@@ -1,0 +1,125 @@
+| Eski numara | Kaynak liste | Yeni ID(ler) |
+|---|---|---|
+| EW-1 | ARPG AT §12.3 | EW-071, EW-073 |
+| EW-2 | ARPG AT §12.3 | EW-065, EW-072 |
+| EW-3 | ARPG AT §12.3 | EW-080 |
+| EW-4 | ARPG AT §12.3 | EW-081 |
+| EW-5 | ARPG AT §12.3 | EW-082 |
+| EW-6 | ARPG AT §12.3 | EW-083 |
+| EW-7 | ARPG AT §12.3 | EW-090, EW-091 |
+| EW-8 | ARPG AT §12.3 | EW-013 |
+| EW-9 | ARPG AT §12.3 | EW-110 |
+| EW-10 | ARPG AT §12.3 | EW-075 |
+| EW-11 | ARPG AT §12.3 | EW-100 |
+| B2 | EKSIKLER_VE_ONCELIK | EW-030 |
+| B3 | EKSIKLER_VE_ONCELIK | EW-060 |
+| B5 | EKSIKLER_VE_ONCELIK | EW-074 |
+| B9 | EKSIKLER_VE_ONCELIK | EW-070 |
+| B11 | EKSIKLER_VE_ONCELIK | EW-006 |
+| B13 | EKSIKLER_VE_ONCELIK | EW-081 |
+| B14 | EKSIKLER_VE_ONCELIK | EW-080 |
+| B15 | EKSIKLER_VE_ONCELIK | EW-090 |
+| B16 | EKSIKLER_VE_ONCELIK | EW-052 |
+| B17 | EKSIKLER_VE_ONCELIK | EW-043 |
+| B18 | EKSIKLER_VE_ONCELIK | EW-110 |
+| E1 | EKSIKLER_VE_ONCELIK | EW-030 |
+| E2 | EKSIKLER_VE_ONCELIK | EW-012, EW-013 |
+| E3 | EKSIKLER_VE_ONCELIK | EW-042 |
+| E5 | EKSIKLER_VE_ONCELIK | EW-061 |
+| E7 | EKSIKLER_VE_ONCELIK | EW-111 |
+| E8 | EKSIKLER_VE_ONCELIK | EW-062 |
+| E14 | EKSIKLER_VE_ONCELIK | EW-075 |
+| E15 | EKSIKLER_VE_ONCELIK | EW-052 |
+| E17 | EKSIKLER_VE_ONCELIK | EW-002 |
+| E18 | EKSIKLER_VE_ONCELIK | EW-004, EW-011, EW-013 |
+| E19 | EKSIKLER_VE_ONCELIK | EW-040 |
+| E21 | EKSIKLER_VE_ONCELIK | EW-040 |
+| E22 | EKSIKLER_VE_ONCELIK | EW-042 |
+| E23 | EKSIKLER_VE_ONCELIK | EW-071 |
+| E24 | EKSIKLER_VE_ONCELIK | EW-072 |
+| E25 | EKSIKLER_VE_ONCELIK | EW-065 |
+| E29 | EKSIKLER_VE_ONCELIK | EW-100 |
+| E32 | EKSIKLER_VE_ONCELIK | EW-102 |
+| E34 | EKSIKLER_VE_ONCELIK | EW-065 |
+| K1 | EW02 ortak küme | EW-001, EW-003 |
+| K2 | EW02 ortak küme | EW-070 |
+| K3 | EW02 ortak küme | EW-013 |
+| K4 | EW02 ortak küme | EW-005, EW-006 |
+| K5 | EW02 ortak küme | EW-032, EW-043 |
+| K6 | EW02 ortak küme | EW-075 |
+| K7 | EW02 ortak küme | EW-030, EW-031 |
+| K8 | EW02 ortak küme | EW-074 |
+| K9 | EW02 ortak küme | EW-060, EW-061, EW-062, EW-063, EW-064 |
+| K10 | EW02 ortak küme | EW-091, EW-092 |
+| A-01 | EW02 §ARPG | EW-071 |
+| A-02 | EW02 §ARPG | EW-072 |
+| A-03 | EW02 §ARPG | EW-082 |
+| A-04 | EW02 §ARPG | EW-080 |
+| A-05 | EW02 §ARPG | EW-081 |
+| A-06 | EW02 §ARPG | EW-090, EW-091 |
+| A-07 | EW02 §ARPG | EW-013 |
+| A-08 | EW02 §ARPG | EW-075 |
+| A-09 | EW02 §ARPG | EW-083 |
+| A-10 | EW02 §ARPG | EW-110 |
+| A-11 | EW02 §ARPG | EW-100 |
+| A-12 | EW02 §ARPG | EW-001, EW-002 |
+| A-13 | EW02 §ARPG | EW-005, EW-006, EW-007 |
+| G-01 | EW02 §GP | EW-030 |
+| G-02 | EW02 §GP | EW-020, EW-032 |
+| G-03 | EW02 §GP | EW-084 |
+| G-04 | EW02 §GP | EW-074 |
+| G-05 | EW02 §GP | EW-003 |
+| G-06 | EW02 §GP | EW-004 |
+| G-07 | EW02 §GP | EW-092 |
+| R-01 | EW02 §RC | EW-001 |
+| R-02 | EW02 §RC | EW-070 |
+| R-03 | EW02 §RC | EW-072 |
+| R-04 | EW02 §RC | EW-060 |
+| R-05 | EW02 §RC | EW-061 |
+| R-06 | EW02 §RC | EW-074 |
+| R-07 | EW02 §RC | EW-005 |
+| R-08 | EW02 §RC | EW-062 |
+| R-09 | EW02 §RC | EW-075 |
+| R-10 | EW02 §RC | EW-013 |
+| R-11 | EW02 §RC | EW-030 |
+| R-12 | EW02 §RC | EW-032 |
+| R-13 | EW02 §RC | EW-006 |
+| R-14 | EW02 §RC | EW-043 |
+| R-15 | EW02 §RC | EW-064 |
+| R-16 | EW02 §RC | EW-063 |
+| EW-GP-1 | GP ESKİ liste GP08 §7 | EW-030, EW-031 |
+| EW-GP-2 | GP ESKİ liste GP08 §7 | EW-084 |
+| EW-GP-3 | GP ESKİ liste GP08 §7 | EW-074 |
+| EW-GP-4 | GP ESKİ liste GP08 §7 | EW-003 |
+| EW-GP-5 | GP ESKİ liste GP08 §7 | EW-004 |
+| EW-GP-01 | GP YENİ liste GP16 (+ GP05 §8) | EW-010, EW-011 |
+| EW-GP-02 | GP YENİ liste GP16 (+ GP05 §8) | EW-014 |
+| EW-GP-03 | GP YENİ liste GP16 (+ GP05 §8) | EW-015 |
+| EW-GP-04 | GP YENİ liste GP16 (+ GP05 §8) | EW-090 |
+| EW-GP-05 | GP YENİ liste GP16 (+ GP05 §8) | EW-016 |
+| EW-GP-06 | GP YENİ liste GP16 (+ GP05 §8) | EW-040, EW-041, EW-042 |
+| EW-GP-07 | GP YENİ liste GP16 (+ GP05 §8) | EW-018 |
+| EW-GP-08 | GP YENİ liste GP16 (+ GP05 §8) | EW-017 |
+| EW-GP-09 | GP YENİ liste GP16 (+ GP05 §8) | EW-019 |
+| EW-R01 | RagnaCook RC12 §11.1 | EW-001, EW-002 |
+| EW-R02 | RagnaCook RC12 §11.1 | EW-001 |
+| EW-R03 | RagnaCook RC12 §11.1 | EW-005 |
+| EW-R04 | RagnaCook RC12 §11.1 | EW-010, EW-012 |
+| EW-R05 | RagnaCook RC12 §11.1 | EW-012 |
+| EW-R06 | RagnaCook RC12 §11.1 | EW-050 |
+| EW-R07 | RagnaCook RC12 §11.1 | EW-051 |
+| EW-R08 | RagnaCook RC12 §11.1 | EW-052 |
+| EW-R09 | RagnaCook RC12 §11.1 | EW-053 |
+| EW-R10 | RagnaCook RC12 §11.1 | EW-054 |
+| EW-R11 | RagnaCook RC12 §11.1 | EW-055 |
+| EW-R12 | RagnaCook RC12 §11.1 | EW-060 |
+| EW-R13 | RagnaCook RC12 §11.1 | EW-061 |
+| EW-R14 | RagnaCook RC12 §11.1 | EW-020 |
+| EW-R15 | RagnaCook RC12 §11.1 | EW-040, EW-042, EW-043 |
+| EW-R16 | RagnaCook RC12 §11.1 | EW-030 |
+| EW-R17 | RagnaCook RC12 §11.1 | EW-013 |
+| EW-R18 | RagnaCook RC12 §11.1 | EW-070, EW-071, EW-074 |
+| EW-R19 | RagnaCook RC12 §11.1 | EW-075 |
+| EW-R20 | RagnaCook RC12 §11.1 | EW-006 |
+| EW-R21 | RagnaCook RC12 §11.1 | EW-111 |
+| EW-R22 | RagnaCook RC12 §11.1 | EW-100, EW-101, EW-102 |

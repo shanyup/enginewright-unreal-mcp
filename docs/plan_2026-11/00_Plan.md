@@ -34,3 +34,26 @@ Yeniden başlatılırsan: ilk boş kutudan devam et. Her çıktı tek başına y
 - **02 v2 (17.11, kart t_3d650d3a):** GP `08_Icerik_Uretim_Sistemi.md` §7 ve RC `12_Icerik_Uretim_Sistemi.md` §11 artık var; `02` bunlardan yeniden yazıldı. 36 satır (ARPG 13, GP 7, RC 16), istenen 7 sütun, ortak kümeler K1–K10, mevcut araç işareti (✅ 10 / 🟡 19 / ❌ 7). Kanıtsız v1 GP satırları çıkarıldı.
 - **Rakip verisi tarihi:** 16.11.2026 (GitHub REST API). 10.11 derin raporları kaynak kodu okumasıdır; özellik hücreleri oradan, sayılar bugünden.
 - **İnceleme Turu 1 tamamlandı:** 8 dosya düzeltilip yerel commitlendi (36cc938, 4eaedf9, 9551f31, f3348ec, 6ea3b60, a96d108, 12eef68). Push yok. Sonraki adım: `kanban_request_review`.
+
+---
+
+## Kart t_ae3a845a — Tam sistem yol haritası (18.11.2026)
+
+Yalnız belge. Oyun repoları salt okunur. Push yok. Alt kart yok. Yeni dosyalar 06+; eski belgeler silinmez.
+
+### Araştırma (research/)
+
+- [x] `arac_envanteri.py` → 129 araç (109 `R.Register` + 16 `R.RegisterAsync` + 4 `Reg.RegisterAsync`; çift ad yok). 16.11 notundaki "133" fazla sayım: `game_run`, `game_run_status`, `loc_gather`, `loc_gather_status` zaten 4 `Reg.RegisterAsync` içinde.
+- [x] `arac_test_kapsami.py` → araç başına test dosyası + RELIABILITY_0.4 durumu
+- [x] `raw/oyun_*.md` → üç oyunun EW listesi alıntıları
+- [x] `ihtiyac_esleme.py` → 56 ihtiyaç, 06/07 tabloları; `belge_yap.py` belgeleri birleştirir
+
+### Çıktılar
+
+- [x] 06_Ihtiyac_Birlesik.md
+- [ ] 07_Arac_Esleme.md
+- [ ] 08_Yol_Haritasi_v2.md
+- [ ] 09_Mimari_ve_Kalite.md
+- [ ] SORULAR_2.md
+- [ ] OZET_2.md
+- [ ] Eski belgelere "yerini 06/07/08 aldı" notu (02, 03_Yol_Haritasi, 03b)
