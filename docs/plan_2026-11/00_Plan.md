@@ -19,7 +19,7 @@ Yeniden başlatılırsan: ilk boş kutudan devam et. Her çıktı tek başına y
 
 - [x] 00_Plan.md
 - [x] 01_Rakip_ve_Emsal_Karsilastirma.md
-- [x] 02_Oyun_Ihtiyaclari.md
+- [x] 02_Oyun_Ihtiyaclari.md (v2, 17.11 — İçerik Sistemi belgelerinden)
 - [x] 03_Yol_Haritasi.md
 - [x] 04_Kesfedilebilirlik_SEO.md
 - [x] 05_Duyuru_ve_Yildiz_Buyume_Plani.md
@@ -31,5 +31,6 @@ Yeniden başlatılırsan: ilk boş kutudan devam et. Her çıktı tek başına y
 - **Araç sayısı (kaynak sayımı, 16.11):** `Plugins/**/Tools/*.cpp` içinde 133 `Register/RegisterAsync` kaydı (129 düz desen + `game_run`, `game_run_status`, `loc_gather`, `loc_gather_status`). README 0.4.0 "124 tool" dönemi; fark = `mrq_render`, `mrq_status`, `perf_capture`, `perf_scene`, `perf_gpu_profile` + sayım farkı. Yayımlanmış 0.4.0 zip'inde bu 5 araç yok.
 - **Dal durumu:** `main` yerelde `origin/main`'den 8 commit önde (8 plan belgesi commit'leri). Bu commit'lerde yalnız `docs/plan_2026-11/` değişiyor. Push edilirse public olur → `SORULAR.md` S-1.
 - **GP ve RagnaCook kaynakları:** ikisinin İçerik Sistemi kartı bitmedi. İhtiyaçlar eski belgelerden çıkarıldı. Kartlar bitince `02` yeniden gözden geçirilmeli.
+- **02 v2 (17.11, kart t_3d650d3a):** GP `08_Icerik_Uretim_Sistemi.md` §7 ve RC `12_Icerik_Uretim_Sistemi.md` §11 artık var; `02` bunlardan yeniden yazıldı. 36 satır (ARPG 13, GP 7, RC 16), istenen 7 sütun, ortak kümeler K1–K10, mevcut araç işareti (✅ 10 / 🟡 19 / ❌ 7). Kanıtsız v1 GP satırları çıkarıldı.
 - **Rakip verisi tarihi:** 16.11.2026 (GitHub REST API). 10.11 derin raporları kaynak kodu okumasıdır; özellik hücreleri oradan, sayılar bugünden.
 - **İnceleme Turu 1 tamamlandı:** 8 dosya düzeltilip yerel commitlendi (36cc938, 4eaedf9, 9551f31, f3348ec, 6ea3b60, a96d108, 12eef68). Push yok. Sonraki adım: `kanban_request_review`.
