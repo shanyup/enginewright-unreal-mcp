@@ -1,5 +1,7 @@
 # 02 — Oyun İhtiyaçları (ARPG + Gunpoint Parole + RagnaCook)
 
+> **18.11.2026 — Yerini aldı:** ihtiyaç listesi → `06_Ihtiyac_Birlesik.md` (tek numara EW-xxx; bu belgedeki A-/G-/R-/K ID'leri 06 §6'da eşlendi); "mevcut araç" sütunu → `07_Arac_Esleme.md`. Bu belge silinmedi, tarihçe için duruyor.
+
 Tarih: 17.11.2026 (v2). Kart: `t_3d650d3a`. Yalnız belge.
 v1'den fark: GP ve RagnaCook İçerik Sistemi belgeleri artık var; ihtiyaçlar oradan alındı. Kaynakta dayanağı olmayan v1 satırları (dövme, koleksiyon defteri, hile tespiti, hayvan animasyonu, Steam lobby) çıkarıldı.
 

@@ -55,5 +55,5 @@ Yalnız belge. Oyun repoları salt okunur. Push yok. Alt kart yok. Yeni dosyalar
 - [x] 08_Yol_Haritasi_v2.md (kapsam: 56/56, Kısmen/Yok sürümsüz 0 — `research/yol_kapsam.py`)
 - [x] 09_Mimari_ve_Kalite.md
 - [x] SORULAR_2.md (14 soru)
-- [ ] OZET_2.md
-- [ ] Eski belgelere "yerini 06/07/08 aldı" notu (02, 03_Yol_Haritasi, 03b)
+- [x] OZET_2.md
+- [x] Eski belgelere "yerini aldı" notu: 02 (→06/07), 03_Yol_Haritasi (→08/07), OZET (→OZET_2). 03_Emsal ve 03b değişmedi (yerini alan yok).

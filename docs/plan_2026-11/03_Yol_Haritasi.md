@@ -1,5 +1,7 @@
 # 03 — Yol Haritası (0.4.1 → 0.5 → 0.6 → 1.0 → sonrası)
 
+> **18.11.2026 — Yerini aldı:** `08_Yol_Haritasi_v2.md` (sürüm planı) ve `07_Arac_Esleme.md` (araç eşleme). Bu belgedeki her aracın yeni yeri 08 §11'de. Bu belge silinmedi, tarihçe için duruyor.
+
 Tarih: 17.11.2026. Saatler **tahmin** (tek geliştirici + AI asistan, haftada ~15–20 saat). Her sürüm: tema, araçlar (ad + kısa sözleşme: girdi/çıktı), kabul ölçütü, doğrulama oyunu, oyun takvimi bağımlılığı. "Yapmayacaklarımız" sonda.
 
 **Mevcut durum:** v0.4.0 yayında, **129 araç** (kod sayımı 17.11, 129 tekil `Register(TEXT("..."))`), 10★, MIT, public.

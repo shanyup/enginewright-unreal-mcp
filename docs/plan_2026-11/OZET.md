@@ -1,5 +1,7 @@
 # OZET — Enginewright Plan Paketi (1 Sayfa)
 
+> **18.11.2026:** Yol haritası kısmının yerini `OZET_2.md` aldı (06–09 + SORULAR_2). Yayın/büyüme kısmı (04, 05, SORULAR S-0…S-10) burada geçerli.
+
 **Tarih:** 17.11.2026 **Repo:** github.com/shanyup/enginewright **v0.4.0** **10★** **MIT** **Public**
 
 ---
