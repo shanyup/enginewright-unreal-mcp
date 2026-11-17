@@ -1,0 +1,1929 @@
+[
+ {
+  "name": "asset_find",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 211,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "Find assets in the Content Browser by folder, name wildcard and class. Works during Play In Editor.",
+  "tests": [
+   "test_assets.py",
+   "test_core.py",
+   "test_settings.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "asset_exists",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 262,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "Check whether an asset exists. Correct during Play In Editor too.",
+  "tests": [
+   "ewtest.py",
+   "test_assets.py",
+   "test_audit.py",
+   "test_blueprint.py",
+   "test_core.py",
+   "test_mvvm.py",
+   "test_settings.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "asset_references",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 273,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "List what uses an asset (referencers) or what it uses (dependencies).",
+  "tests": [],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "asset_duplicate",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 300,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "Copy an asset to a new path and save the copy.",
+  "tests": [
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "asset_rename",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 324,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "Rename or move an asset. Every referencer is updated and the redirector left behind is fixed up and removed. Also reports text that still names the old asset (strings, names, IDs, paths in DataTables, Blueprint defaults,",
+  "tests": [
+   "test_core.py",
+   "test_game.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "asset_delete",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 414,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "Delete assets. Refused (ASSET_REFERENCED) while an asset outside the deleted set still references them: data.blocking and data.reasons say which asset or package uses each one. An asset that is still there after the dele",
+  "tests": [
+   "ewtest.py",
+   "test_assets.py",
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "asset_save",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AssetTools.cpp",
+  "line": 585,
+  "register_fn": "RegisterAssetTools",
+  "category": "Assets",
+  "desc": "Save assets by path, or every unsaved asset and level when paths is empty.",
+  "tests": [],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "asset_import",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ImportValidationTools.cpp",
+  "line": 82,
+  "register_fn": "RegisterImportTools",
+  "category": "Assets",
+  "desc": "Import files into the open editor: textures (png, jpg, tga, exr), sounds (wav, ogg), fonts (ttf, otf), meshes (fbx, obj, gltf). Unattended (no dialogs). Each file must exist; existing assets are only replaced with replac",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "mesh_info",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MeshTextureTools.cpp",
+  "line": 71,
+  "register_fn": "RegisterMeshTextureTools",
+  "category": "Assets",
+  "desc": "Describe a static or skeletal mesh without spawning an actor: local bounds (boundsMin, boundsMax, boundsCenter, size, in cm, mesh space with the pivot at the origin), where the pivot sits (pivotFromCenter, pivotFromBase ",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "mesh_set_material",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MeshTextureTools.cpp",
+  "line": 124,
+  "register_fn": "RegisterMeshTextureTools",
+  "category": "Assets",
+  "desc": "Set the material of a mesh material slot (by slot name or index) on a static or skeletal mesh asset; read back and saved.",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "texture_info",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MeshTextureTools.cpp",
+  "line": 172,
+  "register_fn": "RegisterMeshTextureTools",
+  "category": "Assets",
+  "desc": "Describe a texture: size, pixel format, compression, sRGB, LOD group, mip count, streaming. Change settings with object_set (e.g. CompressionSettings, SRGB, LODGroup).",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "asset_search_text",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AuditTools.cpp",
+  "line": 142,
+  "register_fn": "RegisterAuditTools",
+  "category": "Audit",
+  "desc": "Find where a name, string, text or ID is stored inside content: DataTable rows, Blueprint variable defaults, data assets (no binary grep). Use it before renaming an ID or deleting an asset that is referenced by name.",
+  "tests": [
+   "test_audit.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "id_audit",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AuditTools.cpp",
+  "line": 170,
+  "register_fn": "RegisterAuditTools",
+  "category": "Audit",
+  "desc": "Check that IDs stay consistent across content. Defined IDs come from a DataTable's row names (source) or a list (ids). Used IDs are the values of fields whose name matches fieldPattern (default: ends with ID) in DataTabl",
+  "tests": [
+   "test_audit.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "key_audit",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/AuditTools.cpp",
+  "line": 236,
+  "register_fn": "RegisterAuditTools",
+  "category": "Audit",
+  "desc": "Find hard-coded input keys: EKeys:: and FKey(\"...\") in the project's C++ source, and key input event nodes / key pin defaults in Blueprint graphs. Use it to enforce 'no hard-coded keys, use Enhanced Input'. ok is false (",
+  "tests": [
+   "test_audit.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "validate",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ImportValidationTools.cpp",
+  "line": 235,
+  "register_fn": "RegisterValidationTools",
+  "category": "Audit",
+  "desc": "Check content for problems before they show up in play: checks blueprints (compile every Blueprint), data (Data Validation rules), references (assets that point to missing packages), map (Map Check of the open level). De",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 355,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Create a Blueprint class asset from a parent class (Actor, Pawn, Character, ActorComponent, a C++ class or another Blueprint), compile and save it.",
+  "tests": [
+   "ewtest.py",
+   "test_blueprint.py",
+   "test_measure.py",
+   "test_pie.py",
+   "test_savegame.py",
+   "test_scene.py",
+   "test_ui.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "blueprint_info",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 390,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Describe a Blueprint: parent class, compile status, variables (type, default, category), components added by the Blueprint (components), components inherited from the C++ parent or a parent Blueprint (inheritedComponents",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_compile",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 450,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Compile Blueprints and report errors and warnings per Blueprint. Pass paths, or a folder to compile every Blueprint under it.",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_add_variables",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 490,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Add member variables to a Blueprint: [{name, type, default, category, instanceEditable}]. All are checked first (name clash, type); then added, compiled, read back from the class defaults, and saved.",
+  "tests": [
+   "ewtest.py",
+   "test_blueprint.py",
+   "test_savegame.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_remove_variables",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 578,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Remove member variables from a Blueprint (and the nodes that use them), compile and save.",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_add_component",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 603,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Add a component to an Actor Blueprint (e.g. StaticMeshComponent, PointLightComponent), optionally under a parent component and with property values checked like object_set; compile and save.",
+  "tests": [
+   "test_blueprint.py",
+   "test_measure.py",
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_set_component_defaults",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 666,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Write the default values of a component of an Actor Blueprint, whichever way it got there: added by this Blueprint (blueprint_add_component), inherited from the C++ parent class (Character's Mesh / CharacterMesh0, Capsul",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "blueprint_remove_component",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 737,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Remove a component added in this Blueprint (children move up to its parent), compile and save.",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_graph_read",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 754,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Read a Blueprint graph: nodes (id, class, title, position) and their pins (name, direction, type, default, links as nodeId.pin).",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_add_node",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 774,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Add a node to a Blueprint graph. kind: event (BeginPlay, Tick or any overridable event), custom_event, call (a function: PrintString, Class.Function, or a function of this Blueprint), get / set (a variable), branch. Retu",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_connect",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 895,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Connect two pins in a Blueprint graph: from an output pin to an input pin, each as nodeId.pin (pin names from blueprint_graph_read; aliases exec/then and #index work). The connection is checked by the graph schema and re",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_set_pin",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 944,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Set the default value of an unconnected input pin (text form, e.g. 'Hello', '2.5', 'true', '(X=1,Y=0,Z=0)' or an asset path for object pins). The schema checks the value and it is read back.",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "blueprint_remove_node",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BlueprintTools.cpp",
+  "line": 998,
+  "register_fn": "RegisterBlueprintTools",
+  "category": "Blueprints",
+  "desc": "Remove a node from a Blueprint graph (its links are broken).",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "editor_restart",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BuildTools.cpp",
+  "line": 92,
+  "register_fn": "RegisterBuildTools",
+  "category": "Build",
+  "desc": "Close the editor and open it again on this project, optionally building the project's C++ code in between (needed after header or Build.cs changes; Live Coding cannot do those). Refuses with unsaved changes unless save t",
+  "tests": [
+   "test_build.py",
+   "test_game.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "build_status",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BuildTools.cpp",
+  "line": 158,
+  "register_fn": "RegisterBuildTools",
+  "category": "Build",
+  "desc": "Result of the last editor_restart build: state (running, succeeded, failed, skipped), compiler errors and warnings, and the log tail.",
+  "tests": [
+   "test_build.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "live_coding_compile",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BuildTools.cpp",
+  "line": 176,
+  "register_fn": "RegisterBuildTools",
+  "category": "Build",
+  "desc": "Compile changed C++ .cpp files with Live Coding and patch the running editor (Windows). Header, constructor default and Build.cs changes need editor_restart instead. Waits for the result. The patch lives only in this edi",
+  "tests": [
+   "test_build.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "automation_run",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BuildTools.cpp",
+  "line": 210,
+  "register_fn": "RegisterBuildTools",
+  "category": "Build",
+  "desc": "Run automation tests whose names start with filter (e.g. Project.MyGame or System.Core.Math) in the editor and return each test's result. Use automation_list to see names.",
+  "tests": [
+   "test_build.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "automation_list",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BuildTools.cpp",
+  "line": 280,
+  "register_fn": "RegisterBuildTools",
+  "category": "Build",
+  "desc": "List automation test names that contain filter (e.g. Project., System.Core.Math).",
+  "tests": [
+   "test_build.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "mrq_render",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/CinematicTools.cpp",
+  "line": 134,
+  "register_fn": "RegisterCinematicTools",
+  "category": "Cinematics",
+  "desc": "Render a Level Sequence with Movie Render Queue (PIE executor) to a PNG frame sequence, optionally encoded to MP4 (H.264, social-media ready) with ffmpeg. Presets: format horizontal 1920x1080, vertical 1080x1920 (TikTok/",
+  "tests": [],
+  "reliability": "-"
+ },
+ {
+  "name": "mrq_status",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/CinematicTools.cpp",
+  "line": 257,
+  "register_fn": "RegisterCinematicTools",
+  "category": "Cinematics",
+  "desc": "Progress of the last mrq_render: state (rendering / done / failed / idle), frames written vs expected, seconds per frame, output folder and MP4 path.",
+  "tests": [],
+  "reliability": "-"
+ },
+ {
+  "name": "datatable_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/DataTableTools.cpp",
+  "line": 66,
+  "register_fn": "RegisterDataTableTools",
+  "category": "Data",
+  "desc": "Create a DataTable for a row struct (a C++ struct derived from FTableRowBase, a Blueprint struct asset path, or /Script/Module.Struct).",
+  "tests": [
+   "test_assets.py",
+   "test_core.py",
+   "test_scene.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "datatable_get",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/DataTableTools.cpp",
+  "line": 94,
+  "register_fn": "RegisterDataTableTools",
+  "category": "Data",
+  "desc": "Read a DataTable: its row struct, the row names, and the values of the rows asked for (or all rows when rows is omitted).",
+  "tests": [
+   "test_core.py",
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "datatable_set_rows",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/DataTableTools.cpp",
+  "line": 144,
+  "register_fn": "RegisterDataTableTools",
+  "category": "Data",
+  "desc": "Add or update DataTable rows in one step: {rowName: {field: value}}. Fields are checked like object_set (unknown field, type, enum = error). Partial rows keep their other fields. If any row fails, nothing is written.",
+  "tests": [
+   "test_audit.py",
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "datatable_remove_rows",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/DataTableTools.cpp",
+  "line": 248,
+  "register_fn": "RegisterDataTableTools",
+  "category": "Data",
+  "desc": "Remove DataTable rows. All names must exist, otherwise nothing is removed.",
+  "tests": [
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "datatable_rename_row",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/DataTableTools.cpp",
+  "line": 279,
+  "register_fn": "RegisterDataTableTools",
+  "category": "Data",
+  "desc": "Rename one DataTable row. Note: other assets that store the old name as an ID are not changed; search them with asset text search first.",
+  "tests": [
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "gameplay_tags_list",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/GameplayTagTools.cpp",
+  "line": 87,
+  "register_fn": "RegisterGameplayTagTools",
+  "category": "Data",
+  "desc": "List Gameplay Tags (optionally under a prefix such as Item.Food) with comment, source ini and whether they are explicit.",
+  "tests": [
+   "test_game.py",
+   "test_tags.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "gameplay_tag_add",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/GameplayTagTools.cpp",
+  "line": 114,
+  "register_fn": "RegisterGameplayTagTools",
+  "category": "Data",
+  "desc": "Add a Gameplay Tag to a tag ini (default Config/DefaultGameplayTags.ini) and read it back. Fails on an invalid name (with the fixed form suggested) or when the tag already exists explicitly.",
+  "tests": [
+   "test_game.py",
+   "test_tags.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "gameplay_tag_remove",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/GameplayTagTools.cpp",
+  "line": 184,
+  "register_fn": "RegisterGameplayTagTools",
+  "category": "Data",
+  "desc": "Remove an explicit Gameplay Tag from its ini. Refused while assets reference it (the reply lists them) or when it is only implied by child tags. A tag ini that gameplay_tag_add created is deleted again when its last tag ",
+  "tests": [
+   "test_game.py",
+   "test_tags.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "editor_capture",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/EWEditorUI.cpp",
+  "line": 629,
+  "register_fn": "RegisterEditorUITools",
+  "category": "Editor",
+  "desc": "Capture the editor's own UI to a PNG: the main editor window (with the status bar), or the Enginewright panel (opened first). For game or level views use screenshot.",
+  "tests": [
+   "test_settings.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "batch",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/BatchTool.cpp",
+  "line": 26,
+  "register_fn": "RegisterBatchTool",
+  "category": "Editor",
+  "desc": "Run several tool calls in order as one step: [{tool, args}, ...]. Atomic (default): if a step fails, every earlier step is undone and nothing is saved; saves happen once at the end. Steps that undo cannot revert (asset c",
+  "tests": [
+   "smoke.py",
+   "test_blueprint.py",
+   "test_core.py",
+   "test_mvvm.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "client_config",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ClientTools.cpp",
+  "line": 74,
+  "register_fn": "RegisterClientTools",
+  "category": "Editor",
+  "desc": "Get ready-to-paste MCP client configs for this editor (Claude Code, Codex, Cursor, VS Code, Hermes) with the server URL and token. The same files are in Saved/Enginewright/clients/.",
+  "tests": [
+   "smoke.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "editor_state",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/EditorTools.cpp",
+  "line": 16,
+  "register_fn": "RegisterEditorTools",
+  "category": "Editor",
+  "desc": "Read the editor state: whether Play In Editor runs, the open map, the engine and server version.",
+  "tests": [
+   "ewtest.py",
+   "smoke.py",
+   "test_core.py",
+   "test_pie.py",
+   "write_tests.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "console_command",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/EditorTools.cpp",
+  "line": 29,
+  "register_fn": "RegisterEditorTools",
+  "category": "Editor",
+  "desc": "Run a console command. While Play In Editor runs it goes through a player (cheats work; choose the player for multiplayer tests); otherwise the editor world. Returns the text the command printed.",
+  "tests": [
+   "smoke.py",
+   "test_core.py",
+   "test_pie.py",
+   "test_scene.py",
+   "test_settings.py",
+   "write_tests.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "level_open",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/EditorTools.cpp",
+  "line": 67,
+  "register_fn": "RegisterEditorTools",
+  "category": "Editor",
+  "desc": "Open a level (map) in the editor. Refuses when the current level or other packages have unsaved changes, unless discard is true.",
+  "tests": [
+   "test_core.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "level_save",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/EditorTools.cpp",
+  "line": 94,
+  "register_fn": "RegisterEditorTools",
+  "category": "Editor",
+  "desc": "Save the open level, or save a copy as a new map with path. With path, the map is saved as a new .umap under the project's Content (data.file); the editor may stay on the old map (data.editorMap).",
+  "tests": [
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "log_wait",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SettingsLogTools.cpp",
+  "line": 139,
+  "register_fn": "RegisterSettingsLogTools",
+  "category": "Editor",
+  "desc": "Wait until a log line containing pattern appears (from now, or after since), e.g. after pie_start, a console command or a cheat. Returns the matching line, or TIMEOUT.",
+  "tests": [
+   "smoke.py",
+   "test_pie.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "log_read",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SettingsLogTools.cpp",
+  "line": 192,
+  "register_fn": "RegisterSettingsLogTools",
+  "category": "Editor",
+  "desc": "Read editor log lines captured since the editor started, filtered by text, category and minimum severity. Pass since (the lastSeq of the previous reply) to get only new lines, e.g. to wait for a line after pie_start.",
+  "tests": [
+   "test_core.py",
+   "test_input.py",
+   "test_pie.py",
+   "test_settings.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "settings_get",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SettingsLogTools.cpp",
+  "line": 244,
+  "register_fn": "RegisterSettingsLogTools",
+  "category": "Editor",
+  "desc": "Read project or editor settings from a settings class (e.g. RendererSettings, GameMapsSettings, or your own UDeveloperSettings).",
+  "tests": [
+   "test_core.py",
+   "test_input.py",
+   "test_settings.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "settings_set",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SettingsLogTools.cpp",
+  "line": 270,
+  "register_fn": "RegisterSettingsLogTools",
+  "category": "Editor",
+  "desc": "Change project settings through the running editor and write them to the project's Default*.ini, so the editor will not overwrite them on exit. Values are checked like object_set. Some settings need an editor restart. Pr",
+  "tests": [
+   "test_core.py",
+   "test_input.py",
+   "test_settings.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "doctor",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SettingsLogTools.cpp",
+  "line": 303,
+  "register_fn": "RegisterSettingsLogTools",
+  "category": "Editor",
+  "desc": "Health check of the editor and this server: Play state, unsaved packages, a slow Zen startup cause, and what to do about each.",
+  "tests": [
+   "test_core.py",
+   "test_settings.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "image_compose",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ImageTools.cpp",
+  "line": 159,
+  "register_fn": "RegisterImageTools",
+  "category": "Images",
+  "desc": "Put PNG images side by side in one labelled PNG (e.g. web mock-up vs game, 1920 vs 1280, before vs after): optional title band, column labels, row labels; without column labels each cell shows its file name. ",
+  "tests": [
+   "test_game.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "image_stats",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ImageTools.cpp",
+  "line": 376,
+  "register_fn": "RegisterImageTools",
+  "category": "Images",
+  "desc": "Numbers for a PNG: mean brightness (luma, 0-255), min/max luma, a 16-bin luma histogram (percent of pixels per bin, bin 0 = darkest), mean saturation (0-1), clipped black percent (luma <= 2) and clipped white percent (lu",
+  "tests": [
+   "test_game.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "actor_preview",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ActorPreviewTools.cpp",
+  "line": 147,
+  "register_fn": "RegisterActorPreviewTools",
+  "category": "Level",
+  "desc": "Build an actor class the way the game does (construction script, then BeginPlay when beginPlay is on) and take a PNG of it from a chosen camera, without Play In Editor or game_run. ",
+  "tests": [
+   "test_scene.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "class_measure",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MeasureTools.cpp",
+  "line": 37,
+  "register_fn": "RegisterMeasureTools",
+  "category": "Level",
+  "desc": "Measure an actor class or Blueprint without placing it: spawns a temporary hidden copy in the editor world, reads its bounds (all components and colliding only) and each component's size, then removes it. The level is no",
+  "tests": [
+   "test_game.py",
+   "test_measure.py",
+   "test_scene.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "screen_coverage",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MeasureTools.cpp",
+  "line": 104,
+  "register_fn": "RegisterMeasureTools",
+  "category": "Level",
+  "desc": "Readability check in Play In Editor: how big an actor looks from a player's camera. Projects the actor's bounds to that player's screen and returns the box in pixels, its share of the screen, whether it is fully on scree",
+  "tests": [
+   "test_game.py",
+   "test_measure.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "scene_dress",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneDressTools.cpp",
+  "line": 115,
+  "register_fn": "RegisterSceneDressTools",
+  "category": "Level",
+  "desc": "Set-dress an actor or a point with many meshes in one call and one undo step: a ring or ellipse (shields on a ship, stones around a camp), a line (fence), a grid (crates) or a random scatter. ",
+  "tests": [
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "actor_find",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneTools.cpp",
+  "line": 103,
+  "register_fn": "RegisterSceneTools",
+  "category": "Level",
+  "desc": "Find actors in the open editor level by class, label wildcard or tag.",
+  "tests": [
+   "test_assets.py",
+   "test_build.py",
+   "test_core.py",
+   "test_measure.py",
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "actor_spawn",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneTools.cpp",
+  "line": 142,
+  "register_fn": "RegisterSceneTools",
+  "category": "Level",
+  "desc": "Place an actor in the open editor level (one undo step). The level is not saved; use asset_save.",
+  "tests": [
+   "test_build.py",
+   "test_core.py",
+   "test_measure.py",
+   "test_scene.py",
+   "test_settings.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "actor_set_transform",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneTools.cpp",
+  "line": 180,
+  "register_fn": "RegisterSceneTools",
+  "category": "Level",
+  "desc": "Move, rotate or scale an actor in the open editor level (one undo step). Give only the parts to change.",
+  "tests": [
+   "test_core.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "actor_delete",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneTools.cpp",
+  "line": 206,
+  "register_fn": "RegisterSceneTools",
+  "category": "Level",
+  "desc": "Remove actors from the open editor level (one undo step). All must exist, otherwise nothing is removed.",
+  "tests": [
+   "test_core.py",
+   "test_measure.py",
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "actor_bounds",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneTools.cpp",
+  "line": 229,
+  "register_fn": "RegisterSceneTools",
+  "category": "Level",
+  "desc": "Measure an actor: world bounds center and full size in cm (components included).",
+  "tests": [
+   "test_core.py",
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "world_trace",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SceneTools.cpp",
+  "line": 249,
+  "register_fn": "RegisterSceneTools",
+  "category": "Level",
+  "desc": "Cast a line through the open level (visibility channel) and report the first hit: actor, point and distance.",
+  "tests": [
+   "test_core.py",
+   "test_scene.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "loc_gather",
+  "async": true,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocGatherTools.cpp",
+  "line": 449,
+  "register_fn": "RegisterLocGatherTools",
+  "category": "Localization",
+  "desc": "Run the localization steps of a target with the GatherText commandlet (the Localization Dashboard's Gather, Export, Import and Compile buttons) and check the result, in one call: steps gather, export (writes the .po file",
+  "tests": [
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "loc_gather_status",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocGatherTools.cpp",
+  "line": 549,
+  "register_fn": "RegisterLocGatherTools",
+  "category": "Localization",
+  "desc": "Result of a loc_gather: waits up to 'wait' seconds for it to finish, then gives the same report as loc_gather (or STILL_RUNNING). stop true ends the running commandlet now. Without id: the latest run.",
+  "tests": [
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "stringtable_list",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocalizationTools.cpp",
+  "line": 271,
+  "register_fn": "RegisterLocalizationTools",
+  "category": "Localization",
+  "desc": "List the registered String Tables: asset tables that are loaded and tables registered from code or CSV (LOCTABLE_FROMFILE). Gives id, namespace, entry count and the asset path for asset tables.",
+  "tests": [
+   "test_game.py",
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "stringtable_get",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocalizationTools.cpp",
+  "line": 299,
+  "register_fn": "RegisterLocalizationTools",
+  "category": "Localization",
+  "desc": "Read entries of a String Table (registry id or asset path): key, source string and, when the current language translates it, the display string. Filter by keys or a key wildcard.",
+  "tests": [
+   "test_game.py",
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "stringtable_set",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocalizationTools.cpp",
+  "line": 347,
+  "register_fn": "RegisterLocalizationTools",
+  "category": "Localization",
+  "desc": "Create a String Table asset or change its entries: set (key -> source string), remove keys, namespace. Only asset tables can be edited; tables loaded from CSV by code are read-only here (edit the CSV). Saves and reads ev",
+  "tests": [
+   "test_assets.py",
+   "test_game.py",
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "stringtable_compare",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocalizationTools.cpp",
+  "line": 444,
+  "register_fn": "RegisterLocalizationTools",
+  "category": "Localization",
+  "desc": "Compare a source with a translation, read-only: keys missing from the translation, extra keys, empty translations, translations identical to the source (likely untranslated), and format arguments {x} or rich text tags <x",
+  "tests": [
+   "test_game.py",
+   "test_loc.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "font_coverage",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocalizationTools.cpp",
+  "line": 655,
+  "register_fn": "RegisterLocalizationTools",
+  "category": "Localization",
+  "desc": "Check which characters a font cannot draw (they show as empty boxes, 'tofu', in the game), read-only. font is a Font asset (/Game/UI/F_Main, a Slate runtime font with its typefaces and fallback font), a Font Face asset, ",
+  "tests": [
+   "test_game.py",
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "loc_culture",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/LocalizationTools.cpp",
+  "line": 806,
+  "register_fn": "RegisterLocalizationTools",
+  "category": "Localization",
+  "desc": "Read or switch the editor's current language (and culture), e.g. to preview translated text in Play In Editor or in a screenshot. Lists the cultures that have game localization data. Switching changes text everywhere in ",
+  "tests": [
+   "test_game.py",
+   "test_loc.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "material_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MaterialTools.cpp",
+  "line": 292,
+  "register_fn": "RegisterMaterialTools",
+  "category": "Materials",
+  "desc": "Create a material. Optionally wire parameters straight to material inputs: inputs {BaseColor: {parameter: 'Tint', value: [1,0,0]}, Roughness: {parameter: 'Rough', value: 0.5}, Metallic: {value: 1}} (no parameter = consta",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "material_info",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MaterialTools.cpp",
+  "line": 356,
+  "register_fn": "RegisterMaterialTools",
+  "category": "Materials",
+  "desc": "Describe a material or material instance: expressions with their inputs and links, which node feeds each material input, and parameters with values (instances: overridden flags).",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "material_add_expression",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MaterialTools.cpp",
+  "line": 379,
+  "register_fn": "RegisterMaterialTools",
+  "category": "Materials",
+  "desc": "Add an expression node to a material, e.g. Multiply, Add, Lerp, Constant3Vector, TextureCoordinate, ScalarParameter, VectorParameter, TextureSampleParameter2D, StaticSwitchParameter. name sets the parameter name; values ",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "material_connect",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MaterialTools.cpp",
+  "line": 438,
+  "register_fn": "RegisterMaterialTools",
+  "category": "Materials",
+  "desc": "Connect a material node output to another node's input or to a material input (BaseColor, Roughness, Normal...). Pins by name, #index, or empty for single-input nodes. The link is read back and the material recompiled.",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "material_instance_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MaterialTools.cpp",
+  "line": 486,
+  "register_fn": "RegisterMaterialTools",
+  "category": "Materials",
+  "desc": "Create a material instance of a material (or of another instance), with parameter values checked against the parent's parameters: numbers for scalars, [r,g,b(,a)] for vectors, texture paths, true/false for static switche",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "material_instance_set",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MaterialTools.cpp",
+  "line": 533,
+  "register_fn": "RegisterMaterialTools",
+  "category": "Materials",
+  "desc": "Set parameter values on a material instance. Every name and value is checked against the parent first (unknown name = error with suggestions, nothing written); values are read back and saved.",
+  "tests": [
+   "test_assets.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "pie_actors",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MultiplayerTools.cpp",
+  "line": 123,
+  "register_fn": "RegisterMultiplayerTools",
+  "category": "Multiplayer",
+  "desc": "Multiplayer check: list the actors of a class in every Play In Editor world (server and each client) with net roles, owner and chosen property values, so you can assert 'client 2 sees X'. With minCount and timeout, waits",
+  "tests": [
+   "test_game.py",
+   "test_multiplayer.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "pie_net_emulation",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MultiplayerTools.cpp",
+  "line": 196,
+  "register_fn": "RegisterMultiplayerTools",
+  "category": "Multiplayer",
+  "desc": "Emulate a bad network in a multiplayer Play In Editor session: profile off / average / bad, or exact values (lag in ms, loss in percent). Applied to the server and every client net driver, then read back.",
+  "tests": [
+   "test_game.py",
+   "test_multiplayer.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "object_get",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ObjectTools.cpp",
+  "line": 12,
+  "register_fn": "RegisterObjectTools",
+  "category": "Objects",
+  "desc": "Read properties of any object: an asset, a Blueprint's defaults (classDefault true), a placed actor or a component (Path:Component). Omit properties to read all editable ones.",
+  "tests": [
+   "smoke.py",
+   "test_blueprint.py",
+   "test_core.py",
+   "test_mvvm.py",
+   "write_probe.py",
+   "write_tests.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "object_set",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/ObjectTools.cpp",
+  "line": 45,
+  "register_fn": "RegisterObjectTools",
+  "category": "Objects",
+  "desc": "Write properties on any object, checked and verified: unknown property or struct field, wrong type or enum name = error with suggestions; all values are validated before anything is written (all or nothing, one undo step",
+  "tests": [
+   "smoke.py",
+   "test_assets.py",
+   "test_audit.py",
+   "test_blueprint.py",
+   "test_core.py",
+   "test_ui.py",
+   "write_tests.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "enum_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/TypeTools.cpp",
+  "line": 93,
+  "register_fn": "RegisterTypeTools",
+  "category": "Objects",
+  "desc": "Create a Blueprint enum asset with the given value names, in order. Reads the enum back and checks every value.",
+  "tests": [
+   "ewtest.py",
+   "test_assets.py",
+   "test_blueprint.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "struct_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/TypeTools.cpp",
+  "line": 138,
+  "register_fn": "RegisterTypeTools",
+  "category": "Objects",
+  "desc": "Create a Blueprint struct asset (usable as a DataTable row struct) with typed fields in order. Types: bool, int, int64, float, double, byte, string, name, text, vector, rotator, transform, color, object:<Class>, class:<C",
+  "tests": [
+   "ewtest.py",
+   "test_assets.py",
+   "test_blueprint.py",
+   "test_core.py",
+   "test_scene.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "type_info",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/TypeTools.cpp",
+  "line": 218,
+  "register_fn": "RegisterTypeTools",
+  "category": "Objects",
+  "desc": "Describe a struct (fields and types) or an enum (values), native or Blueprint. Use it to learn a DataTable row struct before writing rows.",
+  "tests": [
+   "test_blueprint.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "perf_capture",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PerfTools.cpp",
+  "line": 105,
+  "register_fn": "RegisterPerfTools",
+  "category": "Performance",
+  "desc": "Measure frame time for some seconds in Play In Editor (or the editor level when PIE is off): frame, game thread, render thread, RHI thread and GPU milliseconds (avg / p50 / p95 / max), FPS, hitches, draw calls and triang",
+  "tests": [],
+  "reliability": "-"
+ },
+ {
+  "name": "perf_scene",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PerfTools.cpp",
+  "line": 180,
+  "register_fn": "RegisterPerfTools",
+  "category": "Performance",
+  "desc": "Cost census of the PIE world (or editor level): actors, visible primitives, static mesh triangles (LOD0, top meshes), skeletal meshes, lights by type with shadow casters and mobility, translucent materials, Niagara and p",
+  "tests": [],
+  "reliability": "-"
+ },
+ {
+  "name": "perf_gpu_profile",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PerfTools.cpp",
+  "line": 303,
+  "register_fn": "RegisterPerfTools",
+  "category": "Performance",
+  "desc": "Profile one rendered frame on the GPU (the engine's ProfileGPU, without its window) and return the costliest passes in milliseconds, e.g. Lumen, shadow depths, base pass, translucency, post processing. Works best in Play",
+  "tests": [],
+  "reliability": "-"
+ },
+ {
+  "name": "game_run",
+  "async": true,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/GameRunTools.cpp",
+  "line": 991,
+  "register_fn": "RegisterGameRunTools",
+  "category": "Play",
+  "desc": "Start the game itself (UnrealEditor <project> <url> -game, or a packaged exe) once per resolution and report: did the URL arrive unchanged (checked in the game's own log), PASSED/FAILED from your patterns, the log lines ",
+  "tests": [
+   "test_build.py",
+   "test_game.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "game_run_status",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/GameRunTools.cpp",
+  "line": 1261,
+  "register_fn": "RegisterGameRunTools",
+  "category": "Play",
+  "desc": "Result of a game_run: waits up to 'wait' seconds for it to finish, then gives the same report as game_run (or STILL_RUNNING). stop true ends the running game now (its report says stopped). Without id: the latest run. A r",
+  "tests": [
+   "test_game.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "input_action_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/InputTools.cpp",
+  "line": 125,
+  "register_fn": "RegisterInputTools",
+  "category": "Play",
+  "desc": "Create an Enhanced Input action asset with a value type (bool, axis1d, axis2d, axis3d).",
+  "tests": [
+   "test_input.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "input_context_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/InputTools.cpp",
+  "line": 147,
+  "register_fn": "RegisterInputTools",
+  "category": "Play",
+  "desc": "Create an empty Enhanced Input mapping context asset (IMC).",
+  "tests": [
+   "test_input.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "input_map",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/InputTools.cpp",
+  "line": 163,
+  "register_fn": "RegisterInputTools",
+  "category": "Play",
+  "desc": "Map a key to an input action in a mapping context, with optional modifiers (Negate, SwizzleAxis, DeadZone, Scalar...) and triggers (Pressed, Released, Hold, Tap...), each as a type name or {type, values}. Everything is c",
+  "tests": [
+   "test_input.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "input_unmap",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/InputTools.cpp",
+  "line": 203,
+  "register_fn": "RegisterInputTools",
+  "category": "Play",
+  "desc": "Remove a key from an action in a mapping context (or every key of the action when key is omitted).",
+  "tests": [
+   "test_input.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "input_context_info",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/InputTools.cpp",
+  "line": 239,
+  "register_fn": "RegisterInputTools",
+  "category": "Play",
+  "desc": "List the mappings of an Enhanced Input mapping context: action, key, modifiers, triggers.",
+  "tests": [
+   "test_input.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "input_map_list",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/InputTools.cpp",
+  "line": 255,
+  "register_fn": "RegisterInputTools",
+  "category": "Play",
+  "desc": "Read what keys are bound to which Enhanced Input actions, grouped by action and by device (keyboardMouse, gamepad, touch). Read only. With context (an Input Mapping Context asset) it lists that asset's mappings. Without ",
+  "tests": [
+   "test_input.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "pie_start",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 233,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Start Play In Editor: players (1-4), netMode standalone / listen (player 0 hosts) / client (dedicated server + clients). By default waits until every player has a pawn (timeout seconds). Multi-player sessions open extra ",
+  "tests": [
+   "test_input.py",
+   "test_measure.py",
+   "test_multiplayer.py",
+   "test_pie.py",
+   "test_savegame.py",
+   "test_ui.py",
+   "write_tests.py"
+  ],
+  "reliability": "NOTE"
+ },
+ {
+  "name": "pie_stop",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 286,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Stop Play In Editor and wait until it has ended.",
+  "tests": [
+   "ewtest.py",
+   "test_input.py",
+   "test_measure.py",
+   "test_multiplayer.py",
+   "test_pie.py",
+   "test_savegame.py",
+   "test_ui.py",
+   "write_tests.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "pie_state",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 299,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Play In Editor state: each world (server/client, net mode, map, time) and its players (pawn, location, camera location, rotation and FOV).",
+  "tests": [
+   "test_pie.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "pie_input",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 305,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Send synthetic input to a Play In Editor player: an Enhanced Input action (with a value) or a key (e.g. SpaceBar, W, LeftMouseButton, Gamepad_FaceButton_Bottom). Holds it for seconds, then releases, and returns after the",
+  "tests": [
+   "test_input.py",
+   "test_pie.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "pie_walk_to",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 360,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Walk a Play In Editor player's pawn to a world position, like a player holding the move keys: every frame it adds movement input toward the target, so the game's own movement (speed, collision, animation) does the walkin",
+  "tests": [
+   "test_pie.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "pie_travel",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 480,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Travel a running Play In Editor session to another map with URL options, like the ServerTravel console command but checked: map is a map asset path (/Game/Maps/MAP_Run) or a map name; options is the URL option string (?g",
+  "tests": [
+   "test_pie.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "screenshot",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 574,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Capture what a Play In Editor player sees, UI included (source game, the default while playing), or the level editor viewport (source editor). Saves a PNG under Saved/Enginewright/Screenshots and returns it as an image, ",
+  "tests": [
+   "smoke.py",
+   "test_pie.py",
+   "test_ui.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "screenshot_ab",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/PieTools.cpp",
+  "line": 628,
+  "register_fn": "RegisterPieTools",
+  "category": "Play",
+  "desc": "Before/after picture in one call: capture a view (A), run steps (tool calls such as object_set or console_command) or one console command, wait, capture the same view again (B), and return both side by side with the shar",
+  "tests": [
+   "test_audit.py"
+  ],
+  "reliability": "FIXED"
+ },
+ {
+  "name": "savegame_get",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SaveGameTools.cpp",
+  "line": 110,
+  "register_fn": "RegisterSaveGameTools",
+  "category": "Play",
+  "desc": "Read a SaveGame slot from Saved/SaveGames: its class and the values of its UPROPERTY fields (all, or the names in fields). Without slot it lists the slots. Also reports whether the file carries bytes the engine did not w",
+  "tests": [
+   "test_savegame.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "savegame_set",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/SaveGameTools.cpp",
+  "line": 153,
+  "register_fn": "RegisterSaveGameTools",
+  "category": "Play",
+  "desc": "Write fields of a SaveGame slot (values: field name -> JSON value, validated against the class's UPROPERTYs; nothing is written when one value is wrong), save the slot and read it back from disk. Plain engine saves are w",
+  "tests": [
+   "test_savegame.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "viewmodel_list",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MVVMTools.cpp",
+  "line": 135,
+  "register_fn": "RegisterMVVMTools",
+  "category": "UI",
+  "desc": "List the MVVM view models of a Widget Blueprint (name, class, creation type) and its view bindings (source -> target, mode, conversion function, enabled, compile errors). Read only. Needs the ModelViewViewModel and Engin",
+  "tests": [
+   "test_mvvm.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "viewmodel_add",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MVVMTools.cpp",
+  "line": 144,
+  "register_fn": "RegisterMVVMTools",
+  "category": "UI",
+  "desc": "Add a view model (a class derived from MVVMViewModelBase, C++ or Blueprint) to a Widget Blueprint, like the Viewmodels panel does. Name defaults to the class name. creationType defaults to CreateInstance (the widget crea",
+  "tests": [
+   "test_mvvm.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "viewmodel_bind",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MVVMTools.cpp",
+  "line": 160,
+  "register_fn": "RegisterMVVMTools",
+  "category": "UI",
+  "desc": "Bind a view model property (or function) to a widget property, like the View Bindings panel: source = a view model property (FieldNotify) or function, target = widget name and property, e.g. Gold.Text. mode defaults to O",
+  "tests": [
+   "test_mvvm.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "viewmodel_unbind",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MVVMTools.cpp",
+  "line": 177,
+  "register_fn": "RegisterMVVMTools",
+  "category": "UI",
+  "desc": "Remove view bindings from a Widget Blueprint: every binding whose target is the given widget property (e.g. Gold.Text), optionally only those from one view model or source. Fails with BINDING_NOT_FOUND when none matches.",
+  "tests": [
+   "test_mvvm.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "viewmodel_remove",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/MVVMTools.cpp",
+  "line": 189,
+  "register_fn": "RegisterMVVMTools",
+  "category": "UI",
+  "desc": "Remove a view model from a Widget Blueprint. Fails with VIEWMODEL_IN_USE while bindings still use it, unless removeBindings is true (then those bindings go too). Compiles and saves; one undo step. Needs the ModelViewView",
+  "tests": [
+   "test_mvvm.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_prompts",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 538,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Check the input prompts a Play In Editor player sees against what the input is really bound to (read-only). Lists the CommonUI action widgets on screen (their shown text, the Enhanced Input action or the input action row",
+  "tests": [
+   "test_input.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_state",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 720,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "What a Play In Editor player's UI shows right now: widgets in the viewport, CommonUI activatable widgets and activatable stacks with their widget list and top, and the buttons (UMG Button or CommonButtonBase) with label ",
+  "tests": [
+   "test_game.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_click",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 734,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Click a button the player can use in Play In Editor (visible, on the top page of its stack), found by widget name, label, any text inside the button (a glyph such as a gear works too) or tooltip (wildcards allowed). meth",
+  "tests": [
+   "test_game.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_key",
+  "async": true,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 834,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Send a key or a mouse button to a Play In Editor player's UI through Slate, the same path a keyboard or mouse takes: the key goes to the widget that has user focus (UMG NativeOnKeyDown / OnKeyDown, CommonUI input, text b",
+  "tests": [
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_open",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 961,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Open a widget class (Widget Blueprint or C++ UserWidget) on a Play In Editor player's screen: creates it for that player and adds it to the viewport; a CommonUI activatable widget is also activated. With stack (name of a",
+  "tests": [
+   "test_game.py",
+   "test_input.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_close",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 1034,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Remove a widget from a Play In Editor player's screen by widget name (as listed by ui_state viewportWidgets) or class name.",
+  "tests": [
+   "test_game.py",
+   "test_input.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_input_type",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 1085,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Read or switch a Play In Editor player's CommonUI input type (MouseAndKeyboard, Gamepad, Touch), as if the player picked up a gamepad. Use it to check gamepad glyphs, focus and button hints without a controller. Needs th",
+  "tests": [
+   "test_game.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "ui_input_audit",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UIRuntimeTools.cpp",
+  "line": 1132,
+  "register_fn": "RegisterUIRuntimeTools",
+  "category": "UI",
+  "desc": "Check CommonUI input wiring in Widget Blueprints (read-only): CommonButtonBase triggering input actions whose DataTable row does not exist, Enhanced Input actions on buttons while CommonInput's Enhanced Input support is ",
+  "tests": [
+   "test_game.py",
+   "test_ui.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_create",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 180,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Create a Widget Blueprint (UMG) with a root panel (default CanvasPanel), compile and save it.",
+  "tests": [
+   "test_game.py",
+   "test_input.py",
+   "test_mvvm.py",
+   "test_ui.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_tree",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 234,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Read a Widget Blueprint's widget tree: every widget with class, parent, index, variable flag, visibility, text (TextBlock) and slot layout (canvas position, size, anchors, alignment; padding and alignment for box slots).",
+  "tests": [
+   "test_game.py",
+   "test_mvvm.py",
+   "test_settings.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_get",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 254,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Read property values of one widget (all editable ones, or the names given) plus its slot.",
+  "tests": [
+   "test_game.py",
+   "test_ui.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_add",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 276,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Add a widget (TextBlock, Button, Image, VerticalBox, HorizontalBox, Overlay, SizeBox, Border, Spacer, a Widget Blueprint...) under a panel, with property values and slot layout checked like object_set; compile, save, and",
+  "tests": [
+   "test_game.py",
+   "test_input.py",
+   "test_mvvm.py",
+   "test_ui.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_set",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 355,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Change one widget's properties and/or slot layout (same rules as widget_add), then compile, save and read back. Nothing changes when any value is invalid.",
+  "tests": [
+   "test_game.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_remove",
+  "async": false,
+  "writes": true,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 407,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Remove a widget and everything under it from a Widget Blueprint; compile and save. Lists the removed widgets.",
+  "tests": [
+   "test_game.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ },
+ {
+  "name": "widget_render",
+  "async": false,
+  "writes": false,
+  "file": "Plugins/Enginewright/Source/Enginewright/Private/Tools/UMGTools.cpp",
+  "line": 433,
+  "register_fn": "RegisterUMGTools",
+  "category": "UI",
+  "desc": "Render a Widget Blueprint or a C++ UserWidget class to a PNG at a given resolution (no Play In Editor needed): saves it under Saved/Enginewright/Screenshots and returns it as an image. Use it to compare a screen with a m",
+  "tests": [
+   "test_game.py",
+   "test_umg.py"
+  ],
+  "reliability": "OK"
+ }
+]
