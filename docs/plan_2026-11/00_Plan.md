@@ -51,7 +51,7 @@ Yalnız belge. Oyun repoları salt okunur. Push yok. Alt kart yok. Yeni dosyalar
 ### Çıktılar
 
 - [x] 06_Ihtiyac_Birlesik.md
-- [ ] 07_Arac_Esleme.md
+- [x] 07_Arac_Esleme.md
 - [ ] 08_Yol_Haritasi_v2.md
 - [ ] 09_Mimari_ve_Kalite.md
 - [ ] SORULAR_2.md
