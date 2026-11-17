@@ -1,5 +1,7 @@
 # Enginewright Rakip Analizi — UE5 MCP / Editör Otomasyon Araçları
 
+> **Güncelleme (17.11.2026):** Bu taslağın bazı sayıları eskidi ya da yanlış (voodoofox, UnrealGenAISupport, flopperam, Epic toolset sayısı). Düzeltmeler: `derin/01–04` "Eski analizdeki hatalar" bölümleri. Güncel ★/commit/lisans ve emsal matrisi: `docs/plan_2026-11/03_Emsal_Karsilastirma.md`.
+
 **Tarih:** 10.11.2026 | **Kaynak:** Web aramaları, GitHub repoları, resmi dokümantasyon, EngineWire test notları (RagnaCook), Epic 5.8 envanteri (870 araç, 59 sınıf)
 
 ---

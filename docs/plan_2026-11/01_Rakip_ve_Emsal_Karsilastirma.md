@@ -1,5 +1,7 @@
 # 01 — Rakip ve Emsal Karşılaştırması
 
+> **Güncelleme (17.11.2026, `t_bea7137b`):** §1 tablosunda 4 araç sayısı hücresi yanlış (chongdashu, db-lyon mimarisi, VibeUE, Claireon) ve Epic sayısı 55/870 yerine kaynakta 58/878. Düzeltilmiş tablo: `03_Emsal_Karsilastirma.md` §1.2 ve §6.
+
 Tarih: 17.11.2026. Yıldız/push/lisans: GitHub REST API 17.11.2026 (ham veri `$TMPDIR/ewplan/repos.txt` + canlı arama). Özellik hücreleri: `docs/arastirma/derin/01–04` (10.11 kaynak kodu okuması) + web. "Tahmin" = doğrulanmamış. "—" = veri yok.
 
 ## 1. UE ekosistemi — rakip tablo (GitHub "unreal mcp" arama ilk 25, yıldız sırası)
