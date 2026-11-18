@@ -14,7 +14,7 @@ bolum = {}
 for m in re.finditer(r"^## (\d+)\. (.+)$", tpl, re.M):
     bolum[int(m.group(1))] = (m.start(), m.group(2))
 sira = sorted(bolum)
-ad = {2: "0.4.1", 3: "0.5", 4: "0.6", 5: "0.7", 6: "0.8", 7: "0.9", 8: "1.0", 9: "Sonrası"}
+ad = {2: "0.4.x", 3: "0.5.x", 4: "0.6.x", 5: "0.7.x", 6: "0.8.x", 7: "0.9.x", 8: "1.0.x", 9: "Sonrası"}
 kap = {}
 for i, n in enumerate(sira):
     if n not in ad:
