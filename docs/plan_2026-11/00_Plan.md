@@ -95,7 +95,7 @@ Talha 18.11: marka adı Enginewright değişmez; depo adı `enginewright-unreal-
 - [x] 03b_Buyume_Hikayeleri commit (önceki karttan commit'siz kalmıştı)
 - [x] `research/yayin_hazirlik_kaynaklar_2026-11-18.md` (web notları K1–K6)
 - [x] 11_Konumlandirma.md (tek cümle EN + TR, fark tablosu, 3 kanıt, kim için)
-- [ ] 12_SEO_v2.md
+- [x] 12_SEO_v2.md (depo adı geçişi 0.4.4, açıklama 342/322/151 kr, 20 topic ölçümlü, README ilk ekran EN, sosyal görsel, 7 dizin + 2 yapılmaz, doküman sitesi 1.0)
 - [ ] 13_Duyuru_v2.md
 - [ ] SORULAR notu (S-0, S-2, S-4, S-10) + SORULAR_3.md
 - [ ] 04 / 05 "yerini 12/13 aldı" notu + OZET_2 satırı

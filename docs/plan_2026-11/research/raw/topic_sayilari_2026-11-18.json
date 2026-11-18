@@ -1,0 +1,31 @@
+{
+ "date": "2026-11-18",
+ "source": "GitHub REST /search/repositories?q=topic:<t> total_count",
+ "counts": {
+  "mcp": 122506,
+  "mcp-server": 44678,
+  "model-context-protocol": 45534,
+  "unreal-engine": 4651,
+  "unreal-engine-5": 2402,
+  "ue5": 1498,
+  "unreal-engine-plugin": 559,
+  "ue5-plugin": 326,
+  "ai-agents": 160021,
+  "claude": 70521,
+  "claude-code": 122250,
+  "codex": 52443,
+  "cursor": 21653,
+  "game-development": 42093,
+  "gamedev": 15802,
+  "game-testing": 171,
+  "test-automation": 10785,
+  "visual-testing": 450,
+  "multiplayer": 9328,
+  "automation": 120175,
+  "qa-automation": 3591,
+  "ai-tools": 18351,
+  "unreal": 1158,
+  "packaging": 1844,
+  "localization": 8566
+ }
+}
