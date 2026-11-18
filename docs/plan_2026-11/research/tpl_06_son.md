@@ -1,5 +1,5 @@
 
-## 7. İhtiyaç sırası (oyunlar açısından, tarih yok)
+## 7. İhtiyaç sırası — ilk kullanan oyun açısından, tarih yok (iç eşleme)
 
 Oyunun ilk kullandığı ana göre. Ayrıntılı sürüm sırası 08'de.
 
@@ -24,5 +24,5 @@ Ortak yükler (birden çok oyunun ilk anında): EW-001 veri, EW-013/014 bot + ö
 
 - RC12 §11.1 EW-R20 "Kısmen / B11 yok" diyor; kodda `validate` var (ImportValidationTools.cpp:235). RC belgesi eski → S2-04.
 - GP16 EW-GP-01 `automation_run`'ı "eksik" sayıyor; araç var (editör içi). Eksik kısım başsız koşu + XML ayrıştırma (EW-011) → S2-04.
-- EW-080 StateTree yazma: GP YZ-0 StateTree geçişini elle (C++) yapıyor; GP belgeleri yazma aracı istemiyor. GP'yi bu ihtiyaca ekleme TAHMİN → S2-05.
+- EW-080 StateTree yazma: genel araçtır, her oyun kullanabilir. GP StateTree kullanıyor (YZ_v2/02 §3); şu an yalnız `statetree_debug_dump` (EW-017) istedi. **S2-05 kapandı (genel araç, Talha 18.11).**
 - EW-032 iki makine / Steam testi araçla çözülmez (TAHMİN); elle kalır.

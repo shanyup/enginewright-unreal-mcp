@@ -1,6 +1,7 @@
 # 06 — Birleşik ihtiyaç listesi (3 oyun → tek numara EW-xxx)
 
-Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. Oyun repoları yalnız okundu.
+Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. Oyun repoları yalnız okundu. Genel ad düzeltmesi: kart `t_5f61e99c` (18.11).
+**Bu belge iç eşlemedir** (Talha 18.11, genel MCP kuralı): ihtiyaç kaynakları ve oyun belgesi referansları burada aynen kalır. Sürüm, araç adı ve kabul ölçütü dili 08/10'da geneldir. Başlığında **(iç eşleme)** olan bölümlerin şema ve tablo satırları oyun adı denetiminden muaftır (`research/oyun_adi_denetim.py`).
 Veri kaynağı: `research/ihtiyac_esleme.py` (tek tablo, 06 ve 07 bundan üretilir). Tablo değişirse betiği düzelt, yeniden çalıştır.
 Alıntılar: `research/raw/oyun_RC_12_s11.md`, `oyun_GP_EW.md`, `oyun_ARPG_EW.md` (kaynak satırların kopyası).
 
@@ -36,7 +37,7 @@ Kümeler (ID bloğu): VERİ 001–007 (7) · TEST 010–020 (11) · AĞ 030–03
 
 Numara kuralı: ID'ler sabit kalır. Yeni ihtiyaç bloğun boş numarasını alır (ör. VERİ'de EW-008). Silinen ihtiyacın numarası tekrar kullanılmaz.
 
-## 3. GP numara çakışması — çözüm
+## 3. Oyun belgelerinde numara çakışması — çözüm (iç eşleme)
 
 GP'de aynı ön ekle iki ayrı liste var:
 
@@ -54,7 +55,7 @@ EW-GP-5  Sim ↔ veri köprüsü  ──┘    … EW-GP-09 scenario_place
 - Ayırt etme kuralı: `EW-GP-<tek hane>` = GP08 ESKİ, `EW-GP-0<hane>` = GP16 YENİ. Bu belgeden sonra ikisi de yalnız eşleme sütununda geçer; yeni ad EW-xxx.
 - GP belgelerinde yeniden adlandırma bu kartın işi değil (oyun reposu salt okunur). Soru: SORULAR_2 S2-03.
 
-## 4. ARPG varsayımları (T1 / T3 / T4 AÇIK)
+## 4. Açık motor / kapsam / zaman varsayımları — T1 / T3 / T4 (iç eşleme)
 
 AT §2 "Temel kararlar"da T1 Motor, T3 Kapsam, T4 Başlama zamanı "[AÇIK]". Bu belge şu varsayımla yazıldı; **VARSAYIM** olarak işaretlidir:
 
@@ -260,7 +261,7 @@ GP satırları "Kaynak liste" sütunuyla ayrılır: GP08 ESKİ (tek hane) ve GP1
 | EW-R22 | RagnaCook RC12 §11.1 | EW-100, EW-101, EW-102 |
 
 
-## 7. İhtiyaç sırası (oyunlar açısından, tarih yok)
+## 7. İhtiyaç sırası — ilk kullanan oyun açısından, tarih yok (iç eşleme)
 
 Oyunun ilk kullandığı ana göre. Ayrıntılı sürüm sırası 08'de.
 
@@ -285,5 +286,5 @@ Ortak yükler (birden çok oyunun ilk anında): EW-001 veri, EW-013/014 bot + ö
 
 - RC12 §11.1 EW-R20 "Kısmen / B11 yok" diyor; kodda `validate` var (ImportValidationTools.cpp:235). RC belgesi eski → S2-04.
 - GP16 EW-GP-01 `automation_run`'ı "eksik" sayıyor; araç var (editör içi). Eksik kısım başsız koşu + XML ayrıştırma (EW-011) → S2-04.
-- EW-080 StateTree yazma: GP YZ-0 StateTree geçişini elle (C++) yapıyor; GP belgeleri yazma aracı istemiyor. GP'yi bu ihtiyaca ekleme TAHMİN → S2-05.
+- EW-080 StateTree yazma: genel araçtır, her oyun kullanabilir. GP StateTree kullanıyor (YZ_v2/02 §3); şu an yalnız `statetree_debug_dump` (EW-017) istedi. **S2-05 kapandı (genel araç, Talha 18.11).**
 - EW-032 iki makine / Steam testi araçla çözülmez (TAHMİN); elle kalır.
