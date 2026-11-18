@@ -57,3 +57,14 @@ Yalnız belge. Oyun repoları salt okunur. Push yok. Alt kart yok. Yeni dosyalar
 - [x] SORULAR_2.md (14 soru)
 - [x] OZET_2.md
 - [x] Eski belgelere "yerini aldı" notu: 02 (→06/07), 03_Yol_Haritasi (→08/07), OZET (→OZET_2). 03_Emsal ve 03b değişmedi (yerini alan yok).
+
+---
+
+## Kart t_035891ab — Ara sürümler (18.11.2026)
+
+Yalnız belge, yalnız `docs/plan_2026-11/`. Push yok. Alt kart yok. Silme yok.
+
+- [x] `research/ara_surum.py` (üretici + denetim: ≤ 12 sa, EW kapsamı, T-01…T-16, Y1–Y9)
+- [x] 10_Ara_Surumler.md (55 ara sürüm, sıralı tablo, tam liste, kritik yol şeması, kilometre taşları)
+- [x] 08 ve OZET_2'ye "ara sürüm listesi: 10" notu
+- [x] SORULAR_2: ek soru S2-15 (ara sürüm numaraları dışarıda nasıl görünür)

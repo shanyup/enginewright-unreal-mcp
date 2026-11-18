@@ -3,6 +3,8 @@
 18.11.2026 · Kart `t_ae3a845a` · Yalnız belge. Yerini aldığı: `OZET.md` yol haritası kısmı (yayın kısmı OZET'te kalır).
 Ayrıntı: 06 ihtiyaç · 07 eşleme · 08 yol haritası · 09 mimari/kalite · SORULAR_2.
 
+> **Ara sürüm listesi: `10_Ara_Surumler.md`** (18.11). 55 ara sürüm (0.4.1 → 1.0.0), her biri ≤ 12 sa TAHMİN, toplam ≈ 538 sa. İş sırası artık 10'dan alınır; aşağıdaki "İlk 10 iş" 10'daki 0.4.1–0.5.2 ile aynı işleri kapsar (10'da ek olarak 0.5.1 `perf_capture` + `scope`).
+
 ## Sayılar
 
 | | |

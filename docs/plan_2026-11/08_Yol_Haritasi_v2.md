@@ -10,6 +10,8 @@ Okuma kuralları:
 - Her sürümün iki şeridi var: **Oyun şeridi** (oyun işini açan araçlar) ve **Cila şeridi** (kararlılık, belge, örnek, CI, çoklu UE, headless). Cila şeridinin bitiş ölçütleri §8'de tek tabloda.
 - Sürüm sırası Talha kararına bağlı (SORULAR_2 S2-01). Aşağıdaki sıra öneridir.
 
+> **Ara sürüm listesi: `10_Ara_Surumler.md`** (18.11, kart `t_035891ab`). İş bu belgedeki büyük sürümlerle değil, 10'daki 55 ara sürümle (0.4.1 → … → 1.0.0, her biri ≤ 12 sa TAHMİN) yürür. Cila şeridi Y1–Y9 ara sürümlerin içine dağıtıldı. Bu belge kapsam ve gerekçe kaynağı olarak kalır.
+
 ---
 
 ## 1. Genel akış
