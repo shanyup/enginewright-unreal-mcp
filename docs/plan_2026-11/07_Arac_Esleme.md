@@ -25,7 +25,7 @@ Kümeye göre (Var / Kısmen / Yok):
 | TEST (11) | 2 | 6 | 3 | En büyük boşluk YZ test ve ölçüm araçları (metrik, vislog, StateTree izi); iç: GP YZ-0 |
 | AĞ (3) | 1 | 2 | 0 | Tek makine co-op var; replikasyon iddiası ajan tarafında |
 | PERF (4) | 1 | 0 | 3 | PIE ölçümü var; paketli FPS (E22), stat filtresi, paketleme yok |
-| LOC (6) | 4 | 1 | 1 | RC'nin tek "Yok" P0'ı burada: EW-055 taşma testi |
+| LOC (6) | 4 | 1 | 1 | Tek "Yok" P0: EW-055 UI metin taşma testi; iç: RC |
 | GÖRSEL (6) | 3 | 3 | 0 | Hazır; toplu tur / bölge maskesi / varyant panosu kısmen |
 | SANAT (6) | 2 | 3 | 1 | İskelet + anim (E23) ve slot başına MI (E24) eksik; iç: ARPG |
 | YZ (5) | 0 | 1 | 4 | Oynanış yazarlığı: StateTree, AnimBP, GAS, Niagara hiç yok; iç: ARPG ana yükü |
