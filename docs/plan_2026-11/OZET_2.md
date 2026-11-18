@@ -51,8 +51,9 @@ Cila şeridi (ayrı): Y1 kararlılık → Y2 test standardı → Y3 betikler →
 0.4.x (1–6) ─► 0.5.x test kapısı (7,8) ─► vislog, gdt, nav, scope, paketli FPS ─► StateTree izi ─► soak ─► YZ test paketi tam
                                         └─► 0.6.x package_build ─► paketli demo build
 0.6.x ─► 0.7.x skeletal_import ─► 0.8.x GAS + StateTree ─► oynanış yazarlığı tam
-(iç: YZ test paketi tam = GP YZ-0 başlar · paketli demo build = RC IS-31/IS-35 Next Fest · 0.8.x sonu = ARPG F1 prototip, T1/T4 VARSAYIM)
 ```
+
+İç eşleme (iç): YZ test paketi tam = GP YZ-0 başlar · paketli demo build = RC IS-31/IS-35 (Next Fest build) · 0.8.x sonu = ARPG F1 prototip (T1/T4 VARSAYIM).
 
 En büyük riskler: GP YZ-0 kodu yokken araç kabulü (S2-02); iskelet/retarget ve StateTree editör API'leri sürüme bağlı (0.7/0.8, TAHMİN); `package_build` editörü kilitleyebilir (0.6).
 
