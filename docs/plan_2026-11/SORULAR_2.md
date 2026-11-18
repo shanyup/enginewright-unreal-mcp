@@ -51,15 +51,16 @@ Cevap biçimi: "S2-01: A" yeterli.
 - **A (öneri):** Evet, ilgili oyunun bir sonraki belge kartında "07 §6'ya göre" notuyla. Gerekçe: oyun ajanları yanlış "yok" görüp gereksiz iş açabilir.
 - B: Hayır; 07 tek doğru kaynak.
 
-**S2-05. StateTree yazma aracı (EW-080) yalnız ARPG ihtiyacı mı?** (06 §8; GP06:12, :20 StateTree'yi elle C++ ile kuruyor; GP16 yalnız iz istiyor, EW-GP-08)
-- **A (öneri):** Yalnız ARPG (+ RC Garmr P2). GP yalnız okuma (0.5 `statetree_debug_dump`). Gerekçe: GP belgeleri yazma aracı istemiyor; eklemek TAHMİN olurdu.
-- B: GP de sahip olsun (YZ-3+ yeni düşman aileleri için).
+**S2-05. StateTree yazma aracı (EW-080) kimin için?** — ✅ **KAPANDI (genel araç, Talha 18.11)**
+- **Karar:** StateTree yazma aracı genel araçtır; her oyun kullanabilir. Seri 0.8.x "Oynanış yazarlığı (GAS, StateTree, BT, AnimBP)".
+- İç not: GP StateTree kullanıyor (`Game/GunpointParole/docs/YZ_v2/02_Karar_Sistemi_Karsilastirma.md` §3); şu an yalnız `statetree_debug_dump` (EW-017, 0.5.x) istedi. İlk yazma kullanıcısı ARPG F0→F1 (06 iç eşleme).
+- Eski seçenekler (A: yalnız ARPG / B: GP de sahip) genel MCP kuralıyla geçersiz: araç sahibi oyun değil, yetenektir.
 
 ## Araç tasarımı
 
-**S2-06. GP'ye özgü araç adları genelleşsin mi?** (`ai_metrics_read` → `metrics_read`; 09 §1.2 S10)
-- **A (öneri):** Evet: genel ad + oyunun dosya biçimi parametre. Gerekçe: RC bot ölçümü (IS-32) ve ARPG IC-12 aynı aracı kullanır (06 EW-014 üç oyun).
-- B: GP16 adları aynen kalsın (GP belgeleriyle birebir).
+**S2-06. Oyuna özgü araç adları genelleşsin mi?** (`ai_metrics_read` → `metrics_read`; 09 §1.2 S10) — ✅ **KAPANDI = A (Talha 18.11)**
+- **A (seçildi):** Genel ad + oyunun dosya biçimi parametre (`metrics_read` `format`). Araç adı, açıklaması ve sürüm başlıklarında oyun adı yok; oyun bağlantısı yalnız "(iç)" alanlarda. 08 §3, 09 S10 güncellendi.
+- B: (reddedildi) GP16 adları aynen kalsın.
 
 **S2-11. 09'daki "ÖNERİ" kuralları (S2, S4, S7–S10, H1–H6, T1–T5, belge şablonu) yeni araçlar için zorunlu olsun mu?**
 - **A (öneri):** Evet, 0.4.1'den itibaren yeni araçlarda zorunlu; eski 129 araca dokunulmaz (yalnız T-xx borç listesi). Gerekçe: dondurma (Y9) öncesi tutarlılık ucuz; sonradan değiştirmek kırıcı.
@@ -104,3 +105,5 @@ Toplam: **14 soru** (S2-01 … S2-14).
 - **A (öneri):** Her ara sürüm yerel git etiketi + CHANGELOG'da başlık; GitHub sürümü (zip) yalnız seri sonlarında (0.4.4, 0.5.6, 0.6.6, 0.7.5, 0.8.7, 0.9.16, 1.0.0). Gerekçe: iş sırası adım adım izlenir; kullanıcıya 55 zip yerine 7 sürüm gider. Etiket/push kararı yayın işiyle birlikte (bu kart push yapmaz).
 - B: Her ara sürüm GitHub sürümü (zip). Sık sürüm "canlı proje" görüntüsü verir ama her biri RELIABILITY + paket ister.
 - C: Ara sürümler yalnız iç plan (etiket yok); dışarıda yalnız 0.5, 0.6 … 1.0.
+
+Talha 18.11: S2-05, S2-06 genel MCP kuralıyla kapandı.
