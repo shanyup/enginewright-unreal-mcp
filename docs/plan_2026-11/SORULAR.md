@@ -1,10 +1,14 @@
 # SORULAR — Karar Bekleyen 10 Soru
 
+> **Durum 18.11.2026 (kart t_c6e43c15):** S-0 Talha kararıyla kapandı (`enginewright-unreal-mcp`). S-2, S-4, S-10 **SORULAR_2 / 10 ile geçersiz**. Açık kalan S-1, S-3, S-5, S-6, S-7, S-8, S-9 → [SORULAR_3.md](SORULAR_3.md) (S3-05, S3-08, S3-09, S3-06, S3-10, S3-11, S3-12). Aşağıdaki metin tarihli kayıt olarak değişmeden kalır.
+
 Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Talha cevaplarsa `OZET.md` ve ilgili dosyalar güncellenir.
 
 ---
 
 ## S-0: Repo adı ne olmalı? (bkz 04 §2)
+
+> ✅ **Kapandı (Talha 18.11):** depo adı `enginewright-unreal-mcp`, marka adı Enginewright değişmez. Geçiş planı: 12 §1. Zaman sorusu: SORULAR_3 S3-02.
 
 | Seçenek | Açıklama | Etki |
 |---|---|---|
@@ -18,6 +22,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 
 ## S-1: Fab / Unreal Marketplace ücretsiz listing yapılır mı?
 
+> ↪ SORULAR_3 **S3-05**'e taşındı.
+
 | Seçenek | Açıklama | Etki |
 |---|---|---|
 | **(a) Evet, UE 5.8 sürümüyle başla** ← **ÖNERİ** | Code-only plugin, MIT, her sürüm ayrı zip; Fab otomatik build, ≤15 GB. Yeni kitle (Marketplace arama) + güven damgası | Keşfedilebilirlik ↑, kurulum kolaylığı ↑ |
@@ -28,6 +34,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 ---
 
 ## S-2: Headless / commandlet MCP (editör kapalı import/veri) v0.6 mı 1.0 mı?
+
+> ⛔ **SORULAR_2 / 10 ile geçersiz:** headless 0.9.5 – 0.9.8 ara sürümlerinde (10 §3 #39–#42).
 
 | Seçenek | Açıklama | Etki |
 |---|---|---|
@@ -40,6 +48,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 
 ## S-3: Python exec aracı eklenir mi? (Bilinçli tercih: YOK)
 
+> ↪ SORULAR_3 **S3-08**'e taşındı.
+
 | Seçenek | Açıklama | Etki |
 |---|---|---|
 | **(a) Hayır, C++ yolu devam** ← **ÖNERİ** | `console_command` + `editor_restart` + `live_coding_compile` + `headless_import` (v0.6) Python'ı kapsar; güvenlik yüklenmez | Güvenlik ↑, bakım ↓ |
@@ -50,6 +60,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 ---
 
 ## S-4: Çoklu UE sürümü destek (5.4–5.8) 1.0'da mı Sonra mı?
+
+> ⛔ **SORULAR_2 / 10 ile geçersiz:** S2-09 kararı; ikinci UE sürümü 0.9.13 ve 1.0.0-rc.3 (10 §3 #47, #53).
 
 | Seçenek | Açıklama | Etki |
 |---|---|---|
@@ -62,6 +74,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 
 ## S-5: Discord sunucusu açılır mı?
 
+> ↪ SORULAR_3 **S3-09**'a taşındı.
+
 | Seçenek | Açıklama | Etki |
 |---|---|---|
 | **(a) Hayır, GitHub Discussions** ← **ÖNERİ** | Discussions: Q&A + Showcase + Ideas; SEO dostu, GitHub entegre, moderasyon az; Discord: anlık ama arama motoru indekslemez, moderasyon yükü | SEO ↑, yük ↓ |
@@ -72,6 +86,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 ---
 
 ## S-6: Dokümantasyon sitesi (GitHub Pages) v1.0'da mı Sonra mı?
+
+> ↪ SORULAR_3 **S3-06**'ya taşındı.
 
 | Seçenek | Açıklama | Etki |
 |---|---|---|
@@ -84,6 +100,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 
 ## S-7: Lisans MIT mi kalır? (Öneri: EVET)
 
+> ↪ SORULAR_3 **S3-10**'a taşındı.
+
 | Seçenek | Açıklama | Etki |
 |---|---|---|
 | **(a) Evet, MIT sabit** ← **ÖNERİ** | blender-mcp (MIT), playwright-mcp (Apache-2.0), unity-mcp (MIT), awesome-mcp-servers (MIT). MIT en permissive, ticari kullanım serbest, katkıcı çeker. | Topluluk ↑, Fab uygunluğu ↑ |
@@ -94,6 +112,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 ---
 
 ## S-8: Telemetri / anonim kullanım istatistiği toplanır mı?
+
+> ↪ SORULAR_3 **S3-11**'e taşındı.
 
 | Seçenek | Açıklama | Etki |
 |---|---|---|
@@ -106,6 +126,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 
 ## S-9: Ücretli / Pro katman planlanır mı?
 
+> ↪ SORULAR_3 **S3-12**'ye taşındı.
+
 | Seçenek | Açıklama | Etki |
 |---|---|---|
 | **(a) Hayır, saf OSS** ← **ÖNERİ** | blender-mcp/playwright-mcp/unity-mcp/awesome-mcp-servers hepsi ücretsiz. Gelir modeli: danışmanlık / eğitim / özel geliştirme (şirket bazında), araç ücretsiz. | Topluluk ↑, basitlik ↑ |
@@ -116,6 +138,8 @@ Tarih: 17.11.2026. Her soru: 2–3 seçenek, **ilk öneri**, gerekçe + etki. Ta
 ---
 
 ## S-10: v0.4.1 art pipeline araçları (EW-1, EW-2) RagnaCook demo takvimine yetişir mi?
+
+> ⛔ **SORULAR_2 / 10 ile geçersiz:** sanat hattı 0.7.x serisine taşındı (10 §3 #20–#25); 0.4.1 artık UI metin taşma denetimi.
 
 | Seçenek | Açıklama | Etki |
 |---|---|---|
