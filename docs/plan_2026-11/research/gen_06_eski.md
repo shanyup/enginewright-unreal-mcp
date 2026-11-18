@@ -123,3 +123,5 @@
 | EW-R20 | RagnaCook RC12 §11.1 | EW-006 |
 | EW-R21 | RagnaCook RC12 §11.1 | EW-111 |
 | EW-R22 | RagnaCook RC12 §11.1 | EW-100, EW-101, EW-102 |
+| EW-R23 | RagnaCook RC12 §11.1 | EW-076 |
+| EW-R24 | RagnaCook RC12 §11.1 | EW-012 |

@@ -156,7 +156,7 @@
   "kume": "TEST",
   "ihtiyac": "PIE senaryo oynatıcı: adım listesi (girdi → bekle → durum iddiası) tek çağrıda",
   "oyunlar": "RC, ARPG",
-  "eski": "EW-R04 · EW-R05 · E2 (parça)",
+  "eski": "EW-R04 · EW-R05 · EW-R24 · E2 (parça)",
   "oyun_is": "RC: EK-03 kart başına senaryo \"kartı ver → olay tetikle → sonuç oku\", C49 Kazan Atışı (IS-62, T-06b) (RC12 §11.1) · ARPG: senaryo testleri (EW02 K3)",
   "an": "RC Demo D1 IS-21 (kart kuralları) · RC 1.0 IS-62 · ARPG F1",
   "durum": "Kısmen",
@@ -695,6 +695,19 @@
   "araclar": [],
   "eksik": "Metadata yazma/okuma ve rapor yok",
   "eks_kod": "E14"
+ },
+ {
+  "id": "EW-076",
+  "kume": "SANAT",
+  "ihtiyac": "Harita denetimi: gizli aktör, görünür ama işlevsiz prop, yer tutucu / kit mesh sayısı (harita başına)",
+  "oyunlar": "RC",
+  "eski": "EW-R23",
+  "oyun_is": "RC: Temel Hat TH-1/TH-4 \"gizli 0, işlevsiz 0\" (RC12 §11.1 EW-R23, Talha 18.11)",
+  "an": "RC Demo EK-10",
+  "durum": "Yok",
+  "araclar": [],
+  "eksik": "actor_find yalnız arama; denetim raporu yok",
+  "eks_kod": "—"
  },
  {
   "id": "EW-080",

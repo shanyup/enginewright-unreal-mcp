@@ -1,9 +1,9 @@
 {
- "ihtiyac": 56,
+ "ihtiyac": 57,
  "durum": {
   "Var": 18,
   "Kısmen": 20,
-  "Yok": 18
+  "Yok": 19
  },
  "kume": {
   "VERİ": 7,
@@ -12,7 +12,7 @@
   "PERF": 4,
   "LOC": 6,
   "GÖRSEL": 6,
-  "SANAT": 6,
+  "SANAT": 7,
   "YZ": 5,
   "SEVİYE": 3,
   "MEDYA": 3,
@@ -21,7 +21,7 @@
  "oyun_sayisi": {
   "3": 7,
   "2": 25,
-  "1": 24
+  "1": 25
  },
  "kullanilan_arac": 72,
  "toplam_arac": 129,
@@ -485,6 +485,12 @@
    "EW-100",
    "EW-101",
    "EW-102"
+  ],
+  "EW-R23": [
+   "EW-076"
+  ],
+  "EW-R24": [
+   "EW-012"
   ]
  }
 }

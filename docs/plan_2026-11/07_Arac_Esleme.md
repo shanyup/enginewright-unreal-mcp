@@ -84,6 +84,7 @@ Sütun "Güvenilirlik": her araç için RELIABILITY_0.4 durumu ve aracı çağı
 | EW-073 | Sanat bütçesi kontrolü (üçgen, doku boyutu)  | **Kısmen** | `mesh_info` (MeshTextureTools.cpp:71), `texture_info` (MeshTextureTools.cpp:172) | Tek asset okunuyor; klasör + eşik raporu yok | mesh_info: FIXED, test 1; texture_info: FIXED, test 1 |
 | EW-074 | Güvenli taşıma + kalan yer tutucu taraması (oyuncu yolunda referans = … | **Var** | `asset_rename` (AssetTools.cpp:324), `asset_references` (AssetTools.cpp:273), `asset_delete` (AssetTools.cpp:414), `asset_search_text` (AuditTools.cpp:142) | "Kalan yer tutucu" toplu raporu yok (klasör → referans sayısı) | asset_rename: OK, test 2; asset_references: FIXED, **testsiz**; asset_delete: FIXED, test 3; asset_search_text: FIXED, test 1 |
 | EW-075 | Asset kaynağı / lisans / AI beyanı metadata + beyan raporu | **Yok** | — | Metadata yazma/okuma ve rapor yok | — |
+| EW-076 | Harita denetimi: gizli aktör, görünür ama işlevsiz prop, yer tutucu / … | **Yok** | — | actor_find yalnız arama; denetim raporu yok | — |
 | EW-080 | StateTree / Behavior Tree yazma | **Yok** | — | Okuma da yazma da yok | — |
 | EW-081 | AnimBP state machine şablonu (iskelet ailesi başına) | **Yok** | `blueprint_graph_read` (BlueprintTools.cpp:754) | AnimGraph yazma yok | blueprint_graph_read: FIXED, test 1 |
 | EW-082 | GAS: Ability / Effect / Attribute / Cue oluştur, oku, test | **Yok** | — | Hiç yok | — |

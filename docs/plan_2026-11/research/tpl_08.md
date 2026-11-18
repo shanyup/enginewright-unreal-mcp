@@ -94,6 +94,7 @@ CİLA ŞERİDİ    Y1 ──────►Y2 ─────►Y3 ──► Y4 
 |---|---|---|---|---|---|
 | `text_overflow_audit` (yeni) | EW-055 | widget yolu ya da açık UI + kültür listesi → TextBlock başına istenen/ayrılan genişlik, taşma listesi | `tests/` içinde taşan + taşmayan widget (2 durum) · test projesinde 1 ekran × 2 dil raporu, ekran görüntüsüyle karşılaştırma | RC 1 ekran × 2 dil (EN, DE ya da RU) | 8 sa |
 | `datatable_import` (yeni) | EW-002 | CSV/JSON yolu + tablo + `dryRun` → eklenen/değişen/silinen satır listesi; katı alan denetimi | `tests/`: upsert + fark + bilinmeyen alan reddi · test tablosunda dryRun → uygula → `datatable_get` aynı | RC `DT_Cards` 48+4+21 satır | 6 sa (03:51 "datatable_csv" 8 sa, export hariç) |
+| `level_audit` (yeni) | EW-076 | harita yolu (ya da açık harita) + sınıf/etiket filtresi → gizli aktör listesi (bHiddenInGame / görünmez), oynanış bileşeni olmayan görünür static mesh aktörleri, yer tutucu/kit desenine uyan mesh'ler; sayılar + aktör yolu | `tests/`: 1 gizli + 1 işlevsiz + 1 temiz aktör → 2 bulgu · test haritasında rapor | RC `MAP_TestKitchen` eski (_Arsiv) ve yeni: eski > 0, yeni = 0 | 4 sa (Talha 18.11, 0.6'dan çekildi) |
 | Gerçek proje deneme koşusu (araç değil, iş) | EW-001, 005, 006, 050–053, 060, 061, 111 | "Var" araçları gerçek bir oyun projesinde ilk kez gerçek veriyle çalıştır | Her ihtiyaç için 1 kayıt (çağrı, süre, sonuç) → `docs/oyun_kosulari/` (yeni klasör, ad önerisi) | RC → `docs/oyun_kosulari/RC_0.4.1.md` | 4 sa |
 
 ### 2.2 Cila şeridi (Y1 Kararlılık)
@@ -108,7 +109,7 @@ CİLA ŞERİDİ    Y1 ──────►Y2 ─────►Y3 ──► Y4 
 | 7 testsiz araca test: `perf_capture`, `perf_scene`, `perf_gpu_profile`, `mrq_render`, `mrq_status`, `asset_references`, `asset_save` | arac_test_kapsami.json | 129/129 araç en az 1 test dosyasında | 6 sa |
 | 5 aracı RELIABILITY tablosuna ekle (perf ×3, mrq ×2) | arac_test_kapsami.json | RELIABILITY satırı OK/NOTE | 1 sa |
 
-**Toplam TAHMİN:** yetenek 18 sa + cila 17 sa ≈ **35 sa**.
+**Toplam TAHMİN:** yetenek 22 sa (18 + `level_audit` 4, Talha 18.11) + cila 17 sa ≈ **39 sa**.
 **Riskler:** (1) Taşma ölçümü Slate'in istenen boyutuna dayanır; `Auto Wrap` ve ölçek kutularında yanlış pozitif → 2 durumlu test zorunlu. (2) Gerçek proje deneme koşusu "Var" sanılan araçta açık bulabilir → sürüm 0.4.2 olarak çıkar (kapsam büyütme yok).
 
 ---
@@ -151,7 +152,7 @@ CİLA ŞERİDİ    Y1 ──────►Y2 ─────►Y3 ──► Y4 
 | Araç (çalışma adı) | İhtiyaç | Sözleşme | Kabul ölçütü (genel test projesi) | Oyun doğrulaması (iç) | İlk kullanan oyun / açtığı oyun işi (iç) | Efor TAHMİN |
 |---|---|---|---|---|---|---|
 | `package_build` + `package_status` | EW-043 (B17) | platform, yapılandırma, hedef (game/server), çıkış klasörü → zip/klasör yolu, log özeti, süre (async) | Test projesi Win64 Development paketi | RC demo paketi elle adım 0 | RC IS-31/35, GP Demo, ARPG Demo | 8 sa (03:31) |
-| `pie_scenario` | EW-012 | adım listesi (`araç`, `girdi`, `bekle`, `iddia`) → adım başına sonuç + ilk hata | Test: 5 adım, 1 bilinçli hata yakalanır | RC EK-03 bir kural kartı | RC IS-21, IS-62 · ARPG senaryo | 6 sa (03:35) |
+| `pie_scenario` | EW-012 | adım listesi (`araç`, `girdi`, `bekle`, `iddia`) → adım başına sonuç + ilk hata | Test: 5 adım, 1 bilinçli hata yakalanır | RC EK-03 bir kural kartı + RC EK-12 harita geçişi (EW-R24: harita, GameMode, doğuş noktası, süre iddiası) | RC IS-21, IS-62 · ARPG senaryo | 6 sa (03:35) |
 | `bot_run` (kalıp: `game_run` + `metrics_read`) | EW-013 | oyunun bot komutu + süre + metrik yolu → özet | Test projesindeki örnek bot komutuyla 1 koşu özeti | RC `RC.BotRun` 1 koşu (RC 09:87) · ARPG IC-12 CSV | RC IS-32, IS-52 · ARPG IC-43 · GP bot profilleri | 3 sa |
 | `replication_check` | EW-031 | aktör filtresi + özellik listesi → server/istemci fark listesi | 2 istemci test: bilinçli replike edilmeyen değer bulunur | GP GI-07 | GP GI-07 · RC IS-33 | 4 sa (03:57) |
 | `loc_screen_sweep` | EW-054 | kültür listesi + ekran listesi → dil × ekran PNG + `text_overflow_audit` sonucu | Test projesinde 2 dil × 3 ekran tek çağrı | RC 2 dil × 3 ekran | RC LOC-4, LOC-5 | 5 sa |

@@ -88,7 +88,7 @@ N = [
   ["game_run","game_run_status"],
   "`game_run` `args`/`cvars`/`pass`/`fail` ile başsız süreç başlatır; automation rapor dosyasını ayrıştırma yok",""),
  ("EW-012","TEST","PIE senaryo oynatıcı: adım listesi (girdi → bekle → durum iddiası) tek çağrıda","RC, ARPG",
-  "EW-R04 · EW-R05 · E2 (parça)","RC: EK-03 kart başına senaryo \"kartı ver → olay tetikle → sonuç oku\", C49 Kazan Atışı (IS-62, T-06b) (RC12 §11.1) · ARPG: senaryo testleri (EW02 K3)",
+  "EW-R04 · EW-R05 · EW-R24 · E2 (parça)","RC: EK-03 kart başına senaryo \"kartı ver → olay tetikle → sonuç oku\", C49 Kazan Atışı (IS-62, T-06b) (RC12 §11.1) · ARPG: senaryo testleri (EW02 K3)",
   "RC Demo D1 IS-21 (kart kuralları) · RC 1.0 IS-62 · ARPG F1","Kısmen",
   ["pie_start","pie_input","pie_walk_to","pie_actors","pie_state","log_wait","console_command"],
   "Hazır kalıp yok; zamanlı girdi dizisi (yön + güç) yok; adımlar ajan döngüsüyle bağlanıyor","E2"),
@@ -202,6 +202,8 @@ N = [
   ["asset_rename","asset_references","asset_delete","asset_search_text"],"\"Kalan yer tutucu\" toplu raporu yok (klasör → referans sayısı)","B5 ✅"),
  ("EW-075","SANAT","Asset kaynağı / lisans / AI beyanı metadata + beyan raporu","RC, ARPG","EW-R19 · R-09 · EW-10 (ARPG) · A-08 · K6 · E14","RC: `Asset_Kaydi.csv`, IS-35 demo sayfası, IS-53 (RC12 §11.1) · ARPG: Steam AI beyanı (AT EW-10)",
   "RC Demo IS-35 · ARPG 1.0","Yok",[],"Metadata yazma/okuma ve rapor yok","E14"),
+ ("EW-076","SANAT","Harita denetimi: gizli aktör, görünür ama işlevsiz prop, yer tutucu / kit mesh sayısı (harita başına)","RC","EW-R23","RC: Temel Hat TH-1/TH-4 \"gizli 0, işlevsiz 0\" (RC12 §11.1 EW-R23, Talha 18.11)",
+  "RC Demo EK-10","Yok",[],"actor_find yalnız arama; denetim raporu yok","—"),
  # ---------------- YZ ----------------
  ("EW-080","YZ","StateTree / Behavior Tree yazma","ARPG, GP","EW-3 (ARPG) · A-04 · B14","ARPG: 22 aile + boss fazları (AT EW-3, 4–5 kart-gün) · GP: YZ-0 StateTree geçişi (GP06:12, :20); GP16 StateTree yazma aracı istemiyor, yalnız iz (EW-GP-08)",
   "ARPG F0 (prototipten önce) · GP YZ-0 (belgelenmemiş ihtiyaç, TAHMİN)","Yok",[],"Okuma da yazma da yok","B14"),
