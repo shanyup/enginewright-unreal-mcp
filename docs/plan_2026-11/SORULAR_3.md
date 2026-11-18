@@ -2,6 +2,8 @@
 
 Tarih: 18.11.2026 · Kart `t_c6e43c15`. **15 soru.** Her soruda öneri ilk sıradadır (**A**) ve gerekçesi yazılıdır. Bu kart karar vermez; belgeler (11, 12, 13) cevap gelene kadar A'yı varsayar.
 
+> **KARARLI — 19.11.2026, Talha: 15/15 = A.** S3-01 A · S3-02 A · S3-03 A · S3-04 A · S3-05 A · S3-06 A · S3-07 A · S3-08 A · S3-09 A · S3-10 A · S3-11 A · S3-12 A · S3-13 A · S3-14 A · S3-15 A. Belgeler 11, 12, 13 zaten A'yı varsaydığı için içerik değişmez.
+
 Kaynak: Eski SORULAR'dan açık kalan S-1, S-3, S-5, S-6, S-7, S-8, S-9 (S3-05, S3-06, S3-08 … S3-12) + yayın planından çıkan 8 yeni soru.
 Kapananlar (SORULAR'a not düşüldü): S-0 (Talha 18.11: `enginewright-unreal-mcp`), S-2 / S-4 / S-10 (SORULAR_2 ve 10 ile geçersiz).
 
