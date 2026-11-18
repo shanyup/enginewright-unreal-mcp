@@ -46,7 +46,7 @@ Yalnız belge. Oyun repoları salt okunur. Push yok. Alt kart yok. Yeni dosyalar
 - [x] `arac_envanteri.py` → 129 araç (109 `R.Register` + 16 `R.RegisterAsync` + 4 `Reg.RegisterAsync`; çift ad yok). 16.11 notundaki "133" fazla sayım: `game_run`, `game_run_status`, `loc_gather`, `loc_gather_status` zaten 4 `Reg.RegisterAsync` içinde.
 - [x] `arac_test_kapsami.py` → araç başına test dosyası + RELIABILITY_0.4 durumu
 - [x] `raw/oyun_*.md` → üç oyunun EW listesi alıntıları
-- [x] `ihtiyac_esleme.py` → 56 ihtiyaç, 06/07 tabloları; `belge_yap.py` belgeleri birleştirir
+- [x] `ihtiyac_esleme.py` → 57 ihtiyaç (18.11: +EW-076), 06/07 tabloları; `belge_yap.py` belgeleri birleştirir
 
 ### Çıktılar
 

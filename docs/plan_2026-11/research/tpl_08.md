@@ -2,7 +2,7 @@
 
 Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. Genel ad düzeltmesi: kart `t_5f61e99c` (18.11, genel MCP kuralı).
 **Bu belge `03_Yol_Haritasi.md`'nin yerini alır** (03 silinmedi; eski satırların karşılığı §9).
-Girdi: 06 (56 ihtiyaç, EW-xxx), 07 (Var 18 / Kısmen 20 / Yok 18). Sıra = oyunların ihtiyaç anı; **tarih hedefi yok**.
+Girdi: 06 (57 ihtiyaç, EW-xxx; EW-076 Talha 18.11), 07 (Var 18 / Kısmen 20 / Yok 19). Sıra = oyunların ihtiyaç anı; **tarih hedefi yok**.
 
 Okuma kuralları:
 - **TAHMİN** = efor tahmini, saat (ajan + Talha onayı dahil). Kaynakta sayı varsa kaynak yazılı (03 = `03_Yol_Haritasi.md` satırı; AT = ARPG §12.3 "kart-gün").
