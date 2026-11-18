@@ -180,6 +180,35 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 | `widget_tree` | OK | 1 call(s), slowest 0.03 s. |
 | `world_trace` | FIXED | Works; `start` / `end` had no type in the schema (fix 9). 1 call(s), slowest 0.06 s. |
 
+## 0.4.1 additions (Enginewright test project, not RagnaCook)
+
+These rows were measured on the Enginewright test project (UE 5.8, empty C++ project) with the tests in `tests/`, not on
+RagnaCook. A run on a real game project is a separate step (`docs/oyun_kosulari/`).
+
+The five tools that had no test and no row in the sweep above:
+
+| Tool | Status | Note |
+|---|---|---|
+| `perf_capture` | OK | Editor level, 1 s capture: 61 frames, avg / p50 / p95 / max for frame, game, render, RHI and GPU, `boundBy`. Unknown argument: `UNKNOWN_ARGUMENT`. Test: `test_perf_mrq.py`. |
+| `perf_scene` | OK | Counts actors, visible primitives and lights; sees a placed cube and lists it in `heaviestMeshes`. Test: `test_perf_mrq.py`. |
+| `perf_gpu_profile` | OK | Editor level: total GPU ms and the costliest passes (`top` respected). Test: `test_perf_mrq.py`. |
+| `mrq_render` | NOTE | Tested up to the arguments and asset checks only: no `sequence` gives `MISSING_ARGUMENT`; a missing sequence is refused and nothing starts. A real render takes minutes and is not in the suite. `width` / `height` had no description (fixed). |
+| `mrq_status` | OK | Idle state with zero frames when nothing renders. Test: `test_perf_mrq.py`. |
+
+New tools of 0.4.1:
+
+| Tool | Status | Note |
+|---|---|---|
+| `text_overflow_audit` | OK | Non-wrapping long text: overflow. Auto Wrap text and text in a ScaleBox: not an overflow. A word wider than the slot overflows even with Auto Wrap. 2 languages with a PNG each. Without translation data in the test project both languages measure the same (the reply warns). Test: `test_textaudit.py`. |
+| `datatable_import` | OK | CSV (quoted comma) and JSON (array and object form): `dryRun` diff equals what the write does, nothing written on an unknown column, bad number, bad enum, duplicate row or short line; `deleteMissing`; file outside the project: `INVALID_PATH`. Test: `test_datatable_import.py`. |
+| `level_audit` | OK | One hidden actor and one idle static mesh found; the actor with a collision box is clean; filters by class and tag; a saved map that is not open is audited without changing the open level. A new Actor Blueprint has three disabled event nodes: they do not count as logic. Test: `test_level_audit.py`. |
+
+The "Kept for 0.4.1" list below is done: `asset_find` folder warning, non-ASCII name warning (`asset_import`,
+`blueprint_create`), `game_run` `keepRuns`, `actor_preview` camera rig left out of the bounds, `pie_start` timeout
+(default 180 s for several players, range 1 to 900, the TIMEOUT message names the wait). Tests: `test_polish.py`.
+The `actor_preview` fix could not be shown on RagnaCook's character: a synthetic Character with a boom already framed
+the body in the test project, so the test pins the result (the boom does not count) instead of a before / after.
+
 ## Kept for 0.4.1
 
 - `asset_find`: warn when the folder does not exist.

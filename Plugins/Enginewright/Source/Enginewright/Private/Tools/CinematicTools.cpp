@@ -137,7 +137,7 @@ void RegisterCinematicTools(FEWRegistry& R)
 			"sequence":{"type":"string","description":"Level Sequence asset path, e.g. /Game/Marketing/LS_Shot."},
 			"map":{"type":"string","description":"Map to render in; default the open editor level."},
 			"format":{"type":"string","enum":["horizontal","vertical","square","4k"],"description":"Resolution preset, default horizontal."},
-			"width":{"type":"integer"},"height":{"type":"integer"},
+			"width":{"type":"integer","description":"Custom width in px (use with height); overrides the format preset."},"height":{"type":"integer","description":"Custom height in px (use with width); overrides the format preset."},
 			"aa":{"type":"integer","description":"Temporal samples per frame, 1-32, default 8."},
 			"warmup":{"type":"integer","description":"Engine warm-up frames before the first output frame, default 32."},
 			"outputDir":{"type":"string","description":"Absolute folder; default <Project>/Saved/Renders/<sequence>_<format>_<time>."},

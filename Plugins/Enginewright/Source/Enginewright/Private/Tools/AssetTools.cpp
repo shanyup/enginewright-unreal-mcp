@@ -256,6 +256,13 @@ void RegisterAssetTools(FEWRegistry& R)
 			Data->SetNumberField(TEXT("total"), Total);
 			FEWResult Res = FEWResult::Ok(Data);
 			if (Total > Rows.Num()) { Res.Warnings.Add(FString::Printf(TEXT("%d more not shown; raise limit or narrow the search."), Total - Rows.Num())); }
+			{
+				const FString SearchFolder = Folder.IsEmpty() ? FString(TEXT("/Game")) : Folder;
+				if (!Registry().PathExists(FName(*SearchFolder)))
+				{
+					Res.Warnings.Add(FString::Printf(TEXT("The folder '%s' does not exist, so the list is empty. Check the path (it starts with /Game and has no trailing file name)."), *SearchFolder));
+				}
+			}
 			return Res;
 		});
 

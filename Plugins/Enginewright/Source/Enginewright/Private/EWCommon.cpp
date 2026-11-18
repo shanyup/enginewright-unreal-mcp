@@ -296,6 +296,29 @@ namespace EW
 		return false;
 	}
 
+	FString NonAsciiNameWarning(const FString& Name)
+	{
+		TArray<FString> Odd;
+		FString Ascii;
+		for (const TCHAR C : Name)
+		{
+			if (C < 128) { Ascii.AppendChar(C); continue; }
+			Odd.AddUnique(FString::Chr(C));
+			switch (C)
+			{
+			case 0x00E7: Ascii += TEXT("c"); break; case 0x00C7: Ascii += TEXT("C"); break;
+			case 0x011F: Ascii += TEXT("g"); break; case 0x011E: Ascii += TEXT("G"); break;
+			case 0x0131: Ascii += TEXT("i"); break; case 0x0130: Ascii += TEXT("I"); break;
+			case 0x00F6: Ascii += TEXT("o"); break; case 0x00D6: Ascii += TEXT("O"); break;
+			case 0x015F: Ascii += TEXT("s"); break; case 0x015E: Ascii += TEXT("S"); break;
+			case 0x00FC: Ascii += TEXT("u"); break; case 0x00DC: Ascii += TEXT("U"); break;
+			default: Ascii += TEXT("_"); break;
+			}
+		}
+		if (Odd.Num() == 0) { return FString(); }
+		return FString::Printf(TEXT("'%s' has non-ASCII character(s) (%s). It works in the editor, but such asset names can break packaged builds, source control and other tools. Prefer ASCII, for example '%s'."), *Name, *FString::Join(Odd, TEXT(", ")), *Ascii);
+	}
+
 	bool AssetPathTaken(const FString& InPath)
 	{
 		FString Path = InPath;

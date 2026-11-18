@@ -1025,6 +1025,7 @@ void RegisterGameRunTools(FEWRegistry& Reg)
 			"culture":{"type":"string","description":"Culture the game starts with, e.g. tr or de-DE: adds -culture=<value> to the game arguments. loc_culture does not change the game process, only the editor."},
 			"editorViewports":{"type":"string","enum":["pause","keep"],"description":"pause (default): the editor's realtime level viewports stop rendering during the run and are restored after; keep: leave them."},
 			"allowLiveCodingPatch":{"type":"boolean","description":"Run even though Live Coding patched this editor (the game then runs the C++ code on disk, without the patch). Default false: refused with LIVE_CODING_PATCHED."},
+			"keepRuns":{"type":"integer","description":"With the default output folder: keep this many run folders under Saved/Enginewright/runs, this run included; the oldest are deleted before a run starts (default 20; 0 keeps all). Ignored when out is set."},
 			"dryRun":{"type":"boolean","description":"Return the commands and the editor checks only; start nothing, create no folder."}}})"),
 		false,
 		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
@@ -1243,6 +1244,27 @@ void RegisterGameRunTools(FEWRegistry& Reg)
 				Ok.Warnings = R->Warnings;
 				Done(Ok);
 				return;
+			}
+			// Retention: with the default output folder, keep the newest keepRuns run folders (this run included).
+			if (OutArg.IsEmpty())
+			{
+				const int32 Keep = (int32)EW::Num(Args, TEXT("keepRuns"), 20);
+				if (Keep > 0)
+				{
+					const FString Root = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("Enginewright/runs"));
+					TArray<FString> Dirs;
+					IFileManager::Get().FindFiles(Dirs, *(Root / TEXT("run-*")), /*Files*/ false, /*Directories*/ true);
+					Dirs.Sort(); // run-<yyyymmdd-hhmmss>: name order is time order
+					int32 Excess = Dirs.Num() - (Keep - 1), Deleted = 0;
+					for (int32 i = 0; i < Dirs.Num() && Excess > 0; ++i)
+					{
+						const TSharedPtr<FGameRun>* Live = Runs().Find(Dirs[i].RightChop(4));
+						if (Live && Live->IsValid() && !(*Live)->bFinished) { continue; } // still running
+						if (IFileManager::Get().DeleteDirectory(*(Root / Dirs[i]), false, true)) { ++Deleted; }
+						--Excess;
+					}
+					if (Deleted > 0) { R->Warnings.Add(FString::Printf(TEXT("Deleted %d old run folder(s) under Saved/Enginewright/runs (keepRuns %d keeps the newest; keepRuns 0 keeps all)."), Deleted, Keep)); }
+				}
 			}
 			R->Started = FPlatformTime::Seconds();
 			R->Waiters.Add({ R->Started + Wait, MoveTemp(Done) });

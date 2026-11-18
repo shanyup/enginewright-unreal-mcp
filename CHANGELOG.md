@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added (0.4.1, not released yet)
+- `text_overflow_audit`: for each visible TextBlock of a Widget Blueprint or UserWidget class (or the open UI during Play In Editor), the width the text wants against the width its slot gives it, per language; lists the overflows. Auto Wrap Text and ScaleBox are not reported as overflow (a word wider than the slot is).
+- `datatable_import`: CSV or JSON file into a DataTable (upsert) with a strict field check, a diff of added / changed / removed rows, `dryRun`, and a read-back after the write.
+- `level_audit`: hidden actors, visible static-mesh actors with no gameplay component, and meshes that match placeholder / kit name patterns, with counts and actor paths; works on the open level or a saved map.
+
+### Changed (0.4.1, not released yet)
+- `asset_find` warns when the folder does not exist.
+- `asset_import` and `blueprint_create` warn about non-ASCII asset names and suggest an ASCII name.
+- `game_run` `keepRuns` (default 20) deletes the oldest run folders under `Saved/Enginewright/runs` before a run starts.
+- `actor_preview` leaves camera proxy, frustum and boom parts out of the framing bounds.
+- `pie_start`: the default `timeout` is 180 s for several players (60 s for one), the range is checked (1 to 900), and the TIMEOUT message says the session is still starting.
+- Tests: `perf_capture`, `perf_scene`, `perf_gpu_profile`, `mrq_render`, `mrq_status`, `asset_references` and `asset_save` have tests now (132 of 132 tools covered).
+
 - 0.4.1: art pipeline (FBX import with LODs, collision and pivot / scale checks; skeleton bind, IK retarget, sockets, Physics Asset; modular character preview; master material template and texture import settings; animation import, Anim Montage and BlendSpace, anim notifies; art budget check; `asset_find` and non-ASCII asset name warnings). See docs/ROADMAP.md.
 
 ## [0.4.0] - 2026-11-10

@@ -231,13 +231,13 @@ namespace
 void RegisterPieTools(FEWRegistry& R)
 {
 	R.RegisterAsync(TEXT("pie_start"),
-		TEXT("Start Play In Editor: players (1-4), netMode standalone / listen (player 0 hosts) / client (dedicated server + clients). By default waits until every player has a pawn (timeout seconds). Multi-player sessions open extra windows."),
+		TEXT("Start Play In Editor: players (1-4), netMode standalone / listen (player 0 hosts) / client (dedicated server + clients). By default waits until every player has a pawn, at most timeout seconds (default 60 for one player, 180 for several). A map that opens slowly (the first open after an editor start, a main menu that travels to another map, a listen session with several players) can need 100 s or more: raise timeout, or pass wait:false and poll pie_state. On TIMEOUT the session is not stopped; it may still be starting. Multi-player sessions open extra windows."),
 		TEXT(R"({"type":"object","properties":{
 			"simulate":{"type":"boolean","description":"Simulate instead of play (no player)."},
 			"players":{"type":"integer","description":"Number of players, default 1."},
 			"netMode":{"type":"string","enum":["standalone","listen","client"],"description":"Default standalone (listen when players > 1)."},
 			"wait":{"type":"boolean","description":"Wait until all players have pawns (default true)."},
-			"timeout":{"type":"number","description":"Seconds to wait, default 60."}}})"),
+			"timeout":{"type":"number","description":"Seconds to wait for every player's pawn: default 60 (1 player) or 180 (several players); 1 to 900. Slow maps and listen sessions need more."}}})"),
 		false,
 		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
 		{
@@ -249,6 +249,8 @@ void RegisterPieTools(FEWRegistry& R)
 			if (Mode.IsEmpty()) { Mode = Players > 1 ? TEXT("listen") : TEXT("standalone"); }
 			if (bSimulate && (Players > 1 || Mode != TEXT("standalone"))) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), TEXT("simulate supports one standalone session only."))); return; }
 			if (Mode == TEXT("standalone") && Players > 1) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), TEXT("Several players need netMode listen or client."))); return; }
+			const float Timeout = (float)EW::Num(Args, TEXT("timeout"), (Players > 1 || Mode != TEXT("standalone")) ? 180 : 60);
+			if (Timeout < 1.f || Timeout > 900.f) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), TEXT("timeout must be 1 to 900 seconds."))); return; }
 
 			ULevelEditorPlaySettings* PS = DuplicateObject(GetDefault<ULevelEditorPlaySettings>(), GetTransientPackage());
 			PS->SetPlayNetMode(Mode == TEXT("listen") ? EPlayNetMode::PIE_ListenServer : Mode == TEXT("client") ? EPlayNetMode::PIE_Client : EPlayNetMode::PIE_Standalone);
@@ -264,7 +266,6 @@ void RegisterPieTools(FEWRegistry& R)
 				Done(FEWResult::Ok(nullptr, TEXT("Play In Editor requested; poll pie_state.")));
 				return;
 			}
-			const float Timeout = (float)EW::Num(Args, TEXT("timeout"), 60);
 			const int32 Want = bSimulate ? 0 : Players;
 			EW::PollUntil(Timeout,
 				[Done, Want, bSimulate]() -> bool
@@ -275,9 +276,9 @@ void RegisterPieTools(FEWRegistry& R)
 					Done(Res);
 					return true;
 				},
-				[Done, Want]()
+				[Done, Want, Timeout]()
 				{
-					FEWResult Res = FEWResult::Error(TEXT("TIMEOUT"), FString::Printf(TEXT("Play In Editor did not reach %d player(s) with a pawn in time. See data and log_read."), Want));
+					FEWResult Res = FEWResult::Error(TEXT("TIMEOUT"), FString::Printf(TEXT("Play In Editor did not reach %d player(s) with a pawn within %.0f s. The session was not stopped and may still be starting: call pie_state, or pie_stop and retry with a larger timeout (slow maps and listen sessions can need 100 s or more). See data and log_read."), Want, Timeout));
 					Res.Data = PieState();
 					Done(Res);
 				});

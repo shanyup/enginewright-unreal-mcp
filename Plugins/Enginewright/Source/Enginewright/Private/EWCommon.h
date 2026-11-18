@@ -67,6 +67,9 @@ namespace EW
 	/** Input mapping contexts applied to the player as (asset path, priority), highest priority first. */
 	TArray<TPair<FString, int32>> PlayerInputContexts(APlayerController* PC);
 
+	/** Warning text when an asset name has non-ASCII characters (empty when it is plain ASCII). Names like BP_Caydanlik with a Turkish letter work in the editor but can break packaging, source control and tools. */
+	FString NonAsciiNameWarning(const FString& Name);
+
 	/** True when an asset already lives at this package path: on disk, or in memory and not deleted. */
 	bool AssetPathTaken(const FString& PackagePath);
 
