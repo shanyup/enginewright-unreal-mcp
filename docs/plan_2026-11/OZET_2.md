@@ -61,3 +61,5 @@ En büyük riskler: GP YZ-0 kodu yokken araç kabulü (S2-02); iskelet/retarget 
 
 Önce cevaplanmalı: **S2-01** sürüm sırası · **S2-02** GP araç kabulü · **S2-12** ARPG T1/T3/T4 varsayımları.
 Diğerleri: S2-03 GP numaraları · S2-04 oyun belgesi eski notları · S2-05 ✅ kapandı (genel araç) · S2-06 ✅ kapandı (A, genel ad) · S2-07 0.6 bölme · S2-08 CI · S2-09 UE sürümleri · S2-10 03'ten kalan araçlar · S2-11 09 kuralları · S2-13 `scenario_place` · S2-14 kanıt kayıtları yeri.
+
+**Yayın hazırlığı (18.11, t_c6e43c15):** depo adı `enginewright-unreal-mcp` 0.4.4'te, büyük duyuru 0.6.6'da (X'te 45 sn "set up, tested, shipped" videosu); planlar 11 (konumlandırma), 12 (SEO v2, 04'ün yerine), 13 (duyuru v2, 05'in yerine); açık 15 soru SORULAR_3'te.

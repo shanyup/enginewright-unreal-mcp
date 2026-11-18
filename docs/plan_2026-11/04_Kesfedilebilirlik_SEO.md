@@ -1,5 +1,7 @@
 # 04 — Keşfedilebilirlik ve SEO Planı (GitHub + Web)
 
+> **18.11.2026: Yerini [12_SEO_v2.md](12_SEO_v2.md) aldı.** Bu belge tarihli kayıt olarak kalır; güncel plan 12'dedir (depo adı kararı, ara sürüm bağları).
+
 Tarih: 17.11.2026. Veri: GitHub REST API 17.11, topic arama sayıları, arama sıralaması. Mevcut repo: github.com/shanyup/enginewright (public, MIT, 10★).
 
 ---

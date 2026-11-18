@@ -105,7 +105,7 @@ Ortak kurallar:
 |---|---|---|---|
 | 0–3 | Siyah zemin, başlık kartı | — | *Can an AI agent ship an Unreal game?* |
 | 3–8 | Terminalde tek istem: "Set up a test arena with 3 enemies, test it in 2-player, package it and run a bot." | — | *One prompt in Claude Code.* |
-| 8–15 | Editörde düzey kurulur: test haritası, düşmanlar ve senaryo noktaları yerleşir (×4) | `batch` + senaryo yerleştirici (0.5.6) | *It sets up the level in one undoable batch.* |
+| 8–15 | Editörde düzey kurulur: test haritası, düşmanlar ve senaryo noktaları yerleşir (×4) | `batch` + `scenario_place` (0.5.6) | *It sets up the level in one undoable batch.* |
 | 15–23 | İki PIE penceresi yan yana (listen server + client), ajan girdi gönderir | `pie_start` (2 oyuncu), `pie_input`, `pie_scenario` (0.6.1) | *It plays it as two players.* |
 | 23–31 | Paket ilerleme çubuğu (×8), editör kilitlenmeden çalışmaya devam eder | `package_build`, `package_status` (0.6.0) | *It packages a Win64 build in the background.* |
 | 31–39 | Paketli oyun açılır, bot yürür, köşede FPS grafiği | `game_run`, `bot_run` (0.6.1), `game_perf_sample` (0.5.3) | *It runs the packaged game with a bot and measures FPS.* |

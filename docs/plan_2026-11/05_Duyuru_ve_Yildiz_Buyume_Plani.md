@@ -1,5 +1,7 @@
 # 05 — Duyuru ve Yıldız Büyüme Planı (90 Gün)
 
+> **18.11.2026: Yerini [13_Duyuru_v2.md](13_Duyuru_v2.md) aldı.** Bu belge tarihli kayıt olarak kalır; güncel plan 13'tedir (büyük duyuru 0.6.6, demo senaryoları).
+
 Tarih: 17.11.2026. Hedef: Enginewright v1.0 lansmanı + 90 günlük duyuru/yıldız büyümesi. Rakip verisine dayalı gerçekçi hedefler. **Yasak taktikler sonda.**
 
 ---
