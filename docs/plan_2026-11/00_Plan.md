@@ -85,3 +85,17 @@ Seri adları (Talha onaylı): 0.4.x Kararlılık + veri aktarımı ve UI metin d
 - [x] OZET_2: seri tablosu + kritik yol genel; oyun işi (iç) sütunu
 - [x] SORULAR_2: S2-05 kapandı (genel araç), S2-06 kapandı = A; kapanış satırı
 - [x] Denetim: `research/oyun_adi_denetim.py` → `research/oyun_adi_denetim_cikti.md` (kapsam satırlarında oyun adı = 0)
+
+---
+
+## Kart t_c6e43c15 — Yayın hazırlığı: repo adı + konumlandırma + SEO v2 + duyuru v2 (18.11.2026)
+
+Talha 18.11: marka adı Enginewright değişmez; depo adı `enginewright-unreal-mcp` (bu kart yeniden adlandırmaz, yalnız plan); büyük duyuru 0.6.x seri sonu; oyunlar yalnız vitrin. Yalnız belge, yalnız `docs/plan_2026-11/`. GitHub'da değişiklik yok. Push yok. Alt kart yok. Silme yok.
+
+- [x] 03b_Buyume_Hikayeleri commit (önceki karttan commit'siz kalmıştı)
+- [x] `research/yayin_hazirlik_kaynaklar_2026-11-18.md` (web notları K1–K6)
+- [x] 11_Konumlandirma.md (tek cümle EN + TR, fark tablosu, 3 kanıt, kim için)
+- [ ] 12_SEO_v2.md
+- [ ] 13_Duyuru_v2.md
+- [ ] SORULAR notu (S-0, S-2, S-4, S-10) + SORULAR_3.md
+- [ ] 04 / 05 "yerini 12/13 aldı" notu + OZET_2 satırı
