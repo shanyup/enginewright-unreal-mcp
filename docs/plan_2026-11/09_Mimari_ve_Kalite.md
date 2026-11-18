@@ -1,6 +1,6 @@
 # 09 — Mimari ve kalite: yeni araçlar için ortak desenler, teknik borç, güvenilirlik
 
-Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. Kod değişmedi.
+Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. Kod değişmedi. Genel ad düzeltmesi: kart `t_5f61e99c` (18.11, genel MCP kuralı).
 Kaynak: kaynak kod okuması (dosya:satır yazılı), `research/arac_test_kapsami.json`, `docs/RELIABILITY_0.4.md`.
 08'deki bütün yeni araçlar bu belgeye uyar. Kural yeni değilse "mevcut" yazılı; yeni kural "ÖNERİ" (Talha onayı: SORULAR_2 S2-11).
 
@@ -36,7 +36,7 @@ Sonuç: sözleşme **zaten merkezi**. Yeni araç yalnız şema + `Run` yazar; de
 | S7 | Çıktı kısa: özet önce (`summary` alanı), ayrıntı dosyaya (`Saved/Enginewright/runs/<araç>/<zaman>/`), yanıtta dosya yolu | ÖNERİ | GP16 EW-GP-02 gerekçesi: "ajan ham json'u bağlama okumadan karar verir" |
 | S8 | Dosya okuyan araç (`metrics_read`, `datatable_import`, `vislog_extract`) yalnız proje klasörü altını okur | ÖNERİ | Yerel MCP; yol kaçışı (`..`) → `INVALID_PATH` (kod zaten 8 yerde) |
 | S9 | Headless uyum bayrağı: araç editör altsistemine (Slate, viewport, PIE) bağlıysa açıklamada "editor only" | ÖNERİ | 0.9 headless (Y8) hangi aracın commandlet'te çalışacağını bilmeli |
-| S10 | Oyuna özgü ad yok (`ai_metrics_read` → `metrics_read`); oyun dosya biçimi parametre | ÖNERİ | Üç oyun aynı aracı kullanır (06 ortak küme) — S2-06 |
+| S10 | Oyuna özgü ad yok (`ai_metrics_read` → `metrics_read`); oyun dosya biçimi parametre. Sürüm başlığı, hedef, araç açıklaması, kabul ölçütü ve şema etiketinde de oyun adı yok; oyun bağlantısı yalnız "(iç)" alanlarda | **KARAR** (Talha 18.11; S2-06 = A) | Genel MCP, herkes için geliştiriliyor; oyunlar geliştirilirken destek olur. Denetim: `research/oyun_adi_denetim.py` |
 
 ## 2. Hata modeli
 
@@ -80,7 +80,7 @@ Kaynakta 195 ayrı büyük harfli sabit dizgi var; çoğu hata kodu (`grep "\"[A
 |---|---|---|
 | T1 | `tests/test_<alan>.py` içinde en az: 1 başarılı çağrı, 1 hata yolu (yanlış argüman ya da bulunamadı), yazan araçta geri okuma + `dryRun` | test dosyası |
 | T2 | Async araçta: başlat → `*_status` → bitti; zaman aşımı yolu | test dosyası |
-| T3 | Oyun kanıtı: ihtiyacın sahibi oyunda 1 gerçek koşu (çağrı, süre, sonuç) | `docs/oyun_kosulari/<OYUN>_<sürüm>.md` (ÖNERİ, yeni klasör) |
+| T3 | Oyun doğrulaması (iç): ihtiyacı ilk kullanan gerçek projede 1 koşu (çağrı, süre, sonuç). Kabul ölçütü bundan bağımsız, genel test projesi üzerindendir (T1/T2) | `docs/oyun_kosulari/<OYUN>_<sürüm>.md` (ÖNERİ, yeni klasör) |
 | T4 | RELIABILITY_<sürüm>.md satırı | satır |
 | T5 | Envanter betiği yeni aracı görür; test kapsamı betiği "testsiz" demez | `arac_test_kapsami.py` çıktısı |
 
@@ -116,23 +116,23 @@ Belge kontrol listesi (araç başına):
 2. README "Tools" tablosunda satır var.
 3. CHANGELOG girişinde ad + bir cümle.
 4. Örnek çağrı (`tests/` dosyasındaki ilk çağrı) README ya da tarif belgesinde.
-5. Oyun kanıtı kaydına bağlantı (T3).
+5. Oyun doğrulaması (iç) kaydına bağlantı (T3).
 
 ## 5. Teknik borç ve güvenilirlik listesi
 
-Öncelik: **Y** = oyun işini engelliyor, **O** = kalite, **D** = düşük. Sürüm = 08'deki yer.
+Öncelik: **Y** = gerçek proje işini engelliyor, **O** = kalite, **D** = düşük. Parantez içi = iç not (etkilenen oyun işi). Sürüm = 10'daki ara sürüm.
 
-| # | Borç | Kanıt | Öncelik | Sürüm |
+| # | Borç | Kanıt | Öncelik (iç not) | Sürüm |
 |---|---|---|---|---|
 | T-01 | 7 araç testsiz | arac_test_kapsami.json | Y (perf ×3 GP G1'de kullanılacak) | 0.4.1 |
 | T-02 | 5 araç RELIABILITY tablosunda yok (perf ×3, mrq ×2) | arac_test_kapsami.json | O | 0.4.1 |
 | T-03 | `asset_find` olmayan klasöre sessiz boş liste | RELIABILITY_0.4.md:67 | O | 0.4.1 |
 | T-04 | ASCII dışı asset adı uyarısız (`asset_import`, `blueprint_create`) | RELIABILITY_0.4.md:68, :81 | Y (RC 155 asset + 186 ses, Türkçe dosya adları) | 0.4.1 |
-| T-05 | `game_run` koşu klasörü sınırsız büyür (RC: 145 koşu / 243 MB) | RELIABILITY_0.4.md §Kept for 0.4.1 | O (0.5 soak + bot ile hızlanır) | 0.4.1 |
+| T-05 | `game_run` koşu klasörü sınırsız büyür (gerçek projede 145 koşu / 243 MB; iç: RC) | RELIABILITY_0.4.md §Kept for 0.4.1 | O (0.5 soak + bot ile hızlanır) | 0.4.1 |
 | T-06 | `actor_preview` kamera kollu Character'ı gevşek çerçeveler | RELIABILITY_0.4.md:61 | O (ARPG varyant panosu) | 0.4.1 |
 | T-07 | Düz `NOT_FOUND` (5 yer) ve 22 farklı `*_NOT_FOUND` | kaynak grep | D | 0.9 (dondurma öncesi) |
 | T-08 | Hata kodu sözlüğü yok (195 sabit dizgi) | kaynak grep | O | 0.9 (Y9 ile) |
-| T-09 | `pie_start` oyunun ilk açılış süresine bağlı; RC ana menüden listen 2 oyuncu `TIMEOUT` | RELIABILITY_0.4.md:140 | Y (RC IS-33, GP GI-07) | 0.4.1 (bekleme parametresi + belge) |
+| T-09 | `pie_start` oyunun ilk açılış süresine bağlı; ağır ana menü haritasında listen 2 oyuncu `TIMEOUT` (iç: RC) | RELIABILITY_0.4.md:140 | Y (RC IS-33, GP GI-07) | 0.4.1 (bekleme parametresi + belge) |
 | T-10 | PIE okuması `input_map_list` oyunun kare takılmasıyla 0,1–8 sn (en yavaş 12,75 sn) | RELIABILITY_0.4.md:116, §Kept | D (motor/oyun kaynaklı) | belge notu |
 | T-11 | Motor sürümü koruması yok: kaynakta `ENGINE_MAJOR/MINOR_VERSION` 0 kez; yalnız UE 5.8 Win64 denenmiş | kaynak grep, README "Supported versions" | O (Y7 çoklu UE'de ilk iş) | Y7 |
 | T-12 | CI yok | `.github/` içeriği | O | Y4 |
