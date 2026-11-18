@@ -68,3 +68,20 @@ Yalnız belge, yalnız `docs/plan_2026-11/`. Push yok. Alt kart yok. Silme yok.
 - [x] 10_Ara_Surumler.md (55 ara sürüm, sıralı tablo, tam liste, kritik yol şeması, kilometre taşları)
 - [x] 08 ve OZET_2'ye "ara sürüm listesi: 10" notu
 - [x] SORULAR_2: ek soru S2-15 (ara sürüm numaraları dışarıda nasıl görünür)
+
+---
+
+## Kart t_5f61e99c — Genel MCP kuralı: oyun adları sürüm dilinden çıktı (18.11.2026)
+
+Talha 18.11: "Temel seviyenin sürüm kodlarında oyunlarımızın adları olmasın. Bu genel bir MCP, herkes için geliştiriliyor. Oyunlar geliştirilirken buna destek oluyorlar." Yalnız belge, yalnız `docs/plan_2026-11/`. Push yok. Alt kart yok. Silme yok.
+
+Seri adları (Talha onaylı): 0.4.x Kararlılık + veri aktarımı ve UI metin denetimi · 0.5.x YZ test ve ölçüm paketi · 0.6.x Paketleme, senaryo ve bot testi · 0.7.x İskelet, animasyon ve malzeme hattı · 0.8.x Oynanış yazarlığı (GAS, StateTree, BT, AnimBP) · 0.9.x Seviye, VFX, Sequencer + headless · 1.0.x Dondurma + cila.
+
+- [x] 10 (`research/ara_surum.py` yeniden yazıldı ve koşuldu): başlık, hedef, kabul genel; "İlk kullanan oyun / açtığı oyun işi (iç)" + "Oyun doğrulaması (iç)"
+- [x] 08 (+ `research/tpl_08.md`, `yol_kapsam.py` sürüm etiketi): seri başlıkları, hedef satırları, Mermaid/ASCII, kabul sütunu genel test projesi + ayrı "Oyun doğrulaması (iç)" sütunu
+- [x] 07 (şablon `tpl_07_*`): küme yorumu ve güvenilirlik notları genel; oyun yalnız "iç:" notunda
+- [x] 06 (şablon `tpl_06_*`): iç eşleme işareti; başlıklar oyunsuz; kaynaklar ve oyun belgesi referansları aynen
+- [x] 09: S10 genel ad kuralı KARAR; T3 = oyun doğrulaması (iç)
+- [x] OZET_2: seri tablosu + kritik yol genel; oyun işi (iç) sütunu
+- [x] SORULAR_2: S2-05 kapandı (genel araç), S2-06 kapandı = A; kapanış satırı
+- [x] Denetim: `research/oyun_adi_denetim.py` → `research/oyun_adi_denetim_cikti.md` (kapsam satırlarında oyun adı = 0)
