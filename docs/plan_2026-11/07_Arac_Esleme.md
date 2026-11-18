@@ -1,6 +1,7 @@
 # 07 — İhtiyaç → mevcut araç eşlemesi
 
-Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. UE açılmadı, araç çağrılmadı.
+Kart: `t_ae3a845a` · 18.11.2026 · Yalnız belge. UE açılmadı, araç çağrılmadı. Genel ad düzeltmesi: kart `t_5f61e99c` (18.11).
+**Genel MCP kuralı (Talha 18.11):** araç adı ve açıklamalarında oyun adı geçmez. Oyun bağlantısı yalnız ihtiyaç kaynağı ve **(iç)** etiketli sütunlarda (iç eşleme).
 **Bu belge `03_Yol_Haritasi.md` §araç eşleme kısmının ve `02_Oyun_Ihtiyaclari.md` "mevcut araç" sütununun yerini alır.**
 
 Kaynak (hepsi otomatik, `research/`):
@@ -12,23 +13,23 @@ Kaynak (hepsi otomatik, `research/`):
 
 | Durum | Sayı | Anlamı |
 |---|---|---|
-| **Var** | 18 | İş bugünkü araçlarla tek ya da birkaç çağrıda yapılır. Oyunda ilk deneme koşusu çoğunda yapılmadı (RC12 §11.1 notu). |
+| **Var** | 18 | İş bugünkü araçlarla tek ya da birkaç çağrıda yapılır. Gerçek projede ilk deneme koşusu çoğunda yapılmadı (iç: RC12 §11.1 notu). |
 | **Kısmen** | 20 | Parçalar var; eksik kısım ajan döngüsüyle ya da oyun betiğiyle kapanıyor. |
 | **Yok** | 18 | Araç yok. Yol haritasında yeni araç (08). |
 
 Kümeye göre (Var / Kısmen / Yok):
 
-| Küme | Var | Kısmen | Yok | Yorum |
+| Küme | Var | Kısmen | Yok | Yorum (iç: hangi oyun bekliyor) |
 |---|---|---|---|---|
 | VERİ (7) | 3 | 3 | 1 | Çekirdek güçlü; dosyadan upsert (E17) ve dışa aktarma eksik |
-| TEST (11) | 2 | 6 | 3 | En büyük boşluk GP YZ-0 araçları (metrik, vislog, StateTree izi) |
+| TEST (11) | 2 | 6 | 3 | En büyük boşluk YZ test ve ölçüm araçları (metrik, vislog, StateTree izi); iç: GP YZ-0 |
 | AĞ (3) | 1 | 2 | 0 | Tek makine co-op var; replikasyon iddiası ajan tarafında |
 | PERF (4) | 1 | 0 | 3 | PIE ölçümü var; paketli FPS (E22), stat filtresi, paketleme yok |
 | LOC (6) | 4 | 1 | 1 | RC'nin tek "Yok" P0'ı burada: EW-055 taşma testi |
 | GÖRSEL (6) | 3 | 3 | 0 | Hazır; toplu tur / bölge maskesi / varyant panosu kısmen |
-| SANAT (6) | 2 | 3 | 1 | İskelet + anim (E23) ve slot başına MI (E24) ARPG'yi tutuyor |
-| YZ (5) | 0 | 1 | 4 | ARPG'nin ana yükü: StateTree, AnimBP, GAS, Niagara hiç yok |
-| SEVİYE (3) | 0 | 1 | 2 | NavMesh (B15) GP + ARPG ortak |
+| SANAT (6) | 2 | 3 | 1 | İskelet + anim (E23) ve slot başına MI (E24) eksik; iç: ARPG |
+| YZ (5) | 0 | 1 | 4 | Oynanış yazarlığı: StateTree, AnimBP, GAS, Niagara hiç yok; iç: ARPG ana yükü |
+| SEVİYE (3) | 0 | 1 | 2 | NavMesh (B15) ve oda doğrulama eksik; iç: GP + ARPG ortak |
 | MEDYA (3) | 1 | 0 | 2 | MRQ var; Sequencer ve kayıt yok |
 | ALTYAPI (2) | 1 | 0 | 1 | Headless (B18) yok |
 
@@ -201,16 +202,16 @@ Sonuç: 1.0 öncesi temizlik ya da birleştirme için aday değil (oyunlar dolay
 
 Kaynak: `RELIABILITY_0.4.md` satırları + `arac_test_kapsami.json`. Tümü: 129 araçtan 61 OK, 56 FIXED, 7 NOTE, 5 tabloda yok; 7 araç testsiz.
 
-| Araç | Sorun | Etkilenen ihtiyaç | Kaynak |
+| Araç | Sorun | Etkilenen ihtiyaç (iç: ilk kullanan oyun) | Kaynak |
 |---|---|---|---|
 | `perf_capture`, `perf_scene`, `perf_gpu_profile` | Testsiz + RELIABILITY'de yok (0.4 turundan sonra eklendi) | EW-040 (GP G1 M9, RC IS-31) | arac_test_kapsami.json |
 | `mrq_render`, `mrq_status` | Testsiz + RELIABILITY'de yok | EW-101 (RC IS-53) | arac_test_kapsami.json |
 | `asset_references` | Testsiz (RELIABILITY'de satırı var) | EW-006, EW-074 (RC IS-30 ★, IS-34) | arac_test_kapsami.json |
-| `pie_start` | NOTE: RC ana menüsünden ilk açılış 103 s; 2 oyunculu listen orada `TIMEOUT` | EW-012, EW-030 (RC IS-33, GP GI-07) | RELIABILITY_0.4.md:140, §Kept for 0.4.1 |
+| `pie_start` | NOTE: ağır ana menü haritasında ilk açılış 103 s; 2 oyunculu listen orada `TIMEOUT` (iç: RC) | EW-012, EW-030 (RC IS-33, GP GI-07) | RELIABILITY_0.4.md:140, §Kept for 0.4.1 |
 | `asset_import` | NOTE: Türkçe dosya adı uyarısız Türkçe asset adı olur (0.4.1) | EW-070, EW-071 (RC 155 asset + 186 ses) | RELIABILITY_0.4.md:68 |
 | `actor_preview` | NOTE: kamera kollu Character gevşek çerçeve (0.4.1) | EW-065 (ARPG 66 varyant panosu) | RELIABILITY_0.4.md:61 |
 | `asset_find` | NOTE: olmayan klasör uyarısız boş liste (0.4.1) | EW-003 | RELIABILITY_0.4.md:67 |
-| `game_run` | FIXED; 8 ihtiyaçla en yüklü araç. RagnaCook'ta 145 koşu / 243 MB, saklama kuralı yok (0.4.1) | EW-011, 013, 018, 020, 032, 053, 054, 064 | RELIABILITY_0.4.md §Kept for 0.4.1 |
+| `game_run` | FIXED; 8 ihtiyaçla en yüklü araç. Gerçek projede 145 koşu / 243 MB, saklama kuralı yok (0.4.x; iç: RC) | EW-011, 013, 018, 020, 032, 053, 054, 064 | RELIABILITY_0.4.md §Kept for 0.4.1 |
 
 Bu tablo 09 §5 teknik borç listesine girer; 08'de 0.4.x sürümü bunları kapatır.
 

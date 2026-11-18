@@ -22,16 +22,16 @@ Sonuç: 1.0 öncesi temizlik ya da birleştirme için aday değil (oyunlar dolay
 
 Kaynak: `RELIABILITY_0.4.md` satırları + `arac_test_kapsami.json`. Tümü: 129 araçtan 61 OK, 56 FIXED, 7 NOTE, 5 tabloda yok; 7 araç testsiz.
 
-| Araç | Sorun | Etkilenen ihtiyaç | Kaynak |
+| Araç | Sorun | Etkilenen ihtiyaç (iç: ilk kullanan oyun) | Kaynak |
 |---|---|---|---|
 | `perf_capture`, `perf_scene`, `perf_gpu_profile` | Testsiz + RELIABILITY'de yok (0.4 turundan sonra eklendi) | EW-040 (GP G1 M9, RC IS-31) | arac_test_kapsami.json |
 | `mrq_render`, `mrq_status` | Testsiz + RELIABILITY'de yok | EW-101 (RC IS-53) | arac_test_kapsami.json |
 | `asset_references` | Testsiz (RELIABILITY'de satırı var) | EW-006, EW-074 (RC IS-30 ★, IS-34) | arac_test_kapsami.json |
-| `pie_start` | NOTE: RC ana menüsünden ilk açılış 103 s; 2 oyunculu listen orada `TIMEOUT` | EW-012, EW-030 (RC IS-33, GP GI-07) | RELIABILITY_0.4.md:140, §Kept for 0.4.1 |
+| `pie_start` | NOTE: ağır ana menü haritasında ilk açılış 103 s; 2 oyunculu listen orada `TIMEOUT` (iç: RC) | EW-012, EW-030 (RC IS-33, GP GI-07) | RELIABILITY_0.4.md:140, §Kept for 0.4.1 |
 | `asset_import` | NOTE: Türkçe dosya adı uyarısız Türkçe asset adı olur (0.4.1) | EW-070, EW-071 (RC 155 asset + 186 ses) | RELIABILITY_0.4.md:68 |
 | `actor_preview` | NOTE: kamera kollu Character gevşek çerçeve (0.4.1) | EW-065 (ARPG 66 varyant panosu) | RELIABILITY_0.4.md:61 |
 | `asset_find` | NOTE: olmayan klasör uyarısız boş liste (0.4.1) | EW-003 | RELIABILITY_0.4.md:67 |
-| `game_run` | FIXED; 8 ihtiyaçla en yüklü araç. RagnaCook'ta 145 koşu / 243 MB, saklama kuralı yok (0.4.1) | EW-011, 013, 018, 020, 032, 053, 054, 064 | RELIABILITY_0.4.md §Kept for 0.4.1 |
+| `game_run` | FIXED; 8 ihtiyaçla en yüklü araç. Gerçek projede 145 koşu / 243 MB, saklama kuralı yok (0.4.x; iç: RC) | EW-011, 013, 018, 020, 032, 053, 054, 064 | RELIABILITY_0.4.md §Kept for 0.4.1 |
 
 Bu tablo 09 §5 teknik borç listesine girer; 08'de 0.4.x sürümü bunları kapatır.
 
