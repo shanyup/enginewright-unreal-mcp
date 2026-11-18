@@ -95,3 +95,12 @@ Toplam: **14 soru** (S2-01 … S2-14).
 | S2-02 | A — Araç Enginewright test projesinde kabul; GP kanıtı YZ-0'ın ilk haftasında. |
 | S2-12 | A — ARPG varsayımları onaylı: T1 UE 5.8, T3 4 akt, T4 şimdi ön-prodüksiyon (tam prodüksiyon RC demosundan sonra). |
 | Not | Talha: "İlerlemeyi tamamen ara versiyonlar hâlinde yaz; iş yaparken ona göre yapacağız." → 08 ara sürümlere bölünecek (S2-07 bu kapsamda). |
+
+---
+
+## Ek soru (kart `t_035891ab`, 10_Ara_Surumler)
+
+**S2-15. Ara sürüm numaraları (0.4.1 … 1.0.0, 55 adım) dışarıya nasıl görünsün?** (10 §1, §8)
+- **A (öneri):** Her ara sürüm yerel git etiketi + CHANGELOG'da başlık; GitHub sürümü (zip) yalnız seri sonlarında (0.4.4, 0.5.6, 0.6.6, 0.7.5, 0.8.7, 0.9.16, 1.0.0). Gerekçe: iş sırası adım adım izlenir; kullanıcıya 55 zip yerine 7 sürüm gider. Etiket/push kararı yayın işiyle birlikte (bu kart push yapmaz).
+- B: Her ara sürüm GitHub sürümü (zip). Sık sürüm "canlı proje" görüntüsü verir ama her biri RELIABILITY + paket ister.
+- C: Ara sürümler yalnız iç plan (etiket yok); dışarıda yalnız 0.5, 0.6 … 1.0.
