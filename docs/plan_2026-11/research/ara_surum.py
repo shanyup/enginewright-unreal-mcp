@@ -11,32 +11,39 @@ import re, pathlib, sys
 KOK = pathlib.Path(__file__).resolve().parent.parent
 KG = 6  # 1 kart-gün ≈ 6 sa (TAHMİN; bu belgenin dönüşüm varsayımı)
 
-# (no, seri, hedef, araç/düzeltme, EW listesi, T/Y listesi, açtığı oyun işi, kabul, bağımlılık, sa, soru)
-A = []
-def s(no, seri, hedef, arac, ew, ty, oyun, kabul, bag, sa, soru=""):
-    A.append(dict(no=no, seri=seri, hedef=hedef, arac=arac, ew=ew, ty=ty, oyun=oyun,
-                  kabul=kabul, bag=bag, sa=sa, soru=soru))
 
-# ---------------- 0.4.x  (08 §2 "0.4.1 Güven + RC P0 boşluğu", ≈ 35 sa) ----------------
+# (no, seri, hedef, araç/düzeltme, EW listesi, T/Y listesi, ilk kullanan oyun / açtığı oyun işi (iç),
+#  kabul (genel test projesi), bağımlılık, sa, soru, oyun doğrulaması (iç))
+# Genel MCP kuralı (Talha 18.11, kart t_5f61e99c): hedef, araç, kabul ve şema etiketlerinde oyun adı yok;
+# oyun bağlantısı yalnız `oyun` ve `ic` alanlarında (belgede "(iç)" etiketli).
+A = []
+def s(no, seri, hedef, arac, ew, ty, oyun, kabul, bag, sa, soru="", ic=""):
+    A.append(dict(no=no, seri=seri, hedef=hedef, arac=arac, ew=ew, ty=ty, oyun=oyun,
+                  kabul=kabul, bag=bag, sa=sa, soru=soru, ic=ic))
+
+# ---------------- 0.4.x  Kararlılık + veri aktarımı ve UI metin denetimi (08 §2, ≈ 35 sa) ----------------
 S = "0.4"
-s("0.4.1", S, "RC'nin tek \"Yok\" P0 aracı olan UI metin taşma denetimini ekle.",
+s("0.4.1", S, "UI metin taşma denetimini ekle (TextBlock istenen genişlik > ayrılan genişlik).",
   "`text_overflow_audit` (yeni); `asset_find` olmayan klasör uyarısı",
   ["EW-055"], ["T-03", "Y1"],
-  "RC LOC-4 → LOC-5 (taşma), IS-34 kapısının LOC kısmı",
-  "`tests/`: taşan + taşmayan widget (2 durum) geçer · `asset_find` olmayan klasörde `warning` alanı · RC 1 ekran × 2 dil (EN + DE ya da RU) raporu ekran görüntüsüyle aynı",
-  "— (ilk ara sürüm)", 9, "S2-11 (öneri A: 09 kuralları bu sürümden zorunlu)")
-s("0.4.2", S, "RC veri aktarımını (IS-10) araçla yap ve \"Var\" araçları RC'de gerçek veriyle dene.",
-  "`datatable_import` (yeni, `dryRun`); RC deneme koşusu (iş)",
+  "RC LOC-4 → LOC-5 (taşma), IS-34 kapısının LOC kısmı (RC'nin tek \"Yok\" P0'ı)",
+  "`tests/`: taşan + taşmayan widget (2 durum) geçer · `asset_find` olmayan klasörde `warning` alanı · test projesinde 1 ekran × 2 dil raporu ekran görüntüsüyle aynı",
+  "— (ilk ara sürüm)", 9, "S2-11 (öneri A: 09 kuralları bu sürümden zorunlu)",
+  "RC 1 ekran × 2 dil (EN + DE ya da RU) raporu ekran görüntüsüyle aynı")
+s("0.4.2", S, "CSV/JSON'dan DataTable aktarımını (upsert + fark + `dryRun`) ekle; \"Var\" araçları gerçek oyun verisiyle dene.",
+  "`datatable_import` (yeni, `dryRun`); gerçek proje deneme koşusu (iş)",
   ["EW-002", "EW-001", "EW-005", "EW-006", "EW-050", "EW-051", "EW-052", "EW-053", "EW-060", "EW-061", "EW-111"], ["Y1"],
   "RC Demo D1 IS-10 (48 kart + 4 lanet + 21 sunak), D1 güveni",
-  "`tests/`: upsert + fark + bilinmeyen alan reddi · RC `DT_Cards` dryRun → uygula → `datatable_get` aynı · 10 \"Var\" ihtiyaç için 1'er kayıt `docs/oyun_kosulari/RC_0.4.md`",
-  "0.4.1", 10, "S2-14 (öneri A: kayıt Enginewright `docs/oyun_kosulari/`)")
-s("0.4.3", S, "RC import ve co-op açılışını kıran küçük kararlılık açıklarını kapat.",
+  "`tests/`: upsert + fark + bilinmeyen alan reddi · test tablosunda `dryRun` → uygula → `datatable_get` aynı · 10 \"Var\" ihtiyaç için 1'er gerçek proje kaydı",
+  "0.4.1", 10, "S2-14 (öneri A: kayıt Enginewright `docs/oyun_kosulari/`)",
+  "RC `DT_Cards` dryRun → uygula → `datatable_get` aynı · 10 kayıt `docs/oyun_kosulari/RC_0.4.md`")
+s("0.4.3", S, "Import ve çok oyunculu PIE açılışını kıran küçük kararlılık açıklarını kapat.",
   "ASCII dışı ad uyarısı (`asset_import`, `blueprint_create`); `pie_start` bekleme parametresi + belge; `game_run` koşu saklama (son N); `actor_preview` kamera kollu Character çerçevesi; `input_map_list` yavaşlık belge notu",
   [], ["T-04", "T-09", "T-05", "T-06", "T-10", "Y1"],
   "RC Türkçe adlı asset importu, RC IS-33 (2 oyunculu listen açılışı); ARPG varyant panosu zemini",
-  "`BP_Çaydanlık` → uyarı · RC ana menü 2 oyunculu açılış `TIMEOUT` vermeden ayarlı süreyle açılır · N+1. koşuda en eski klasör silinir (test) · Character + SpringArm testinde çerçeve gövdeye oturur",
-  "0.4.2", 10)
+  "`BP_Çaydanlık` → uyarı · yavaş açılan haritada 2 oyunculu listen açılışı `TIMEOUT` vermeden ayarlı süreyle açılır · N+1. koşuda en eski klasör silinir (test) · Character + SpringArm testinde çerçeve gövdeye oturur",
+  "0.4.2", 10, "",
+  "RC ana menü 2 oyunculu açılış · RC Türkçe adlı asset importu uyarı verir")
 s("0.4.4", S, "Testsiz 7 aracı teste bağla ve 0.4 serisini güvenilirlik turuyla kapat.",
   "7 testsiz araca test (`perf_capture`, `perf_scene`, `perf_gpu_profile`, `mrq_render`, `mrq_status`, `asset_references`, `asset_save`); 5 RELIABILITY satırı; RELIABILITY_0.4.x turu",
   [], ["T-01", "T-02", "Y1"],
@@ -44,14 +51,15 @@ s("0.4.4", S, "Testsiz 7 aracı teste bağla ve 0.4 serisini güvenilirlik turuy
   "`arac_test_kapsami.py`: testsiz 0 (129/129) · RELIABILITY'de 5 yeni satır OK/NOTE · tur dosyası \"Kept for 0.5\" bölümüyle kapanır",
   "0.4.3", 9)
 
-# ---------------- 0.5.x  (08 §3 "GP YZ-0 test paketi", ≈ 55 sa) ----------------
+# ---------------- 0.5.x  YZ test ve ölçüm paketi (08 §3, ≈ 55 sa) ----------------
 S = "0.5"
-s("0.5.0", S, "GP kapı G0'ı açan başsız test koşusu ve ölçüm okuyucuyu ekle; test standardını başlat.",
-  "`automation_run` `headless` + rapor ayrıştırma; `metrics_read` (eşik + kapı özeti); test standardı T1–T5 \"bitti\" tanımı, RELIABILITY_0.5.md açılır",
+s("0.5.0", S, "Başsız automation koşusunu ve ölçüm dosyası okuyucuyu (eşik + kapı özeti) ekle; test standardını başlat.",
+  "`automation_run` `headless` + rapor ayrıştırma; `metrics_read` (eşik + kapı özeti; `format` parametresi = oyunun ölçüm dosyası biçimi); test standardı T1–T5 \"bitti\" tanımı, RELIABILITY_0.5.md açılır",
   ["EW-011", "EW-010", "EW-014"], ["Y2"],
   "GP YZ-0 kapı G0; yan: RC IS-32 bot ölçümü, ARPG IC-12",
   "Test projesinde 1 geçen + 1 kalan automation testi ayrışır · örnek `metrics.json` + eşik dosyasıyla geçti/kaldı/eksik · özet < 2 KB",
-  "0.4.4", 10, "S2-06 (öneri A: genel ad `metrics_read`) · S2-02 = A (GP kanıtı 0.5.7'de)")
+  "0.4.4", 10, "S2-06 = A (kapandı: genel ad `metrics_read`, dosya biçimi parametre) · S2-02 = A",
+  "GP kanıtı 0.5.7'de (S2-02 A); oyun belgesindeki ad `ai_metrics_read`")
 s("0.5.1", S, "NavMesh kopuk ada raporu ve stat grubu filtreli ölçümü ekle.",
   "`nav_build_check`; `perf_capture` + `scope` (stat grubu filtresi)",
   ["EW-090", "EW-041"], ["Y2"],
@@ -88,39 +96,44 @@ s("0.5.6", S, "Senaryo yerleştiriciyi ekle ve 0.5 serisini güvenilirlik turuyl
   "GP S1/S2/S3 test haritaları; **GP YZ-0 başlayabilir** (araçlar test projesinde kabul, S2-02 A)",
   "10 aktörlük liste tek çağrıda yerleşir + `dryRun` listesi · RELIABILITY_0.5 bütün 0.5 araçları OK/NOTE",
   "0.5.5", 8, "S2-13 (öneri A: `scenario_place` burada; B seçilirse 0.6.6'ya kayar)")
-s("0.5.7", S, "0.5 araçlarının GP kanıtını GP YZ-0'ın ilk haftasında topla.",
-  "GP kanıt koşusu (iş, araç yok)",
+s("0.5.7", S, "0.5 araçlarını ilk gerçek oyun projesinde doğrula (kanıt koşusu, araç yok).",
+  "Oyun doğrulama koşusu (iş, araç yok)",
   ["EW-011", "EW-014", "EW-015", "EW-016", "EW-017", "EW-018", "EW-041", "EW-042", "EW-090"], ["Y2"],
-  "GP YZ-0 G0…G3 kanıtı",
-  "9 araç için 1'er kayıt (çağrı, süre, sonuç) `docs/oyun_kosulari/GP_0.5.md` · bulunan açık → 0.5.8 düzeltme ara sürümü (kapsam büyütme yok)",
-  "0.5.6 + GP YZ-0 iskeleti (dış). 0.6.x ile paralel", 4, "S2-02 = A · S2-14")
+  "GP YZ-0 G0…G3 kanıtı (YZ-0 ilk haftası)",
+  "9 araç için 1'er kayıt (çağrı, süre, sonuç) `docs/oyun_kosulari/` · bulunan açık → 0.5.8 düzeltme ara sürümü (kapsam büyütme yok)",
+  "0.5.6 + oyun tarafında test modülü iskeleti (dış). 0.6.x ile paralel", 4, "S2-02 = A · S2-14",
+  "GP YZ-0 ilk haftası; kayıt `docs/oyun_kosulari/GP_0.5.md`")
 
-# ---------------- 0.6.x  (08 §4 "Demo paketi", ≈ 52 sa) ----------------
+# ---------------- 0.6.x  Paketleme, senaryo ve bot testi (08 §4, ≈ 52 sa) ----------------
 S = "0.6"
 s("0.6.0", S, "Paketleme ve durum takibini async araç olarak ekle; envanter betiklerini `tools/`'a taşı.",
   "`package_build` + `package_status`; `arac_envanteri.py` / `arac_test_kapsami.py` → `tools/`",
   ["EW-043"], ["Y3"],
   "RC IS-31 (paket + perf), IS-35 (Next Fest build) adım 0; GP/ARPG Demo paketi",
   "Test projesi Win64 Development paketi async biter, editör kilitlenmez · `tools/` betiği: kayıtlı araç = README = test kapsamı",
-  "0.5.6 (`game_perf_sample` paket ölçümü için)", 10)
+  "0.5.6 (`game_perf_sample` paket ölçümü için)", 10, "",
+  "RC demo paketi elle adım 0")
 s("0.6.1", S, "PIE senaryo oynatıcıyı ve bot koşusu kalıbını ekle.",
   "`pie_scenario`; `bot_run` (`game_run` + `metrics_read`)",
   ["EW-012", "EW-013"], ["Y2"],
   "RC IS-21 (kart kuralları), IS-32 (playtest/denge), IS-62; ARPG IC-43; GP bot profilleri",
-  "5 adımlı senaryoda 1 bilinçli hata yakalanır · RC `RC.BotRun` 1 koşu özeti",
-  "0.6.0", 9)
+  "5 adımlı senaryoda 1 bilinçli hata yakalanır · test projesindeki örnek bot komutuyla 1 koşu özeti",
+  "0.6.0", 9, "",
+  "RC `RC.BotRun` 1 koşu özeti · RC EK-03 bir kural kartı senaryosu")
 s("0.6.2", S, "Asset beyanı ve yer tutucu raporunu ekle; yeni araçlara belge şablonunu uygula.",
   "`asset_metadata_set` / `asset_declaration_report`; `placeholder_report`; EWTOOL açıklama şablonu (yeni araçlar)",
   ["EW-075", "EW-074"], ["Y5"],
   "RC IS-35 (beyan), IS-30 ★ (`_Kullanilmayan`); GP K-70. **RC Demo build araçları tamam** (0.6a sınırı)",
-  "10 asset metadata yaz-oku · `Asset_Kaydi.csv` ile beyan CSV aynı · `_Kullanilmayan` oyuncu yolu referans 0 · 0.4–0.6 yeni araç açıklamaları şablona uyar",
-  "0.6.1", 9, "S2-07 (Talha notu: ara sürümlere bölündü; RC kısmı önce = öneri A sırası)")
+  "10 asset metadata yaz-oku · beyan CSV elle tutulan örnek kayıtla aynı · yer tutucu klasöründe oyuncu yolu referansı 0 raporlanır · 0.4–0.6 yeni araç açıklamaları şablona uyar",
+  "0.6.1", 9, "S2-07 (Talha notu: ara sürümlere bölündü; 0.6.0–0.6.2 önce = öneri A sırası)",
+  "RC `Asset_Kaydi.csv` ile beyan CSV aynı · RC `_Kullanilmayan` oyuncu yolu referans 0")
 s("0.6.3", S, "Replikasyon iddiası ve dil × ekran döngüsünü ekle.",
   "`replication_check`; `loc_screen_sweep` (`text_overflow_audit` ile)",
   ["EW-031", "EW-054", "EW-032"], ["Y2"],
   "RC IS-33 (co-op), LOC-4 tam döngü; GP GI-07",
-  "2 istemcide bilinçli replike edilmeyen değer bulunur · RC 2 dil × 3 ekran tek çağrı · 2 makine/Steam testi elle kalır (EW-032 notu)",
-  "0.6.2 (0.4.1 `text_overflow_audit`)", 9)
+  "2 istemcide bilinçli replike edilmeyen değer bulunur · test projesinde 2 dil × 3 ekran tek çağrı · 2 makine/Steam testi elle kalır (EW-032 notu)",
+  "0.6.2 (0.4.1 `text_overflow_audit`)", 9, "",
+  "RC 2 dil × 3 ekran tek çağrı · GP GI-07 replikasyon")
 s("0.6.4", S, "Veri dışa aktarma ve toplu DataAsset oluşturmayı ekle.",
   "`data_export`; `dataasset_create` (`dryRun`)",
   ["EW-004", "EW-003"], ["Y2"],
@@ -131,23 +144,25 @@ s("0.6.5", S, "Kamera turu ve bölge maskeli stil ölçümünü ekle.",
   "`screenshot_tour`; `image_stats` bölge maskesi + palet",
   ["EW-064", "EW-063"], ["Y2"],
   "RC IS-35 mağaza 8 kare, IS-53; RC IS-03 sonrası stil denetimi",
-  "Test haritası 5 nokta PNG + manifest · RC `stil_olcu.py` ile aynı sonuç (±%2)",
-  "0.6.4", 9)
+  "Test haritası 5 nokta PNG + manifest · değeri bilinen test görselinde bölge ölçümü beklenenle aynı (±%2)",
+  "0.6.4", 9, "",
+  "RC `stil_olcu.py` ile aynı sonuç (±%2) · RC mağaza 8 kare")
 s("0.6.6", S, "Yerleşim seti modunu ekle, statik CI'ı kur, 0.6 serisini turla kapat.",
   "`scenario_place` yerleşim seti modu (grup + tohum); statik CI (envanter + kapsam + test sözdizimi); RELIABILITY_0.6 turu",
   ["EW-092"], ["T-12", "Y4"],
   "GP GI-03, GI-26 (B1 mekânları)",
-  "GP GI-03 1 mekân tohumla yerleşir · CI iş akışı yerelde koşar (push ayrı karar) · RELIABILITY_0.6 OK/NOTE",
-  "0.6.5 (0.5.6 `scenario_place`)", 8, "S2-08 (öneri A: statik CI şimdi, 1.0 öncesi elle tur) · S2-13")
+  "Test haritasında 1 grup aynı tohumla aynı yerleşimi verir · CI iş akışı yerelde koşar (push ayrı karar) · RELIABILITY_0.6 OK/NOTE",
+  "0.6.5 (0.5.6 `scenario_place`)", 8, "S2-08 (öneri A: statik CI şimdi, 1.0 öncesi elle tur) · S2-13",
+  "GP GI-03 1 mekân tohumla yerleşir")
 
-# ---------------- 0.7.x  (08 §5 "ARPG sanat hattı", 8–10 kart-gün + 7 sa) ----------------
+# ---------------- 0.7.x  İskelet, animasyon ve malzeme hattı (08 §5, 8–10 kart-gün + 7 sa) ----------------
 S = "0.7"
 s("0.7.0", S, "FBX'ten iskeletli mesh, Skeleton ve Physics Asset içe aktar.",
   "`skeletal_import` temel (SkeletalMesh + Skeleton + PhysicsAsset)",
   ["EW-071"], ["Y2"],
   "ARPG F0 stil testi (AT EW-1 başı); RC Garmr zemini",
   "1 aile FBX → SkeletalMesh + PhysicsAsset; `validate` temiz; ASCII uyarısı (0.4.3) çalışır",
-  "0.6.6 · ARPG T1 = UE 5.8 (S2-12 A)", 10)
+  "0.6.6 · UE 5.8 hedefi (S2-12 A)", 10)
 s("0.7.1", S, "Animasyon dizileri ve soketleri iskelete bağla.",
   "`skeletal_import` anim + soket (AnimSequence, soket ekleme)",
   ["EW-071"], ["Y2"],
@@ -158,8 +173,9 @@ s("0.7.2", S, "IK Retargeter ile animasyonu başka iskelete aktar.",
   "`anim_retarget` (IKRig + Retargeter)",
   ["EW-071"], ["Y2"],
   "ARPG F0; GP YZ-2 retarget + Physical Animation",
-  "Kaynak → hedef iskelet 5 animasyon; GP YZ-2 bir karakter (GP kanıtı GP YZ-2'de)",
-  "0.7.1", 12)
+  "Kaynak → hedef iskelet 5 animasyon (test projesi)",
+  "0.7.1", 12, "",
+  "GP YZ-2 bir karakter (GP kanıtı GP YZ-2'de)")
 s("0.7.3", S, "Montage, BlendSpace ve anim notify yazarlığını ekle.",
   "`montage_create`, `blendspace_create`, anim notify",
   ["EW-071"], ["Y2"],
@@ -176,10 +192,11 @@ s("0.7.5", S, "Varyant panosunu ve sanat bütçesi denetimini ekle; 0.7 serisini
   "`actor_preview` `material_overrides` + `anim`/`time`; `art_budget_audit`; RELIABILITY_0.7 turu",
   ["EW-065", "EW-073"], ["Y2"],
   "ARPG F0 varyant panosu; RC 155 asset bütçe denetimi",
-  "66 varyant panosu (8×8) tek çağrı · RC 155 asset eşik raporu · RELIABILITY_0.7 OK/NOTE",
-  "0.7.4 (0.4.3 `actor_preview` çerçevesi)", 10)
+  "8×8 varyant panosu tek çağrı · test klasöründe eşik (üçgen, doku) raporu · RELIABILITY_0.7 OK/NOTE",
+  "0.7.4 (0.4.3 `actor_preview` çerçevesi)", 10, "",
+  "ARPG 66 varyant panosu · RC 155 asset eşik raporu")
 
-# ---------------- 0.8.x  (08 §6 "ARPG oynanış yazarlığı", 12–15 kart-gün) ----------------
+# ---------------- 0.8.x  Oynanış yazarlığı (GAS, StateTree, BT, AnimBP) (08 §6, 12–15 kart-gün) ----------------
 S = "0.8"
 s("0.8.0", S, "GAS attribute set okumayı ve GameplayEffect oluşturmayı ekle.",
   "`attribute_set_info`, `effect_create`",
@@ -202,21 +219,22 @@ s("0.8.2", S, "GameplayCue ve GAS iddia testini ekle.",
 s("0.8.3", S, "Şablondan StateTree oluştur.",
   "`statetree_create` (şablon kopyala + parametre; serbest grafik yok)",
   ["EW-080"], ["Y2"],
-  "ARPG F0 (22 düşman ailesi; AT EW-3 başı)",
-  "1 düşman ailesi şablon JSON → StateTree; `validate` temiz",
-  "0.8.2 (0.5.4 `statetree_debug_dump` ortak altyapı)", 12, "S2-05 (öneri A: yalnız ARPG + RC Garmr; GP yalnız okur)")
+  "ARPG F0 (22 düşman ailesi; AT EW-3 başı); GP StateTree kullanıyor (YZ_v2/02 §3), yeni aileler için kullanabilir",
+  "1 şablon JSON → StateTree; `validate` temiz",
+  "0.8.2 (0.5.4 `statetree_debug_dump` ortak altyapı)", 12, "S2-05 kapandı (genel araç, Talha 18.11)",
+  "ARPG 1 düşman ailesi şablonu")
 s("0.8.4", S, "StateTree'ye düğüm ekle ve PIE'de durum geçişini kanıtla.",
   "`statetree_node_add`",
   ["EW-080"], ["Y2"],
   "**ARPG F1 grind prototipi başlayabilir** (AT: ilk dört EW prototipten önce)",
   "PIE'de 3 durum; `statetree_debug_dump` geçişleri sırasıyla gösterir",
-  "0.8.3", 10, "S2-05")
+  "0.8.3", 10, "S2-05 kapandı")
 s("0.8.5", S, "Behavior Tree oluşturmayı ekle.",
   "`behaviortree_create`",
   ["EW-080"], ["Y2"],
   "ARPG boss fazları; RC Garmr (P2)",
   "1 BT + Blackboard; `validate` temiz; PIE'de görev çalışır",
-  "0.8.4", 8, "S2-05")
+  "0.8.4", 8, "S2-05 kapandı")
 s("0.8.6", S, "İskelet ailesi için AnimBP state machine şablonunu kur.",
   "`animbp_statemachine_template` (şablon kopyala)",
   ["EW-081"], ["Y2"],
@@ -230,7 +248,7 @@ s("0.8.7", S, "AnimBP varyant parametrelerini ekle; 0.8 serisini kapat.",
   "2. ailede yalnız parametreyle aynı şablon çalışır · RELIABILITY_0.8 OK/NOTE",
   "0.8.6", 10)
 
-# ---------------- 0.9.x  (08 §7 "ARPG prodüksiyon + headless + dondurma adayı") ----------------
+# ---------------- 0.9.x  Seviye, VFX, Sequencer + headless (08 §7; dondurma adayı dahil) ----------------
 S = "0.9"
 s("0.9.0", S, "Oda parçası bağlantı noktası ve ızgara doğrulayıcıyı ekle.",
   "`room_validate` (port + ızgara)",
@@ -309,7 +327,7 @@ s("0.9.12", S, "API dondurma adayını çıkar: ad ve şema listesi, uymayanlara
   [], ["Y9"],
   "Bütün oyunlar (1.x içinde ad kırılmaz)",
   "Liste betikle üretilir · eski adla çağrı uyarıyla çalışır (test)",
-  "0.9.11", 10, "S2-11 · S2-06")
+  "0.9.11", 10, "S2-11 · S2-06 = A (eski ad takma ad)")
 s("0.9.13", S, "Motor sürümü korumasını ekle ve ikinci UE sürümünde derle.",
   "`ENGINE_MAJOR/MINOR_VERSION` korumaları; UE 5.7 derlemesi",
   [], ["T-11", "Y7"],
@@ -335,10 +353,10 @@ s("0.9.16", S, "Dondurma adayında tam güvenilirlik turu yap.",
   "Bütün araçlar OK/FIXED/NOTE + süre · \"Kept for 1.0\" listesi",
   "0.9.15", 12)
 
-# ---------------- 1.0.x  (08 §8 "Dondurma + cila + yayın işi", ≈ 40 sa) ----------------
+# ---------------- 1.0.x  Dondurma + cila (08 §8, ≈ 40 sa) ----------------
 S = "1.0"
 s("1.0.0-rc.1", S, "Örnek projeyi kur.",
-  "Örnek proje (test projesi temelli, 3 oyun iş akışına uygun içerik)",
+  "Örnek proje (test projesi temelli; veri, test, sanat iş akışlarına uygun içerik)",
   [], ["Y6"],
   "Oyun dışı (yeni kullanıcı); oyun ajanları için ortak örnek",
   "Temiz klonda örnek proje açılır, `smoke.py` geçer",
@@ -355,12 +373,13 @@ s("1.0.0-rc.3", S, "Çoklu UE testini ve sürüm öncesi denetim listesini bitir
   "Oyun dışı",
   "İki sürümde `run_all.py` sonucu · kontrol listesi CHANGELOG öncesi doldurulur",
   "1.0.0-rc.2", 10, "S2-09 · S2-08 (öneri A: 1.0 öncesi C = elle tur listesi)")
-s("1.0.0-rc.4", S, "Üç oyunda son kanıt koşusunu yap, 07 durumlarını güncelle.",
+s("1.0.0-rc.4", S, "Gerçek oyun projelerinde son kanıt koşusunu yap, 07 durumlarını güncelle.",
   "Kanıt koşusu (iş): bütün \"Var\" ihtiyaçlar + 0.4–0.9 araçları",
   ["EW-005", "EW-006", "EW-020", "EW-030", "EW-040", "EW-050", "EW-051", "EW-052", "EW-053", "EW-060", "EW-061", "EW-062", "EW-070", "EW-101", "EW-111"], ["Y2"],
   "RC / GP / ARPG: aracın oyunda çalıştığı kanıtı",
   "Her \"Var\" ihtiyaç için 1 kayıt `docs/oyun_kosulari/` · 07 tablosu güncel",
-  "1.0.0-rc.3", 10, "S2-14")
+  "1.0.0-rc.3", 10, "S2-14",
+  "RC, GP, ARPG projelerinde birer kayıt dosyası")
 s("1.0.0", S, "API'yi dondur ve 1.0'ı kapat.",
   "RELIABILITY_1.0; Y9 dondurma onayı (takma adlar kalır); CHANGELOG 1.0",
   [], ["Y1", "Y9"],
@@ -368,37 +387,40 @@ s("1.0.0", S, "API'yi dondur ve 1.0'ı kapat.",
   "RELIABILITY_1.0: bütün araçlar OK/FIXED, NOTE yalnız belgelenmiş motor sınırı · ad/şema listesi 0.9.12 ile fark 0",
   "1.0.0-rc.4", 8)
 
+# (nerede, kilometre taşı = genel yetenek, ilk kullanan oyun / açtığı oyun işi (iç))
 KILOMETRE = [
-    ("0.4.4 sonrası", "RC Demo D1 araç güveni (IS-10, LOC-4/5)"),
-    ("0.5.6 sonrası", "GP YZ-0 başlayabilir (G0…G3 araçları test projesinde kabul)"),
-    ("0.6.2 sonrası", "RC Demo / Next Fest build araçları tamam (eski \"0.6a\")"),
-    ("0.8.4 sonrası", "ARPG F1 grind prototipi başlayabilir (AT: EW-1, 2, 5, 3 bitti)"),
-    ("0.9.16 sonrası", "API dondurma adayı + headless hazır"),
-    ("1.0.0 sonrası", "**YAYIN İŞİ (Y10)** — kapsam dışı (04, 05, SORULAR S-0…S-10)"),
+    ("0.4.4 sonrası", "Veri aktarımı + UI metin denetimi + kararlılık turu tamam", "RC Demo D1 araç güveni (IS-10, LOC-4/5)"),
+    ("0.5.6 sonrası", "YZ test ve ölçüm paketi test projesinde kabul (başsız test, ölçüm, nav, vislog, GDT, StateTree izi, soak, senaryo)", "GP YZ-0 başlayabilir (G0…G3)"),
+    ("0.6.2 sonrası", "Demo build hattı araçları tamam (paket, senaryo/bot, asset beyanı, yer tutucu)", "RC Demo / Next Fest build araçları tamam (eski \"0.6a\")"),
+    ("0.8.4 sonrası", "Oynanış prototipi araçları tamam (iskelet/anim/malzeme + GAS + StateTree)", "ARPG F1 grind prototipi başlayabilir (AT: EW-1, 2, 5, 3 bitti)"),
+    ("0.9.16 sonrası", "API dondurma adayı + headless hazır", "—"),
+    ("1.0.0 sonrası", "**YAYIN İŞİ (Y10)** — kapsam dışı (04, 05, SORULAR S-0…S-10)", "—"),
 ]
 
+# seri: (ad = Talha onaylı genel ad, 08 bölümü, 08 TAHMİN)
 SERI = {
-    "0.4": ("08 §2 0.4.1 Güven + RC P0", "≈ 35 sa"),
-    "0.5": ("08 §3 0.5 GP YZ-0 test paketi", "≈ 55 sa"),
-    "0.6": ("08 §4 0.6 Demo paketi", "≈ 52 sa"),
-    "0.7": ("08 §5 0.7 ARPG sanat hattı", "8–10 kart-gün + 7 sa ≈ 55–67 sa"),
-    "0.8": ("08 §6 0.8 ARPG oynanış yazarlığı", "12–15 kart-gün ≈ 72–90 sa"),
-    "0.9": ("08 §7 0.9 ARPG prodüksiyon + headless", "18–21 kart-gün + 10 sa ≈ 118–136 sa"),
-    "1.0": ("08 §8 1.0 Dondurma + cila", "≈ 40 sa"),
+    "0.4": ("Kararlılık + veri aktarımı ve UI metin denetimi", "08 §2", "≈ 35 sa"),
+    "0.5": ("YZ test ve ölçüm paketi", "08 §3", "≈ 55 sa"),
+    "0.6": ("Paketleme, senaryo ve bot testi", "08 §4", "≈ 52 sa"),
+    "0.7": ("İskelet, animasyon ve malzeme hattı", "08 §5", "8–10 kart-gün + 7 sa ≈ 55–67 sa"),
+    "0.8": ("Oynanış yazarlığı (GAS, StateTree, BT, AnimBP)", "08 §6", "12–15 kart-gün ≈ 72–90 sa"),
+    "0.9": ("Seviye, VFX, Sequencer + headless", "08 §7", "18–21 kart-gün + 10 sa ≈ 118–136 sa"),
+    "1.0": ("Dondurma + cila", "08 §8", "≈ 40 sa"),
 }
 
+# (soru, konu, etkilediği ara sürüm, yazılan seçenek / durum)
 SORU = [
-    ("S2-03", "GP iki EW-GP listesi", "Ara sürüm etkisi yok (oyun reposu belgesi; ayrı GP kartı)", "A"),
-    ("S2-04", "Oyun belgelerinde eski durum notları (T-14)", "Ara sürüm etkisi yok; 0.4.2 ve 0.5.7 kanıt kayıtları düzeltme kaynağı olur", "A"),
-    ("S2-05", "StateTree yazma kimin", "0.8.3, 0.8.4, 0.8.5 (B seçilirse GP kabulü eklenir, +2–4 sa TAHMİN)", "A"),
-    ("S2-06", "Genel araç adları", "0.5.0 (`metrics_read`), 0.9.12 (takma adlar)", "A"),
-    ("S2-07", "0.6 bölme", "Talha notuyla karşılandı: 0.6.0–0.6.6; RC kısmı önce (0.6.0–0.6.2 = eski 0.6a)", "A sırası"),
-    ("S2-08", "CI", "0.6.6 (statik CI), 1.0.0-rc.3 (elle tur listesi)", "A"),
-    ("S2-09", "Çoklu UE sürümleri", "0.9.13, 1.0.0-rc.3 (B seçilirse 5.6 için +1 ara sürüm)", "A"),
-    ("S2-10", "03'ten kalan araçlar", "Ara sürüm yok; Sonrası listesi (B seçilirse 1.0.0-rc öncesine 1 ara sürüm)", "A"),
-    ("S2-11", "09 kuralları zorunlu mu", "0.4.1'den itibaren her yeni araç; 0.9.5, 0.9.12", "A"),
-    ("S2-13", "`scenario_place` 0.5'te mi", "0.5.6 (B seçilirse 0.6.6'ya taşınır: 0.5.6 3 sa, 0.6.6 13 sa → 0.6.6 ikiye bölünür)", "A"),
-    ("S2-14", "Kanıt kayıtları yeri", "0.4.2, 0.5.7, 1.0.0-rc.4", "A"),
+    ("S2-03", "Oyun belgelerindeki iki eski numara listesi", "Ara sürüm etkisi yok (oyun reposu belgesi; ayrı oyun kartı)", "A (öneri)"),
+    ("S2-04", "Oyun belgelerinde eski durum notları (T-14)", "Ara sürüm etkisi yok; 0.4.2 ve 0.5.7 kanıt kayıtları düzeltme kaynağı olur", "A (öneri)"),
+    ("S2-05", "StateTree yazma kimin", "0.8.3, 0.8.4, 0.8.5: genel araç, her oyun kullanabilir", "**Kapandı** (Talha 18.11, genel MCP kuralı)"),
+    ("S2-06", "Genel araç adları", "0.5.0 (`metrics_read` + biçim parametresi), 0.9.12 (takma adlar)", "**Kapandı = A** (Talha 18.11, genel MCP kuralı)"),
+    ("S2-07", "0.6 bölme", "Talha notuyla karşılandı: 0.6.0–0.6.6; demo build hattı önce (0.6.0–0.6.2 = eski 0.6a)", "A sırası"),
+    ("S2-08", "CI", "0.6.6 (statik CI), 1.0.0-rc.3 (elle tur listesi)", "A (öneri)"),
+    ("S2-09", "Çoklu UE sürümleri", "0.9.13, 1.0.0-rc.3 (B seçilirse 5.6 için +1 ara sürüm)", "A (öneri)"),
+    ("S2-10", "03'ten kalan araçlar", "Ara sürüm yok; Sonrası listesi (B seçilirse 1.0.0-rc öncesine 1 ara sürüm)", "A (öneri)"),
+    ("S2-11", "09 kuralları zorunlu mu", "0.4.1'den itibaren her yeni araç; 0.9.5, 0.9.12", "A (öneri)"),
+    ("S2-13", "`scenario_place` 0.5'te mi", "0.5.6 (B seçilirse 0.6.6'ya taşınır: 0.5.6 3 sa, 0.6.6 13 sa → 0.6.6 ikiye bölünür)", "A (öneri)"),
+    ("S2-14", "Kanıt kayıtları yeri", "0.4.2, 0.5.7, 1.0.0-rc.4", "A (öneri)"),
 ]
 
 
@@ -437,16 +459,17 @@ def md():
     w = L.append
     w("# 10 — Ara sürümler (08 yol haritası → küçük, sıralı adımlar)")
     w("")
-    w("Kart: `t_035891ab` · 18.11.2026 · Yalnız belge. Üretici + denetim: `research/ara_surum.py` (tablolar betikten).")
+    w("Kart: `t_035891ab` · 18.11.2026 · Yalnız belge. Üretici + denetim: `research/ara_surum.py` (tablolar betikten). Genel ad düzeltmesi: kart `t_5f61e99c` (18.11).")
     w("Talha (18.11): *\"İlerlemeyi tamamen ara versiyonlar hâlinde yaz; iş yaparken ona göre yapacağız.\"*")
     w("Girdi: 08 (büyük sürümler), 06/07 (EW-xxx), 09 (T-xx, kurallar), SORULAR_2 (S2-01/02/12 = A). **Tarih yok; sıra var.**")
     w("")
     w("Okuma kuralları:")
     w("- Bir ara sürüm = 1–2 iş günü, **≤ 12 sa TAHMİN** (ajan + Talha onayı). Betik 12'yi aşanı reddeder.")
-    w(f"- ARPG kart-gün dönüşümü: **1 kart-gün ≈ {KG} sa (TAHMİN, bu belgenin varsayımı)**; AT kart-gün tanımı vermiyor.")
+    w(f"- Kart-gün dönüşümü (08 §5–§7 eforları): **1 kart-gün ≈ {KG} sa (TAHMİN, bu belgenin varsayımı)**; AT kart-gün tanımı vermiyor.")
     w("- Cila şeridi (Y1–Y9) ayrı şerit değil: işleri ara sürümlerin içinde (§5 eşleme). Y10 YAYIN İŞİ yalnız kilometre taşı satırı.")
-    w("- Her ara sürüm 09 §3.2 \"bitti\" tanımına uyar (T1 test, T3 oyun kanıtı, T4 RELIABILITY satırı); kabul sütunu ek somut kanıttır.")
-    w("- Açık soru (S2-03…11, 13, 14) etkilediği satırda **\"S2-xx cevabına bağlı\"**; satır önerilen seçenekle yazıldı. Karar verilmedi.")
+    w("- Her ara sürüm 09 §3.2 \"bitti\" tanımına uyar (T1 test, T3 oyun doğrulaması, T4 RELIABILITY satırı); kabul ölçütü genel test projesi/örnek üzerinden yazılır, oyun kanıtı ayrı satırdır: **\"Oyun doğrulaması (iç)\"**.")
+    w("- **Genel MCP kuralı (Talha 18.11):** sürüm/ara sürüm başlığı, hedef, araç adı, kabul ölçütü ve şema etiketlerinde oyun adı geçmez. Oyun bağlantısı yalnız iç planlama alanlarında: **\"İlk kullanan oyun / açtığı oyun işi (iç)\"** ve **\"Oyun doğrulaması (iç)\"**. Denetim: `research/oyun_adi_denetim.py`.")
+    w("- Açık soru (S2-03, 04, 07…11, 13, 14; S2-05 ve S2-06 kapandı) etkilediği satırda **\"S2-xx cevabına bağlı\"**; satır önerilen seçenekle yazıldı. Karar verilmedi.")
     w("- Seri sonu ara sürümü RELIABILITY turuyla kapanır; tur \"Kept for\" listesi bir sonraki serinin ilk ara sürümüne girer (09 §6).")
     w("- Bir ara sürümde açık çıkarsa düzeltme yeni numara alır (ör. 0.4.4 sonrası bulunan açık → 0.4.5); kapsam büyütülmez.")
     w("")
@@ -461,39 +484,39 @@ def md():
     w("")
     w("### 1.1 Seri toplamı ↔ 08 tahmini")
     w("")
-    w("| Seri | 08 karşılığı | 08 TAHMİN | Ara sürüm | Bu belge TAHMİN |")
-    w("|---|---|---|---|---|")
-    for k, (ad, t) in SERI.items():
+    w("| Seri | Ad | 08 karşılığı | 08 TAHMİN | Ara sürüm | Bu belge TAHMİN |")
+    w("|---|---|---|---|---|---|")
+    for k, (ad, bol, t) in SERI.items():
         ar = seri_sa[k]
-        w(f"| {k}.x | {ad} | {t} | {ar[0]['no']} … {ar[-1]['no']} ({len(ar)}) | {sum(a['sa'] for a in ar)} sa |")
+        w(f"| {k}.x | {ad} | {bol} | {t} | {ar[0]['no']} … {ar[-1]['no']} ({len(ar)}) | {sum(a['sa'] for a in ar)} sa |")
     w("")
-    w("Fark notu: 0.4.x ve 0.5.x 08'den biraz büyük (RELIABILITY turu, T-16, 0.5.7 GP kanıtı ayrı satır). 0.9.x 08'den büyük: Y5 (129 araç belge), Y7, T-07/T-08 ve tam tur 0.9'a yerleşti (08'de 1.0 cila şeridindeydi). 1.0.x bu yüzden küçük.")
+    w("Fark notu: 0.4.x ve 0.5.x 08'den biraz büyük (RELIABILITY turu, T-16, 0.5.7 oyun doğrulama koşusu ayrı satır). 0.9.x 08'den büyük: Y5 (129 araç belge), Y7, T-07/T-08 ve tam tur 0.9'a yerleşti (08'de 1.0 cila şeridindeydi). 1.0.x bu yüzden küçük.")
     w("")
     w("## 2. Kritik yol şeması")
     w("")
     w("```mermaid")
     w("flowchart LR")
-    w("  subgraph S04[\"0.4.x RC güven\"]")
+    w("  subgraph S04[\"0.4.x Kararlılık + veri + UI metin\"]")
     w("    a041[0.4.1 taşma] --> a042[0.4.2 datatable_import] --> a043[0.4.3 kararlılık] --> a044[0.4.4 test borcu]")
     w("  end")
-    w("  subgraph S05[\"0.5.x GP YZ-0\"]")
-    w("    a050[0.5.0 G0] --> a051[0.5.1 nav+scope] --> a053[0.5.3 gdt+FPS] --> a054[0.5.4 StateTree izi] --> a055[0.5.5 soak] --> a056[0.5.6 scenario]")
+    w("  subgraph S05[\"0.5.x YZ test ve ölçüm\"]")
+    w("    a050[0.5.0 automation+metrics] --> a051[0.5.1 nav+scope] --> a053[0.5.3 gdt+FPS] --> a054[0.5.4 StateTree izi] --> a055[0.5.5 soak] --> a056[0.5.6 scenario]")
     w("    a050 --> a052[0.5.2 vislog] --> a053")
-    w("    a056 -.->|GP YZ-0 ilk hafta| a057[0.5.7 GP kanıt]")
+    w("    a056 -.->|paralel| a057[0.5.7 oyun doğrulaması]")
     w("  end")
-    w("  subgraph S06[\"0.6.x Demo\"]")
+    w("  subgraph S06[\"0.6.x Paketleme, senaryo, bot\"]")
     w("    a060[0.6.0 paket] --> a061[0.6.1 senaryo+bot] --> a062[0.6.2 beyan] --> a063[0.6.3 ağ+loc] --> a064[0.6.4 veri] --> a065[0.6.5 tur+stil] --> a066[0.6.6 yerleşim+CI]")
     w("  end")
-    w("  subgraph S07[\"0.7.x ARPG sanat\"]")
+    w("  subgraph S07[\"0.7.x İskelet, anim, malzeme\"]")
     w("    a070[0.7.0 iskelet] --> a071[0.7.1 anim] --> a072[0.7.2 retarget] --> a073[0.7.3 montage] --> a074[0.7.4 MI] --> a075[0.7.5 pano]")
     w("  end")
-    w("  subgraph S08[\"0.8.x ARPG yazarlık\"]")
+    w("  subgraph S08[\"0.8.x Oynanış yazarlığı\"]")
     w("    a080[0.8.0-0.8.2 GAS] --> a083[0.8.3-0.8.4 StateTree] --> a085[0.8.5 BT] --> a086[0.8.6-0.8.7 AnimBP]")
     w("  end")
-    w("  subgraph S09[\"0.9.x prodüksiyon + dondurma adayı\"]")
+    w("  subgraph S09[\"0.9.x Seviye, VFX, Sequencer + headless\"]")
     w("    a090[0.9.0-0.9.1 oda] --> a092[0.9.2 smoke+fizik] --> a093[0.9.3-0.9.4 Niagara] --> a095[0.9.5-0.9.8 headless] --> a099[0.9.9-0.9.10 Sequencer] --> a0911[0.9.11-0.9.16 cila]")
     w("  end")
-    w("  subgraph S10[\"1.0.x\"]")
+    w("  subgraph S10[\"1.0.x Dondurma + cila\"]")
     w("    r1[rc.1-rc.2 örnek] --> r3[rc.3 çoklu UE] --> r4[rc.4 kanıt] --> v100[1.0.0] -.-> YAYIN[YAYIN İŞİ]")
     w("  end")
     w("  a044 --> a050")
@@ -502,35 +525,35 @@ def md():
     w("  a075 --> a080")
     w("  a086 --> a090")
     w("  a0911 --> r1")
-    w("  a062 ==>|RC Next Fest build| RCD((RC Demo))")
-    w("  a056 ==>|YZ-0 başlar| GPY((GP YZ-0))")
-    w("  a083 ==>|F1 prototip| ARP((ARPG F1))")
+    w("  a062 ==>|demo build hattı| M1((Demo build araçları))")
+    w("  a056 ==>|test paketi kabul| M2((YZ test paketi))")
+    w("  a083 ==>|prototip araçları| M3((Oynanış prototipi))")
     w("```")
     w("")
-    w("ASCII (`─►` kritik yol, `═►` oyun işini açar, `└►` yan dal):")
+    w("ASCII (`─►` kritik yol, `═►` kilometre taşı, `└►` yan dal):")
     w("")
     w("```")
-    w("0.4.1 ─► 0.4.2 ─► 0.4.3 ─► 0.4.4 ─► 0.5.0 ─► 0.5.1 ─► 0.5.3 ─► 0.5.4 ─► 0.5.5 ─► 0.5.6 ─┬► 0.6.0 ─► 0.6.1 ─► 0.6.2 ═► RC Demo build")
-    w("RC LOC-4/5  RC IS-10                  GP G0    G1       G1       G2       G3      │")
-    w("                                      └► 0.5.2 vislog (G1, 0.5.3'ten önce)          ├═► GP YZ-0 başlar")
-    w("                                                                                    └► 0.5.7 GP kanıt (YZ-0 ilk hafta, paralel)")
-    w("0.6.2 ─► 0.6.3 ─► 0.6.4 ─► 0.6.5 ─► 0.6.6 ─► 0.7.0 … 0.7.5 ─► 0.8.0 … 0.8.4 ═► ARPG F1 prototip")
+    w("0.4.1 ─► 0.4.2 ─► 0.4.3 ─► 0.4.4 ─► 0.5.0 ─► 0.5.1 ─► 0.5.3 ─► 0.5.4 ─► 0.5.5 ─► 0.5.6 ─┬► 0.6.0 ─► 0.6.1 ─► 0.6.2 ═► demo build hattı")
+    w("UI metin    veri                      auto+    nav+     gdt+     ST izi   soak    │")
+    w("                                      └► 0.5.2 vislog (0.5.3'ten önce)              ├═► YZ test paketi kabul")
+    w("                                                                                    └► 0.5.7 oyun doğrulaması (paralel)")
+    w("0.6.2 ─► 0.6.3 ─► 0.6.4 ─► 0.6.5 ─► 0.6.6 ─► 0.7.0 … 0.7.5 ─► 0.8.0 … 0.8.4 ═► oynanış prototipi araçları")
     w("                                                                         └► 0.8.5 ─► 0.8.6 ─► 0.8.7")
     w("0.8.7 ─► 0.9.0 … 0.9.10 (oda, smoke, Niagara, headless, Sequencer) ─► 0.9.11 … 0.9.16 (cila) ─► 1.0.0-rc.1 … rc.4 ─► 1.0.0 ═► YAYIN İŞİ")
     w("```")
     w("")
-    w("Paralel yapılabilenler (kritik yolda değil): 0.5.2 (0.5.0'dan sonra, 0.5.3'ten önce), 0.5.7 (GP'ye bağlı), 0.6.3–0.6.5 (RC Demo build'i beklemez), 0.9.13 (UE 5.7 derleme; 0.9.12'den bağımsız başlatılabilir).")
+    w("Paralel yapılabilenler (kritik yolda değil): 0.5.2 (0.5.0'dan sonra, 0.5.3'ten önce), 0.5.7 (oyun doğrulaması, dışa bağlı), 0.6.3–0.6.5 (demo build hattını beklemez), 0.9.13 (UE 5.7 derleme; 0.9.12'den bağımsız başlatılabilir).")
     w("")
     w("### 2.1 Kilometre taşları")
     w("")
-    w("| Nerede | Kilometre taşı |")
-    w("|---|---|")
-    for n, k in KILOMETRE:
-        w(f"| {n} | {k} |")
+    w("| Nerede | Kilometre taşı (yetenek) | İlk kullanan oyun / açtığı oyun işi (iç) |")
+    w("|---|---|---|")
+    for n, k, o in KILOMETRE:
+        w(f"| {n} | {k} | {o} |")
     w("")
     w("## 3. Sıralı tablo")
     w("")
-    w("| # | Ara sürüm | Hedef | EW / T / Y | Açtığı oyun işi | Bağımlılık | TAHMİN | Açık soru |")
+    w("| # | Ara sürüm | Hedef | EW / T / Y | İlk kullanan oyun / açtığı oyun işi (iç) | Bağımlılık | TAHMİN | Açık soru |")
     w("|---|---|---|---|---|---|---|---|")
     for i, a in enumerate(A, 1):
         ids = ", ".join(a["ew"][:4] + (["…"] if len(a["ew"]) > 4 else []) + a["ty"])
@@ -542,20 +565,22 @@ def md():
     for a in A:
         if a["seri"] != son:
             son = a["seri"]
-            ad, t = SERI[son]
-            w(f"### {son}.x — {ad.split(' ', 2)[2]} ({ad.split(' ', 2)[0]} {ad.split(' ', 2)[1]}; 08 TAHMİN {t})")
+            ad, bol, t = SERI[son]
+            w(f"### {son}.x — {ad} ({bol}; 08 TAHMİN {t})")
             w("")
         w(f"#### {a['no']}")
         w("")
         w(f"- **Hedef:** {a['hedef']}")
         w(f"- **Araç / düzeltme:** {a['arac']}")
         w(f"- **İhtiyaç / borç / cila:** {', '.join(a['ew'] + a['ty']) or '—'}")
-        w(f"- **Açtığı oyun işi:** {a['oyun']}")
-        w(f"- **Kabul ölçütü:** {a['kabul']}")
+        w(f"- **İlk kullanan oyun / açtığı oyun işi (iç):** {a['oyun']}")
+        w(f"- **Kabul ölçütü (genel test projesi):** {a['kabul']}")
+        if a["ic"]:
+            w(f"- **Oyun doğrulaması (iç):** {a['ic']}")
         w(f"- **Bağımlılık:** {a['bag']}")
         w(f"- **Efor TAHMİN:** {a['sa']} sa")
         if a["soru"]:
-            w(f"- **S2 cevabına bağlı:** {a['soru']}")
+            w(f"- **İlgili S2 sorusu:** {a['soru']}")
         w("")
     w("## 5. Cila şeridi → ara sürüm (ayrı şerit kalmadı)")
     w("")
@@ -601,17 +626,17 @@ def md():
     w("")
     w("## 7. Açık sorular → etkilediği ara sürüm")
     w("")
-    w("| Soru | Konu | Etkilediği ara sürüm | Yazılan seçenek |")
+    w("| Soru | Konu | Etkilediği ara sürüm | Yazılan seçenek / durum |")
     w("|---|---|---|---|")
     for q in SORU:
-        w(f"| {q[0]} | {q[1]} | {q[2]} | {q[3]} (öneri) |")
+        w(f"| {q[0]} | {q[1]} | {q[2]} | {q[3]} |")
     w("")
     w("Yeni karar sorusu: **S2-15** (SORULAR_2 sonunda) — ara sürüm numaralarının CHANGELOG/etiket karşılığı.")
     w("")
     w("## 8. İş yaparken kullanım")
     w("")
     w("1. Sıradaki ara sürümü §3'ten al. Bir kart = bir ara sürüm.")
-    w("2. Kart gövdesine §4'teki hedef, kabul ölçütü ve TAHMİN'i kopyala.")
+    w("2. Kart gövdesine §4'teki hedef, kabul ölçütü, oyun doğrulaması (iç) ve TAHMİN'i kopyala.")
     w("3. Kabul ölçütü + 09 §3.2 \"bitti\" tanımı karşılanınca kartı kapat.")
     w("4. Açık çıkarsa düzeltmeyi yeni ara sürüm numarasıyla sıraya ekle; mevcut ara sürümü büyütme.")
     w("5. Seri sonu (0.4.4, 0.5.6, 0.6.6, 0.7.5, 0.8.7, 0.9.16, 1.0.0) RELIABILITY turunu içerir.")
