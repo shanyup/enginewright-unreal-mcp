@@ -10,7 +10,7 @@ Okuma kuralları:
 - Cila şeridi (Y1–Y9) ayrı şerit değil: işleri ara sürümlerin içinde (§5 eşleme). Y10 YAYIN İŞİ yalnız kilometre taşı satırı.
 - Her ara sürüm 09 §3.2 "bitti" tanımına uyar (T1 test, T3 oyun doğrulaması, T4 RELIABILITY satırı); kabul ölçütü genel test projesi/örnek üzerinden yazılır, oyun kanıtı ayrı satırdır: **"Oyun doğrulaması (iç)"**.
 - **Genel MCP kuralı (Talha 18.11):** sürüm/ara sürüm başlığı, hedef, araç adı, kabul ölçütü ve şema etiketlerinde oyun adı geçmez. Oyun bağlantısı yalnız iç planlama alanlarında: **"İlk kullanan oyun / açtığı oyun işi (iç)"** ve **"Oyun doğrulaması (iç)"**. Denetim: `research/oyun_adi_denetim.py`.
-- Açık soru (S2-03, 04, 07…11, 13, 14; S2-05 ve S2-06 kapandı) etkilediği satırda **"S2-xx cevabına bağlı"**; satır önerilen seçenekle yazıldı. Karar verilmedi.
+- SORULAR_2'nin tamamı kararlı (Talha 18.11: S2-01…15, hepsi A; S2-05/S2-06 genel MCP kuralıyla). Satırlardaki "S2-xx cevabına bağlı" işaretleri kesin karar olarak okunur.
 - Seri sonu ara sürümü RELIABILITY turuyla kapanır; tur "Kept for" listesi bir sonraki serinin ilk ara sürümüne girer (09 §6).
 - Bir ara sürümde açık çıkarsa düzeltme yeni numara alır (ör. 0.4.4 sonrası bulunan açık → 0.4.5); kapsam büyütülmez.
 

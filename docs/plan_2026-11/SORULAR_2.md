@@ -107,3 +107,22 @@ Toplam: **14 soru** (S2-01 … S2-14).
 - C: Ara sürümler yalnız iç plan (etiket yok); dışarıda yalnız 0.5, 0.6 … 1.0.
 
 Talha 18.11: S2-05, S2-06 genel MCP kuralıyla kapandı.
+
+## Talha kararları — kalan 10 soru (18.11.2026)
+
+Hepsi **A** (önerilen seçenek). Belgeler zaten önerilen seçenekle yazılmıştı; "S2-xx cevabına bağlı" işaretleri artık kesin karar sayılır.
+
+| # | Karar |
+|---|---|
+| S2-03 | A — Oyun belgelerine "Enginewright ID" (EW-xxx) sütunu; ayrı oyun belge kartında (bu repo oyun reposuna yazmaz). |
+| S2-04 | A — Oyun belgelerindeki eski "araç yok" notları, ilgili oyunun sonraki belge kartında 07 §6'ya göre düzeltilir. |
+| S2-07 | A — Ara sürümlerle kapandı (10). |
+| S2-08 | A — Şimdi statik CI (envanter + kapsam betikleri); 1.0 öncesi elle `run_all.py` + RELIABILITY turu. GitHub'a şimdi bir şey eklenmez. |
+| S2-09 | A — UE 5.8 + 5.7; Mac/Linux 1.0 sonrası. |
+| S2-10 | A — 03_Yol_Haritasi'nın sahipsiz araçları "Sonrası" listesinde; bir oyun isterse sürüme alınır. |
+| S2-11 | A — 09 kuralları 0.4.1'den itibaren yeni araçlarda zorunlu; eski araçlar yalnız T-xx borç listesiyle. |
+| S2-13 | A — `scenario_place` 0.5.x sonunda. |
+| S2-14 | A — Oyun kanıt kayıtları `docs/oyun_kosulari/` (klasör ilk kanıtta açılır). |
+| S2-15 | A — Her ara sürüm yerel git etiketi + CHANGELOG başlığı; GitHub sürümü yalnız seri sonlarında; push kararı yayın işinde. |
+
+SORULAR_2'de açık soru kalmadı.
