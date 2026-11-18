@@ -85,3 +85,13 @@ Cevap biçimi: "S2-01: A" yeterli.
 ---
 
 Toplam: **14 soru** (S2-01 … S2-14).
+
+
+## Talha kararları (18.11.2026)
+
+| # | Karar |
+|---|---|
+| S2-01 | A — Sıra: 0.4.1 (RC) → 0.5 (GP YZ-0) → 0.6 (Demo) → 0.7–0.9 (ARPG). |
+| S2-02 | A — Araç Enginewright test projesinde kabul; GP kanıtı YZ-0'ın ilk haftasında. |
+| S2-12 | A — ARPG varsayımları onaylı: T1 UE 5.8, T3 4 akt, T4 şimdi ön-prodüksiyon (tam prodüksiyon RC demosundan sonra). |
+| Not | Talha: "İlerlemeyi tamamen ara versiyonlar hâlinde yaz; iş yaparken ona göre yapacağız." → 08 ara sürümlere bölünecek (S2-07 bu kapsamda). |
