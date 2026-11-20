@@ -5,7 +5,8 @@
 
 namespace EWLoc
 {
-	/** {name} style format arguments and <tag> rich text tags used by a string, sorted. */
+	/** {name} style format arguments (each once: "{0} {0}|plural(...)" uses one argument) and <tag> rich text tags
+	 *  (every occurrence) used by a string, sorted. */
 	inline TArray<FString> Tokens(const FString& S)
 	{
 		TArray<FString> Out;
@@ -19,7 +20,7 @@ namespace EWLoc
 			if (End == INDEX_NONE || End - i > 64) { continue; }
 			FString Tok = S.Mid(i, End - i + 1);
 			if (Open == TEXT('<')) { int32 Sp; if (Tok.FindChar(TEXT(' '), Sp)) { Tok = Tok.Left(Sp) + TEXT(">"); } } // <tag attr="x"> -> <tag>
-			Out.Add(Tok);
+			if (Open == TEXT('{')) { Out.AddUnique(Tok); } else { Out.Add(Tok); }
 			i = End;
 		}
 		Out.Sort();

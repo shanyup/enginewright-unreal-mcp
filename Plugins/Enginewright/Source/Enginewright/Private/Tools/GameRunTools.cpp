@@ -411,7 +411,7 @@ namespace
 		for (const FString& D : R.S.ShotDirs)
 		{
 			FString Filled, Err;
-			if (FillPlaceholders(D, Vals, Filled, Err)) { Dirs.Add(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), Filled)); }
+			if (FillPlaceholders(D, Vals, Filled, Err)) { Dirs.Add(FPaths::ConvertRelativePathToFull(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()), Filled)); }
 		}
 		if (R.S.Exe.IsEmpty()) { Dirs.Add(FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("Screenshots"))); }
 		return Dirs;
@@ -1179,7 +1179,7 @@ void RegisterGameRunTools(FEWRegistry& Reg)
 			}
 			if (!S.Exe.IsEmpty())
 			{
-				S.Exe = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), S.Exe);
+				S.Exe = FPaths::ConvertRelativePathToFull(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()), S.Exe);
 				if (!IFileManager::Get().FileExists(*S.Exe)) { Done(FEWResult::Error(TEXT("NOT_FOUND"), FString::Printf(TEXT("exe not found: %s"), *S.Exe))); return; }
 			}
 			else if (!S.ExeArgs.IsEmpty()) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), TEXT("exeArgs needs exe."))); return; }
@@ -1209,7 +1209,7 @@ void RegisterGameRunTools(FEWRegistry& Reg)
 			R->Id = FDateTime::Now().ToString(TEXT("%Y%m%d-%H%M%S"));
 			const FString OutArg = EW::Str(Args, TEXT("out"));
 			S.Out = OutArg.IsEmpty() ? FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("Enginewright/runs") / (TEXT("run-") + R->Id))
-				: FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), OutArg);
+				: FPaths::ConvertRelativePathToFull(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()), OutArg);
 			FPaths::NormalizeDirectoryName(S.Out);
 
 			// Check placeholders of every run before starting anything.

@@ -676,7 +676,12 @@ void RegisterDataTableTools(FEWRegistry& R)
 				A->SetBoolField(TEXT("save"), false);
 				const FEWResult W = Reg.Call(TEXT("datatable_set_rows"), A);
 				if (!W.bOk) { return W; }
-				Res.Warnings.Append(W.Warnings);
+				// Rows are sent whole, so their unchanged fields would each warn "did not change"; the import's own
+				// read-back below is the real check.
+				for (const FString& Warn : W.Warnings)
+				{
+					if (!Warn.EndsWith(TEXT(" did not change (same value, or the engine ignored it)."))) { Res.Warnings.Add(Warn); }
+				}
 			}
 			if (Removed.Num() > 0)
 			{

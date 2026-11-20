@@ -384,6 +384,8 @@ void RegisterAssetTools(FEWRegistry& R)
 				return Res;
 			}
 
+			// Taken before the rename: right after it the asset registry does not list the new path's referencers yet.
+			const TArray<FString> OldReferencers = Referencers(Old);
 			TArray<FAssetRenameData> Renames;
 			Renames.Emplace(Obj, FPackageName::GetLongPackagePath(Dest), FPackageName::GetShortName(Dest));
 			if (!Tools().RenameAssets(Renames))
@@ -410,7 +412,7 @@ void RegisterAssetTools(FEWRegistry& R)
 			TSharedRef<FJsonObject> Data = MakeShared<FJsonObject>();
 			Data->SetStringField(TEXT("path"), Dest);
 			Data->SetBoolField(TEXT("exists"), AssetExists(Dest));
-			Data->SetArrayField(TEXT("referencersUpdated"), ToJson(Referencers(Dest)));
+			Data->SetArrayField(TEXT("referencersUpdated"), ToJson(AssetExists(Old) ? TArray<FString>() : OldReferencers));
 			const TArray<TSharedPtr<FJsonValue>> Text = TextRefs(true);
 			Data->SetArrayField(TEXT("textReferences"), Text);
 			if (Text.Num()) { Res.Warnings.Add(FString::Printf(TEXT("%d text value(s) still name the old asset (see textReferences); update them by hand."), Text.Num())); }

@@ -296,11 +296,22 @@ void RegisterTextAuditTools(FEWRegistry& R)
 				}
 				const FString ShotDir = FPaths::ProjectSavedDir() / TEXT("Enginewright/Screenshots");
 				FString Failure;
+				// In the editor, game text is translated only through the game localization preview: changing the
+				// language alone leaves every game string in the source language (and the audit measured that).
+				FTextLocalizationManager& TLM = FTextLocalizationManager::Get();
+				const bool bPreviewWas = GIsEditor && TLM.IsGameLocalizationPreviewEnabled();
+				bool bPreviewTouched = false;
 				for (const FString& C : Cultures)
 				{
 					if (!I18N.SetCurrentLanguage(C)) { Failure = FString::Printf(TEXT("The engine refused language '%s'."), *C); break; }
 					FCultureReport Rep;
 					Rep.Culture = I18N.GetCurrentLanguage()->GetName();
+					if (GIsEditor)
+					{
+						TLM.EnableGameLocalizationPreview(Rep.Culture);
+						TLM.WaitForAsyncTasks();
+						bPreviewTouched = true;
+					}
 					Rep.bGameLocalization = GameCultures.Contains(Rep.Culture) || GameCultures.ContainsByPredicate([&](const FString& G) { return Rep.Culture.StartsWith(G + TEXT("-")) || G.StartsWith(Rep.Culture + TEXT("-")); });
 					if (!Rep.bGameLocalization) { Warnings.Add(FString::Printf(TEXT("No compiled game localization for '%s': its text stays in the source language, so the widths equal the source widths."), *Rep.Culture)); }
 
@@ -349,6 +360,28 @@ void RegisterTextAuditTools(FEWRegistry& R)
 					Reports.Add(MoveTemp(Rep));
 				}
 				if (I18N.GetCurrentLanguage()->GetName() != OrigLanguage) { I18N.SetCurrentLanguage(OrigLanguage); }
+				if (bPreviewTouched)
+				{
+					if (bPreviewWas)
+					{
+						// The engine does not tell which culture the preview showed; the configured one is the best guess.
+						const FString Prev = TLM.GetConfiguredGameLocalizationPreviewLanguage();
+						TLM.EnableGameLocalizationPreview(Prev);
+						Warnings.Add(FString::Printf(TEXT("The game localization preview was on before the audit; it was set back to the configured preview language '%s'."), *Prev));
+					}
+					else { TLM.DisableGameLocalizationPreview(); }
+					TLM.WaitForAsyncTasks();
+				}
+				// Safety net: a translated culture whose every measured text equals the first culture's was not applied.
+				for (int32 i = 1; i < Reports.Num(); ++i)
+				{
+					const FCultureReport& A = Reports[0];
+					const FCultureReport& B = Reports[i];
+					if (!B.bGameLocalization || B.Culture == A.Culture || B.Rows.Num() == 0 || B.Rows.Num() != A.Rows.Num()) { continue; }
+					bool bSame = true;
+					for (int32 k = 0; k < B.Rows.Num() && bSame; ++k) { bSame = A.Rows[k].Text == B.Rows[k].Text; }
+					if (bSame) { Warnings.Add(FString::Printf(TEXT("Every measured text in '%s' equals '%s': the translation was not applied or does not cover these texts."), *B.Culture, *A.Culture)); }
+				}
 				if (!Failure.IsEmpty()) { return Bad(TEXT("CAPTURE_FAILED"), Failure + TEXT(" The editor language was restored.")); }
 			}
 

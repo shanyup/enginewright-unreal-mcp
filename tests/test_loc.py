@@ -1,7 +1,7 @@
 """Localization tests: String Table assets (create, set, remove, read back), registry listing, source vs translation
 comparison, and switching the editor language. Writes only under /Game/_EWTest.
 """
-import os, pathlib, shutil, struct, sys, zlib
+import json, os, pathlib, shutil, struct, sys, zlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ewtest import PROJ, ROOT, call as c, check, delete_if_exists, done, ensure_stopped, rpc
 
@@ -163,6 +163,19 @@ r = c("stringtable_compare", {"sourceCsv": str(CSV), "po": str(PO), "namespace":
 check("namespace not found in the po -> compared across namespaces, with a warning", r["ok"] and r.get("warnings") and r["data"]["translationEntries"] == 7, r)
 r = c("stringtable_compare", {"sourceCsv": str(CSV), "po": str(PO), "namespace": "*"})
 check("namespace * = any namespace (first entry of a key wins)", r["ok"] and r["data"]["translationEntries"] == 7 and not r.get("warnings"), r)
+
+# one argument used twice (plural form) is one argument; CRLF in a CSV source is not a source change
+CSVP = LOC / "ST_EWPlural.csv"
+CSVP.write_bytes('Key,SourceString\r\nCount,"{0} {0}|plural(one=dish,other=dishes)"\r\nTwo,"Line one\r\nLine two"\r\n'.encode("utf-8"))
+POP = LOC / "Plural.po"
+POP.write_text('msgid ""\nmsgstr ""\n"Language: tr\\n"\n\n#. Key:\tCount\nmsgctxt "ST_EWPlural,Count"\nmsgid "{0} {0}|plural(one=dish,other=dishes)"\nmsgstr "{0} yemek"\n\n'
+               '#. Key:\tTwo\nmsgctxt "ST_EWPlural,Two"\nmsgid "Line one\\nLine two"\nmsgstr "Satır bir\\nSatır iki"\n', encoding="utf-8")
+r = c("stringtable_compare", {"sourceCsv": str(CSVP), "po": str(POP), "namespace": "ST_EWPlural"})
+d = r.get("data") or {}
+check("plural: {0} twice vs once is no format mismatch", r["ok"] and not d.get("formatMismatch"), d.get("formatMismatch"))
+check("CRLF source line vs LF po msgid: no sourceChanged", r["ok"] and not d.get("sourceChanged"), d.get("sourceChanged"))
+r = c("stringtable_compare", {"sourceCsv": "Saved/Enginewright/loc_test/ST_EWPlural.csv", "po": str(POP), "namespace": "ST_EWPlural"})
+check("project-relative file path resolves to a full path (no ../ in the result)", r["ok"] and "../" not in json.dumps(r["data"]), r.get("data", {}).get("source"))
 
 # slice H3: CSV source picks the CSV file name as the default namespace; a wrong namespace warns where the keys are
 CSVNS = LOC / "ST_EWNs.csv"

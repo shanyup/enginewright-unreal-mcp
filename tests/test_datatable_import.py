@@ -42,6 +42,8 @@ check("dryRun wrote nothing", rows() == before, rows())
 r = c("datatable_import", {"path": DT, "file": csv1})
 d = r.get("data") or {}
 check("apply: same counts, read back ok", r["ok"] and d["addedCount"] == 1 and d["changedCount"] == 1 and d.get("readBack") is True, r)
+check("apply: no 'did not change' warning for the fields a changed row kept",
+      not any("did not change" in w for w in r.get("warnings", [])), r.get("warnings"))
 after = rows()
 check("datatable_get shows what dryRun promised (Pear with a comma in the text, Apple 2.5)",
       set(after) == {"Apple", "Bread", "Pear"} and after["Apple"]["Weight"] == 2.5 and "Pear, green" in json.dumps(after["Pear"]["DisplayName"]), after)

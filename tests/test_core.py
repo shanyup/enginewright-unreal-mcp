@@ -77,6 +77,7 @@ check("rename dryRun: lists referencer + text reference, renames nothing", r["ok
       and c("asset_exists", {"path": T + "/BP_EWCopy"})["data"]["exists"], r)
 r = c("asset_rename", {"source": T + "/BP_EWCopy", "destination": T + "/BP_EWMoved"})
 check("rename reports text it could not fix", r["ok"] and any(h["value"] == "BP_EWCopy" for h in r["data"]["textReferences"]) and r.get("warnings"), r)
+check("rename: the referencer it fixed is listed", r["ok"] and T + "/DT_EW" in r["data"]["referencersUpdated"], r)
 check("rename: new exists, old gone", r["ok"] and r["data"]["exists"] and not c("asset_exists", {"path": T + "/BP_EWCopy"})["data"]["exists"], r)
 r = c("datatable_remove_rows", {"path": T + "/DT_EW", "rows": ["Bread"]})
 check("remove the text-reference row again", r["ok"], r)
