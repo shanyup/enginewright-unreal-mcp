@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Thanks for the request. Enginewright is an early preview with one maintainer, so requests are read in order and there is no promised date.
-        Tip: paste the prompt from [docs/REQUEST_WITH_AI.md](https://github.com/shanyup/enginewright/blob/main/docs/REQUEST_WITH_AI.md) into your own AI agent while it is connected to Enginewright. It checks the existing tools with `search` / `describe` first and fills in every field below.
+        Tip: paste the prompt from [docs/REQUEST_WITH_AI.md](https://github.com/shanyup/enginewright-unreal-mcp/blob/main/docs/REQUEST_WITH_AI.md) into your own AI agent while it is connected to Enginewright. It checks the existing tools with `search` / `describe` first and fills in every field below.
   - type: textarea
     id: story
     attributes:

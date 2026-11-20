@@ -165,11 +165,11 @@ Release notes: [docs/release-notes/v0.2.0.md](docs/release-notes/v0.2.0.md)
 - `doctor`.
 - Atomic `batch` with rollback.
 
-[Unreleased]: https://github.com/shanyup/enginewright/compare/v0.5.1...main
-[0.5.1]: https://github.com/shanyup/enginewright/compare/v0.5.0...v0.5.1
-[0.5.0]: https://github.com/shanyup/enginewright/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/shanyup/enginewright/compare/v0.3.1...v0.4.0
-[0.3.1]: https://github.com/shanyup/enginewright/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/shanyup/enginewright/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/shanyup/enginewright/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/shanyup/enginewright/releases/tag/v0.1.0
+[Unreleased]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.5.1...main
+[0.5.1]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/shanyup/enginewright-unreal-mcp/releases/tag/v0.1.0

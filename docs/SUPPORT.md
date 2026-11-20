@@ -48,4 +48,4 @@ This table lists which Unreal Engine features Enginewright can read and write; e
 | Sequencer | 5.8 | none | none | n/a | After 1.0.0, if needed. Epic's MCP toolsets cover parts of it (see [WITH_EPIC_MCP.md](WITH_EPIC_MCP.md)). |
 | Headless mode (editor closed) | 5.8 | none | none | n/a | Planned for 1.0.0. Only `ewtool.py build` works with the editor closed today. |
 
-Missing something? Use the [Tool request form](https://github.com/shanyup/enginewright/issues/new?template=feature_request.yml).
+Missing something? Use the [Tool request form](https://github.com/shanyup/enginewright-unreal-mcp/issues/new?template=feature_request.yml).

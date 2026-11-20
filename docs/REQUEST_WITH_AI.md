@@ -5,7 +5,7 @@ Enginewright grows from real needs. If your agent could not do an editor task wi
 1. Start your agent (Claude Code, Codex, Cursor, VS Code, Hermes, ...) with Enginewright connected and your project open in the editor.
 2. Paste the prompt below. Replace the line after `TASK:` with what you wanted to do.
 3. The agent searches the existing tools first. If one of them already does the job, it tells you how to call it, and there is nothing to request.
-4. Otherwise it writes a filled-in request. Open a [Tool request](https://github.com/shanyup/enginewright/issues/new?template=feature_request.yml) and copy each section into the field with the same name.
+4. Otherwise it writes a filled-in request. Open a [Tool request](https://github.com/shanyup/enginewright-unreal-mcp/issues/new?template=feature_request.yml) and copy each section into the field with the same name.
 5. Read it before you send it: remove project names or paths you do not want to make public. Never paste your token or client config files.
 
 ## The prompt
@@ -160,7 +160,7 @@ The agent called `doctor`, then `search` six times ("view model", "MVVM binding"
 
 </details>
 
-Every `###` heading matches a field of the [Tool request](https://github.com/shanyup/enginewright/issues/new?template=feature_request.yml) form, in the same order; the two dropdown answers are options of the form, and both JSON blocks parse. This is the kind of request we can turn into a tool: it names the task, shows that no existing tool covers it, and gives a test that can go into `tests/`.
+Every `###` heading matches a field of the [Tool request](https://github.com/shanyup/enginewright-unreal-mcp/issues/new?template=feature_request.yml) form, in the same order; the two dropdown answers are options of the form, and both JSON blocks parse. This is the kind of request we can turn into a tool: it names the task, shows that no existing tool covers it, and gives a test that can go into `tests/`.
 
 ## What happens next
 

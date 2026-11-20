@@ -4,9 +4,9 @@ Thanks for helping. Enginewright is an early preview kept by one maintainer, so 
 
 Ways to help:
 
-- **Request a tool** with the [Tool request form](https://github.com/shanyup/enginewright/issues/new?template=feature_request.yml). Your own AI agent can fill it in: see [docs/REQUEST_WITH_AI.md](docs/REQUEST_WITH_AI.md).
-- **Report a bug** with the [Bug report form](https://github.com/shanyup/enginewright/issues/new?template=bug_report.yml). Include the `doctor` output.
-- **Pick a [good first issue](https://github.com/shanyup/enginewright/labels/good%20first%20issue).** Each one names the files to touch, the test to extend and when it is done.
+- **Request a tool** with the [Tool request form](https://github.com/shanyup/enginewright-unreal-mcp/issues/new?template=feature_request.yml). Your own AI agent can fill it in: see [docs/REQUEST_WITH_AI.md](docs/REQUEST_WITH_AI.md).
+- **Report a bug** with the [Bug report form](https://github.com/shanyup/enginewright-unreal-mcp/issues/new?template=bug_report.yml). Include the `doctor` output.
+- **Pick a [good first issue](https://github.com/shanyup/enginewright-unreal-mcp/labels/good%20first%20issue).** Each one names the files to touch, the test to extend and when it is done.
 - **Send a pull request.** For a new tool, open a request first so we agree on the name and arguments before you write code.
 
 ## How a request gets onto the roadmap
@@ -16,7 +16,7 @@ Ways to help:
 3. It is built on the `dev` branch (or by your pull request, see below) and ships in that version; the release notes link the issue.
 4. Requests that do not fit stay open as ideas and can move later.
 
-Not sure yet, or just a question? Start in [GitHub Discussions](https://github.com/shanyup/enginewright/discussions) (Ideas or Q&A). A discussed idea can become a Tool request later.
+Not sure yet, or just a question? Start in [GitHub Discussions](https://github.com/shanyup/enginewright-unreal-mcp/discussions) (Ideas or Q&A). A discussed idea can become a Tool request later.
 
 ## Development setup
 
