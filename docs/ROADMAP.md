@@ -79,9 +79,10 @@ Tools added after 0.4.0, then used on a real game project; the problems found th
 - [Using Enginewright with Epic's MCP server](WITH_EPIC_MCP.md): both servers in one editor, one agent.
 - Documentation brought up to date.
 
-## v0.5.2 (next)
+## v0.5.2 (done)
 
-- A reliability round for the 0.5 series and the release.
+- Reliability round: all 132 tools called on a real game project, 996 checked calls (real, wrong input, during Play In Editor, Turkish text, long jobs). Two editor crashes and 12 other problems were found and fixed, each with a test; see [RELIABILITY_0.5.md](RELIABILITY_0.5.md).
+- The server checks number ranges from the tool schemas; missing folders and maps get their own error codes.
 
 ## Next series
 

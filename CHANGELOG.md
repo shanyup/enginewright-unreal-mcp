@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.5.2] - 2026-11-21
+### Added
+- [docs/RELIABILITY_0.5.md](docs/RELIABILITY_0.5.md): all 132 tools called on a real game project (996 checked calls), with the result for every tool.
+
+### Changed
+- `EnginewrightMVVM` carries the same version as Enginewright (0.5.2); its code did not change.
+
 ### Fixed
 - `widget_get` without `properties` on a panel widget crashed the editor (stack overflow): reading every property followed the widget's `Slot` back to the widget forever. Each subobject is now exported once; repeats and the owner itself are written as their path. The same reader serves `object_get`, `settings_get` and `savegame_get`.
 - `widget_set` (and every property write) accepted an enum number outside the enum, e.g. `Visibility: 12345`, and the next widget render hit an engine assert. Out-of-range numbers are refused with `INVALID_VALUE` and the valid names.

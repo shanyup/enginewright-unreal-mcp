@@ -22,6 +22,7 @@ An Unreal Engine editor plugin that runs a [Model Context Protocol](https://mode
 - Every new tool was used on a real game project before the release; the problems found there are fixed (`stringtable_compare`, `asset_rename`, `datatable_import`).
 - The server refuses requests from web pages of other sites (`Origin` check).
 - [Use it together with Epic's MCP server](docs/WITH_EPIC_MCP.md): both in one editor, one agent.
+- Reliability round: all 132 tools were called on a real game project (996 checked calls); two editor crashes and 12 other problems were fixed, see [docs/RELIABILITY_0.5.md](docs/RELIABILITY_0.5.md).
 
 Changes: [CHANGELOG.md](CHANGELOG.md).
 
@@ -204,7 +205,7 @@ This is a one-maintainer project in early preview: requests and pull requests ar
 | Version | Status | Main items |
 |---|---|---|
 | 0.4 | done | Localization loop, game testing tools, save games, scene tools, reliability sweep |
-| 0.5 | this release | Text overflow, DataTable import and level audits; fixes from a real game run; `Origin` check; setup with Epic's MCP server |
+| 0.5 | this release | Text overflow, DataTable import and level audits; fixes from a real game run; `Origin` check; setup with Epic's MCP server; reliability round on all 132 tools |
 | 0.6 | next | Art pipeline: LOD import, FBX options, material variants, art budget check, capture tools |
 | 0.7 - 0.11 | planned | Scene checks, demo builds and play testing, skeleton and animation, AI testing, gameplay authoring |
 | 1.0.0 | planned | Headless mode, error code reference, API freeze and stability promise, example project |
