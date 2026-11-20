@@ -47,11 +47,14 @@ png.unlink(missing_ok=True)
 
 # --- game_run keeps only the newest keepRuns run folders (default folder)
 FAKE = str(HERE / "fakegame.py")
+# The stand-in game runs windowless (pythonw.exe) so no console window opens and stays on screen.
+_PYW = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
+PY = _PYW if os.path.exists(_PYW) else sys.executable
 runs = PROJ / "Saved/Enginewright/runs"
 
 
 def fake_run(keep):
-    return c("game_run", {"exe": sys.executable, "exeArgs": [FAKE], "url": "/Game/Maps/Test?Mode=pass?Shots=0", "pass": ["PASSED"],
+    return c("game_run", {"exe": PY, "exeArgs": [FAKE], "url": "/Game/Maps/Test?Mode=pass?Shots=0", "pass": ["PASSED"],
                           "keepRuns": keep, "timeout": 60}, timeout=300)
 
 
@@ -70,7 +73,7 @@ check("keepRuns 0 keeps everything (the folder count grows by one)", r.get("ok")
 time.sleep(1.2)
 r = fake_run(2)
 check("N+1th run: oldest deleted, reply says so", r.get("ok") and len(run_dirs()) == 2 and any("Deleted" in w for w in r.get("warnings", [])), (run_dirs(), r.get("warnings")))
-r = c("game_run", {"exe": sys.executable, "exeArgs": [FAKE], "url": "/Game/Maps/Test?Mode=pass?Shots=0", "pass": ["PASSED"], "keepRuns": -1, "dryRun": True})
+r = c("game_run", {"exe": PY, "exeArgs": [FAKE], "url": "/Game/Maps/Test?Mode=pass?Shots=0", "pass": ["PASSED"], "keepRuns": -1, "dryRun": True})
 check("dryRun deletes nothing", r.get("ok") and len(run_dirs()) == 2, r)
 
 # --- actor_preview: Character with a camera boom is framed on the body
