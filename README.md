@@ -2,7 +2,7 @@
 
 **Build it. Play it. Prove it.**
 
-[![Version](https://img.shields.io/badge/version-0.5.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.2-blue)](CHANGELOG.md)
 [![Unreal Engine](https://img.shields.io/badge/Unreal%20Engine-5.8-black)](#supported-versions)
 [![Platform](https://img.shields.io/badge/platform-Win64-lightgrey)](#supported-versions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)

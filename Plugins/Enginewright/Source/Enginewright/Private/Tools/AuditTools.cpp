@@ -154,6 +154,7 @@ void RegisterAuditTools(FEWRegistry& R)
 			if (Text.TrimStartAndEnd().IsEmpty()) { return Bad(TEXT("INVALID_ARGUMENT"), TEXT("text is empty.")); }
 			FString Folder = EW::Str(Args, TEXT("folder"));
 			if (Folder.IsEmpty()) { Folder = TEXT("/Game"); }
+			if (!Registry().PathExists(FName(*Folder))) { return Bad(TEXT("FOLDER_NOT_FOUND"), FString::Printf(TEXT("The content folder '%s' does not exist."), *Folder)); }
 			const bool bExact = EW::Bool(Args, TEXT("exact"), false);
 			TArray<TSharedPtr<FJsonValue>> Hits;
 			const int32 Scanned = ScanContent(Folder, (int32)EW::Num(Args, TEXT("maxAssets"), 5000), [&](const FString& A, const FString& W, const FString& F, const FString& V)
@@ -194,6 +195,33 @@ void RegisterAuditTools(FEWRegistry& R)
 			if (Folder.IsEmpty()) { Folder = TEXT("/Game"); }
 			FString PatternText = EW::Str(Args, TEXT("fieldPattern"));
 			if (PatternText.IsEmpty()) { PatternText = TEXT("(?i).*ID$"); }
+			if (!Registry().PathExists(FName(*Folder))) { return Bad(TEXT("FOLDER_NOT_FOUND"), FString::Printf(TEXT("The content folder '%s' does not exist."), *Folder)); }
+			{
+				// FRegexPattern accepts a broken pattern and then matches nothing, so the audit looked clean (tur 0.5).
+				// It has no error API; check the structure here (escapes, character classes, balanced groups, a quantifier at the start).
+				FString Why;
+				int32 Depth = 0;
+				bool bClass = false;
+				for (int32 i = 0; i < PatternText.Len() && Why.IsEmpty(); ++i)
+				{
+					const TCHAR C = PatternText[i];
+					if (C == TEXT('\\')) { if (++i >= PatternText.Len()) { Why = TEXT("it ends with a lone backslash"); } continue; }
+					if (bClass) { if (C == TEXT(']')) { bClass = false; } continue; }
+					if (C == TEXT('[')) { bClass = true; }
+					else if (C == TEXT('(')) { ++Depth; }
+					else if (C == TEXT(')')) { if (--Depth < 0) { Why = TEXT("a ')' has no '('"); } }
+					else if ((C == TEXT('*') || C == TEXT('+') || C == TEXT('?')) && (i == 0 || PatternText[i - 1] == TEXT('(') || PatternText[i - 1] == TEXT('|')))
+					{
+						if (!(C == TEXT('?') && i > 0 && PatternText[i - 1] == TEXT('('))) { Why = FString::Printf(TEXT("'%c' has nothing to repeat"), C); }
+					}
+				}
+				if (Why.IsEmpty() && bClass) { Why = TEXT("a '[' is not closed"); }
+				if (Why.IsEmpty() && Depth > 0) { Why = TEXT("a '(' is not closed"); }
+				if (!Why.IsEmpty())
+				{
+					return Bad(TEXT("INVALID_ARGUMENT"), FString::Printf(TEXT("fieldPattern '%s' is not a valid regex: %s."), *PatternText, *Why));
+				}
+			}
 			const FRegexPattern Pattern(PatternText);
 
 			TMap<FString, TArray<TSharedPtr<FJsonValue>>> Uses;

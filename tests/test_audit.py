@@ -19,6 +19,13 @@ r = c("asset_search_text", {"text": "Aple", "folder": ROOT, "exact": True})
 check("asset_search_text finds a value in a DataTable row", r["ok"] and any(h["asset"].endswith("DT_EW") and h["field"] == "ProcessedItemID" for h in r["data"]["hits"]), r)
 r = c("asset_search_text", {"text": "  "})
 check("empty text -> INVALID_ARGUMENT", not r["ok"] and r["errorCode"] == "INVALID_ARGUMENT", r)
+# 0.5.2: a missing folder and a broken regex used to answer ok with nothing scanned.
+r = c("asset_search_text", {"text": "Aple", "folder": ROOT + "/NoSuchFolder"})
+check("asset_search_text missing folder -> FOLDER_NOT_FOUND", not r["ok"] and r["errorCode"] == "FOLDER_NOT_FOUND", r)
+r = c("id_audit", {"ids": ["A"], "folder": ROOT, "fieldPattern": "(["})
+check("id_audit broken fieldPattern -> INVALID_ARGUMENT", not r["ok"] and r["errorCode"] == "INVALID_ARGUMENT", r)
+r = c("id_audit", {"ids": ["A"], "folder": ROOT + "/NoSuchFolder"})
+check("id_audit missing folder -> FOLDER_NOT_FOUND", not r["ok"] and r["errorCode"] == "FOLDER_NOT_FOUND", r)
 
 r = c("id_audit", {"source": DT, "folder": ROOT})
 check("id_audit flags the undefined ID with a suggestion", not r["ok"] and r["errorCode"] == "UNDEFINED_IDS"

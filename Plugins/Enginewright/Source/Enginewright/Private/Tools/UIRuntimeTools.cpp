@@ -3,6 +3,7 @@
 // reflection, so projects without the CommonUI plugin still work.
 #include "EnginewrightTool.h"
 #include "EWCommon.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetTree.h"
@@ -837,7 +838,7 @@ void RegisterUIRuntimeTools(FEWRegistry& R)
 			"player":{"type":"integer","description":"Play In Editor player index (0 = first, default 0)."},
 			"key":{"type":"string","description":"Key name, e.g. Enter, SpaceBar, E, Escape, Gamepad_FaceButton_Bottom."},
 			"event":{"type":"string","enum":["tap","press","release"],"description":"tap (default): press, hold for seconds, release."},
-			"seconds":{"type":"number","description":"Hold time for tap, default 0.05. Max 5."},
+			"seconds":{"type":"number","minimum":0,"maximum":5,"description":"Hold time for tap, default 0.05. Max 5."},
 			"mouseButton":{"type":"string","enum":["Left","Right","Middle"],"description":"Send a mouse button instead of a key. Needs x and y."},
 			"x":{"type":"number","description":"Mouse x in viewport pixels (as in ui_state rect)."},
 			"y":{"type":"number","description":"Mouse y in viewport pixels."},
@@ -1142,6 +1143,10 @@ void RegisterUIRuntimeTools(FEWRegistry& R)
 			FString Folder = EW::Str(Args, TEXT("path"));
 			if (Folder.IsEmpty()) { Folder = TEXT("/Game"); }
 			if (!Folder.StartsWith(TEXT("/"))) { return Bad(TEXT("INVALID_ARGUMENT"), TEXT("path must be a content folder like /Game/UI.")); }
+			if (!FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry")).Get().PathExists(FName(*Folder)))
+			{
+				return Bad(TEXT("FOLDER_NOT_FOUND"), FString::Printf(TEXT("The content folder '%s' does not exist."), *Folder));
+			}
 			const int32 MaxAssets = FMath::Clamp((int32)EW::Num(Args, TEXT("maxAssets"), 500), 1, 5000);
 
 			bool bEnhanced = false, bInputData = false;

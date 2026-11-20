@@ -135,6 +135,16 @@ namespace EW
 				OutError = FString::Printf(TEXT("%s is an enum %s; send its name as a string."), *Where, *Enum->GetName());
 				return nullptr;
 			}
+			// An out-of-range number was stored as is, and the engine later hit check(false) on it (widget Visibility).
+			const double Num = V->AsNumber();
+			if (Num != FMath::FloorToDouble(Num) || !Enum->IsValidEnumValue(static_cast<int64>(Num)) || Num == static_cast<double>(Enum->GetMaxEnumValue()))
+			{
+				TArray<FString> Names;
+				for (int32 i = 0; i < Enum->NumEnums() - 1; ++i) { Names.Add(Enum->GetAuthoredNameStringByIndex(i)); }
+				OutError = FString::Printf(TEXT("%s: %s is not a value of %s. Send one of its names."), *Where, *V->AsString(), *Enum->GetName());
+				OutSuggest = Names;
+				return nullptr;
+			}
 			return V;
 		}
 		if (CastField<FNumericProperty>(P))
@@ -185,15 +195,38 @@ namespace EW
 		return UEditorLoadingAndSavingUtils::SavePackages({ Package }, false);
 	}
 
+	TSharedPtr<FJsonValue> PropertyToJson(FProperty* P, const void* ValuePtr, const UObject* Self)
+	{
+		// The engine converter exports instanced subobjects (e.g. a widget's Slot) by value with no cycle guard when it is
+		// called per property, and Slot -> Content -> Slot recursed until the stack overflowed. Each object is exported by
+		// value at most once; any later reference to it (or to Self) is written as its path.
+		TSet<const UObject*> Seen;
+		if (Self) { Seen.Add(Self); }
+		const FJsonObjectConverter::CustomExportCallback Cb = FJsonObjectConverter::CustomExportCallback::CreateLambda(
+			[&Seen](FProperty* Prop, const void* Value) -> TSharedPtr<FJsonValue>
+			{
+				const FObjectProperty* OP = CastField<FObjectProperty>(Prop);
+				if (!OP) { return nullptr; }
+				const UObject* O = OP->GetObjectPropertyValue(Value);
+				if (!O) { return nullptr; }
+				bool bAlready = false;
+				Seen.Add(O, &bAlready);
+				if (!bAlready) { return TSharedPtr<FJsonValue>(); }
+				return MakeShared<FJsonValueString>(O->GetPathName());
+			});
+		return FJsonObjectConverter::UPropertyToJsonValue(P, ValuePtr, 0, 0, &Cb);
+	}
+
 	FEWResult ReadValues(const UStruct* Struct, const void* Container, const TArray<FString>& Names, TSharedPtr<FJsonObject>& OutValues)
 	{
 		OutValues = MakeShared<FJsonObject>();
+		const UObject* Self = Struct->IsA<UClass>() ? static_cast<const UObject*>(Container) : nullptr;
 		if (Names.Num() == 0)
 		{
 			for (TFieldIterator<FProperty> It(Struct); It; ++It)
 			{
 				if (Struct->IsA<UClass>() && !It->HasAnyPropertyFlags(CPF_Edit | CPF_BlueprintVisible | CPF_Config)) { continue; }
-				OutValues->SetField(Struct->GetAuthoredNameForField(*It), FJsonObjectConverter::UPropertyToJsonValue(*It, It->ContainerPtrToValuePtr<void>(Container)));
+				OutValues->SetField(Struct->GetAuthoredNameForField(*It), PropertyToJson(*It, It->ContainerPtrToValuePtr<void>(Container), Self));
 			}
 			return FEWResult::Ok();
 		}
@@ -205,7 +238,7 @@ namespace EW
 				return FEWResult::Error(TEXT("UNKNOWN_PROPERTY"), FString::Printf(TEXT("%s has no property '%s'."), *Struct->GetName(), *Name),
 					Suggest(Name, PropertyNames(Struct)));
 			}
-			OutValues->SetField(Struct->GetAuthoredNameForField(P), FJsonObjectConverter::UPropertyToJsonValue(P, P->ContainerPtrToValuePtr<void>(Container)));
+			OutValues->SetField(Struct->GetAuthoredNameForField(P), PropertyToJson(P, P->ContainerPtrToValuePtr<void>(Container), Self));
 		}
 		return FEWResult::Ok();
 	}
@@ -249,7 +282,7 @@ namespace EW
 		TArray<FString> Before;
 		for (const auto& Step : Plan)
 		{
-			Before.Add(ValueToText(FJsonObjectConverter::UPropertyToJsonValue(Step.Key, Step.Key->ContainerPtrToValuePtr<void>(Container))));
+			Before.Add(ValueToText(PropertyToJson(Step.Key, Step.Key->ContainerPtrToValuePtr<void>(Container), Owner)));
 		}
 		for (int32 i = 0; i < Plan.Num(); ++i)
 		{
@@ -278,7 +311,7 @@ namespace EW
 		for (int32 i = 0; i < Plan.Num(); ++i)
 		{
 			FProperty* P = Plan[i].Key;
-			const TSharedPtr<FJsonValue> After = FJsonObjectConverter::UPropertyToJsonValue(P, P->ContainerPtrToValuePtr<void>(Container));
+			const TSharedPtr<FJsonValue> After = PropertyToJson(P, P->ContainerPtrToValuePtr<void>(Container), Owner);
 			const FString AfterText = ValueToText(After);
 			TSharedRef<FJsonObject> C = MakeShared<FJsonObject>();
 			TSharedPtr<FJsonObject> B = ParseObject(Before[i]);

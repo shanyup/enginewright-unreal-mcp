@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-21
+### Fixed
+- `widget_get` without `properties` on a panel widget crashed the editor (stack overflow): reading every property followed the widget's `Slot` back to the widget forever. Each subobject is now exported once; repeats and the owner itself are written as their path. The same reader serves `object_get`, `settings_get` and `savegame_get`.
+- `widget_set` (and every property write) accepted an enum number outside the enum, e.g. `Visibility: 12345`, and the next widget render hit an engine assert. Out-of-range numbers are refused with `INVALID_VALUE` and the valid names.
+- `log_read` with `minVerbosity` also returned empty `Log` lines (console colour changes); these are no longer stored.
+- Number arguments are checked against the schema `minimum` / `maximum` (e.g. negative `maxWidth` in `editor_capture`, negative `seconds` in `perf_capture`, `top: 0` in `perf_gpu_profile`, holds above the limit in `ui_key` and `pie_input`).
+- `asset_search_text`, `id_audit` and `ui_input_audit` answer `FOLDER_NOT_FOUND` for a missing content folder instead of an empty result.
+- `id_audit` refuses a broken `fieldPattern` regex with `INVALID_ARGUMENT` instead of matching nothing.
+- `mrq_render` answers `MAP_NOT_FOUND` for a map that does not exist instead of starting a render that cannot load it.
+
 ## [0.5.1] - 2026-11-20
 ### Security
 - The HTTP server refuses requests whose `Origin` header names another web site (403, before the token check), so a web page open in a browser cannot reach the editor. Requests without `Origin` (MCP clients, scripts) and from `localhost`, `127.0.0.1` or `[::1]` pass. Trusted local web tools can be listed in the new `AllowedOrigins` setting.

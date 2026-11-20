@@ -12,6 +12,9 @@ namespace EW
 	FProperty* FindPropertyLoose(const UStruct* Struct, const FString& Key);
 	TArray<FString> PropertyNames(const UStruct* Struct);
 
+	/** One property to JSON. Each subobject is exported by value once; repeats and Self become paths (no cycles). */
+	TSharedPtr<FJsonValue> PropertyToJson(FProperty* P, const void* ValuePtr, const UObject* Self = nullptr);
+
 	/** Reads properties of a struct instance (all editable ones when Names is empty). Fails on unknown names. */
 	FEWResult ReadValues(const UStruct* Struct, const void* Container, const TArray<FString>& Names, TSharedPtr<FJsonObject>& OutValues);
 

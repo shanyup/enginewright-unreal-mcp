@@ -154,6 +154,14 @@ void RegisterCinematicTools(FEWRegistry& R)
 			if (!Q) { Done(FEWResult::Error(TEXT("NO_MRQ"), TEXT("Movie Render Queue subsystem missing; enable the MovieRenderPipeline plugin."))); return; }
 			if (Q->IsRendering() || GRender.bActive) { Done(FEWResult::Error(TEXT("BUSY"), TEXT("A render is already running; see mrq_status."))); return; }
 
+			// A given map that does not exist used to start a render that could never load it (tur 0.5). Checked before the
+			// sequence so the reply names the first problem; the open editor level (default) may be unsaved, so it is not checked.
+			const FString GivenMap = EW::Str(Args, TEXT("map"));
+			if (!GivenMap.IsEmpty() && !FPackageName::DoesPackageExist(FPackageName::ObjectPathToPackageName(GivenMap)))
+			{
+				Done(FEWResult::Error(TEXT("MAP_NOT_FOUND"), FString::Printf(TEXT("No map '%s'. Give a package path like /Game/Maps/MyMap."), *GivenMap))); return;
+			}
+
 			FString Err;
 			const FString SeqPath = EW::Str(Args, TEXT("sequence"));
 			ULevelSequence* Seq = EW::LoadAs<ULevelSequence>(SeqPath, Err);
