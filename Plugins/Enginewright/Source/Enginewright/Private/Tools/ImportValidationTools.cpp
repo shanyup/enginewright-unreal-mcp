@@ -226,6 +226,11 @@ void RegisterImportTools(FEWRegistry& R)
 			Data->SetArrayField(TEXT("results"), Results);
 			FEWResult Res = Failed ? Bad(TEXT("IMPORT_FAILED"), FString::Printf(TEXT("%d of %d file(s) did not import."), Failed, Files.Num())) : FEWResult::Ok();
 			Res.Data = Data;
+			for (const FString& F : Files)
+			{
+				const FString NonAscii = EW::NonAsciiNameWarning(FPaths::GetBaseFilename(F));
+				if (!NonAscii.IsEmpty()) { Res.Warnings.Add(NonAscii); }
+			}
 			return Res;
 		}, /*bTransactional*/ false);
 }

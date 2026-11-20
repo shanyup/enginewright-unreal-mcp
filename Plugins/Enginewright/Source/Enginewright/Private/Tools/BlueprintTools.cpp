@@ -384,7 +384,10 @@ void RegisterBlueprintTools(FEWRegistry& R)
 			Data->SetStringField(TEXT("path"), BP->GetPathName());
 			Data->SetStringField(TEXT("class"), BP->GeneratedClass ? BP->GeneratedClass->GetPathName() : FString());
 			Data->SetStringField(TEXT("parent"), Parent->GetPathName());
-			return Finish(BP, FEWResult::Ok(Data));
+			FEWResult Made = Finish(BP, FEWResult::Ok(Data));
+			const FString NonAscii = EW::NonAsciiNameWarning(Name);
+			if (!NonAscii.IsEmpty()) { Made.Warnings.Add(NonAscii); }
+			return Made;
 		}, /*bTransactional*/ false);
 
 	R.Register(TEXT("blueprint_info"),

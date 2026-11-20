@@ -4,6 +4,9 @@
 #include "EWProps.h"
 
 #include "Camera/CameraComponent.h"
+#include "Components/DrawFrustumComponent.h"
+#include "Components/MeshComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
@@ -47,7 +50,22 @@ namespace
 		return true;
 	}
 
-	/** Visible bounds of the given actors (editor-only parts left out). */
+	/**
+	 * Parts of a camera rig that only help the editor: the camera's proxy mesh and frustum (visualization components) and any
+	 * non-mesh drawing component hung under a camera or a spring arm. Meshes under a camera (first-person arms) stay: they are the body.
+	 */
+	bool IsCameraRigPart(const UPrimitiveComponent* C)
+	{
+		if (C->IsVisualizationComponent() || C->IsA<UDrawFrustumComponent>()) { return true; }
+		if (C->IsA<UMeshComponent>()) { return false; }
+		for (const USceneComponent* P = C->GetAttachParent(); P; P = P->GetAttachParent())
+		{
+			if (P->IsA<USpringArmComponent>() || P->IsA<UCameraComponent>()) { return true; }
+		}
+		return false;
+	}
+
+	/** Visible bounds of the given actors (editor-only parts and camera rigs left out). */
 	FBox VisibleBounds(const TArray<AActor*>& Actors)
 	{
 		FBox Box(ForceInit);
@@ -60,6 +78,7 @@ namespace
 			{
 				if (!C || !C->IsRegistered() || C->IsEditorOnly() || !C->IsVisible() || C->bHiddenInGame) { continue; }
 				if (C->Bounds.SphereRadius <= 0) { continue; }
+				if (IsCameraRigPart(C)) { continue; } // camera boom, camera proxy and frustum are not part of the body
 				Box += C->Bounds.GetBox();
 			}
 		}

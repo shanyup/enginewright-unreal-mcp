@@ -30,3 +30,6 @@ dist/
 .DS_Store
 Thumbs.db
 
+
+# Ic belgeler (ozel ayri depo: shanyup/enginewright-ic)
+docs/ic/

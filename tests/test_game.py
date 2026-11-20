@@ -12,7 +12,9 @@ from ewtest import PROJ, call as c, check, done, ensure_stopped, rpc
 
 HERE = pathlib.Path(__file__).resolve().parent
 FAKE = str(HERE / "fakegame.py")
-PY = sys.executable
+# The stand-in game runs windowless (pythonw.exe) so no console window opens and stays on screen.
+_PYW = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
+PY = _PYW if os.path.exists(_PYW) else sys.executable
 TMP = pathlib.Path(tempfile.mkdtemp(prefix="ew_game_test_"))
 ensure_stopped()
 

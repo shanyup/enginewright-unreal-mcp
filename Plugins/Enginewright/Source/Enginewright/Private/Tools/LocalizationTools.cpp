@@ -262,7 +262,7 @@ namespace
 	/** Absolute path of a file argument; relative paths start at the project folder. */
 	FString ResolveFile(const FString& P)
 	{
-		return FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), P);
+		return FPaths::ConvertRelativePathToFull(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()), P);
 	}
 }
 
@@ -592,7 +592,12 @@ void RegisterLocalizationTools(FEWRegistry& R)
 				if (TV.TrimStartAndEnd().IsEmpty() && !V.TrimStartAndEnd().IsEmpty()) { Add(Empty, NEmpty, Entry(K, V)); continue; }
 				const bool bIgnored = IgnoreSame.ContainsByPredicate([&K](const FString& W) { return K.MatchesWildcard(W); });
 				if (TV == V && !bIgnored && V.Len() > 1 && !V.IsNumeric()) { Add(Same, NSame, Entry(K, V)); }
-				if ((TE->bHasPoSource && TE->PoSource != V) || (TE->bHasHash && TE->Hash != FTextLocalizationResource::HashString(V)))
+				// Line endings do not count: a CSV source has \r\n where the po file has \n.
+				const FString VLf = V.Replace(TEXT("\r\n"), TEXT("\n"));
+				const bool bPoChanged = TE->bHasPoSource && TE->PoSource.Replace(TEXT("\r\n"), TEXT("\n")) != VLf;
+				const bool bHashChanged = TE->bHasHash && TE->Hash != FTextLocalizationResource::HashString(V) &&
+					TE->Hash != FTextLocalizationResource::HashString(VLf);
+				if (bPoChanged || bHashChanged)
 				{
 					TSharedRef<FJsonObject> J = Entry(K, V, TV, TEXT("translation"));
 					if (TE->bHasPoSource) { J->SetStringField(TEXT("translatedFrom"), TE->PoSource); }
