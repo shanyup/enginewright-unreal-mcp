@@ -44,11 +44,11 @@ Fixes from using v0.3 on a real game project, and the contribution setup:
 
 ## Version plan
 
-A new feature raises the second number (0.x.0); a fix only raises the third (0.x.y). The 0.x releases grow with the games that use Enginewright; 1.0.0 is the launch update.
+A new feature raises the second number (0.x.0); a fix only raises the third (0.x.y). The 0.x releases grow with the games that use Enginewright; 1.0.0 is the launch update. Every release is used on a real game project before it is tagged.
 
-## v0.4.0 (done, current release)
+## v0.4.0 (done)
 
-Requests from localizing and play-testing a real game (RagnaCook), then a reliability sweep that ran every tool on it.
+Requests from localizing and play-testing a real game in development, then a reliability sweep that ran every tool on it.
 
 - `stringtable_compare` reads a `.po` or `.locres` translation and a CSV source, not only two String Tables; it also reports translations made for an older source text and fuzzy entries.
 - `loc_gather` / `loc_gather_status`: gather, export, import, compile and check of a localization target in one call; the commandlet no longer starts an MCP server, so it works while the editor is open; the verdict uses both exit codes.
@@ -63,38 +63,41 @@ Requests from localizing and play-testing a real game (RagnaCook), then a reliab
 - Game test tools (ER-21..24). `ui_key`: a key or mouse button through Slate to the focused widget (NativeOnKeyDown, "press any key" panels), with an optional `focus` that moves user focus first and reports what had focus before and after. `pie_walk_to`: walks the pawn to a position with movement input, navmesh path when there is one, `STUCK` / `TIMEOUT` with the last position. `ui_state` lists only what the player can use (visible, top page of its stack, page activated) and counts the rest; `includeHidden` shows it with `layer`, `top` and `hiddenReason`; `ui_click` ignores closed and covered pages, and `AMBIGUOUS` names page and layer of each candidate. `savegame_get` / `savegame_set`: read and write a SaveGame slot by reflection; a slot with a game footer or checksum needs the game's own save function (`saveFunction`).
 - Scene dressing tools (ER-15, ER-17). `scene_dress`: ring, ellipse, line, grid or scatter of meshes around an actor or point, one undo step, seed, rotation and scale jitter, ground snap, overlap and avoid checks, instanced or separate actors, DataTable export (relative to the target, same row shape as a game's dressing table). `actor_preview`: build an actor class like the game does (construction, BeginPlay, a few ticks) in an isolated preview world or temporarily in the open level, photograph it from a framed or given camera, clean up.
 - CommonUI menu and play-through tools (ER-25..27). `ui_state` buttons carry `text` (every text inside the button, glyphs included) and `tooltip`; `label` is the first text with a letter or digit, and `ui_click` finds a button by any of them. `pie_travel` travels a running session to another map with URL options (`?game=...?listen`), checks the map and the options, and waits for the new map and the pawns. `input_map_list` lists the bound keys per action and device, from an asset or live from the player; `ui_prompts` compares the hints on screen (CommonUI action widgets and key-like texts) with those bindings and answers OK / MISMATCH / PROMPT_NOT_SHOWN / ACTION_NOT_BOUND per `check` entry.
-- Reliability sweep: every tool called on the game project (330 calls), 11 fixes; see [RELIABILITY_0.4.md](RELIABILITY_0.4.md).
+- Reliability sweep: every tool called on a real game project (330 calls), 11 fixes; see [RELIABILITY_0.4.md](RELIABILITY_0.4.md).
 
-## v0.4.1 (next): art import pipeline
+## v0.5.0 (done)
 
-- FBX import with LODs, collision (UCX), pivot and scale checks.
-- Skeleton bind (KayKit Rig_Medium is RagnaCook's base skeleton), IK retarget (for example UE Mannequin clips onto it), sockets, Physics Asset creation.
-- Modular character preview.
-- Master material template (one parameterised master for a hand-painted style) and texture import settings (sRGB, mask, compression).
-- Animation import onto an existing skeleton, Anim Montage and BlendSpace creation, anim notifies.
-- Art budget check (triangles and texture size against the game's art direction).
-- `asset_find` warns about a folder that does not exist; a warning for asset names with non-ASCII letters.
+Tools added after 0.4.0, then used on a real game project; the problems found there were fixed in the same release.
 
-## v0.5: what the RagnaCook demo still needs
+- `text_overflow_audit` (UI text that does not fit its slot, per culture and screen size; translated game text is measured in the editor), `datatable_import` (CSV or JSON upsert with a diff and `dryRun`), `level_audit` (hidden, idle and placeholder actors).
+- `asset_find` warns about a folder that does not exist; `asset_import` and `blueprint_create` warn about non-ASCII asset names; `game_run` `keepRuns`; `actor_preview` framing; `pie_start` timeout.
+- Fixes from the game run: `stringtable_compare` (a format argument used twice, CRLF sources), `asset_rename` `referencersUpdated`, `datatable_import` warnings, full paths in results.
 
-- Behavior Tree / StateTree editing.
-- AnimBP state machines.
-- Mutable (Customizable Object) tools.
+## v0.5.1 (done)
 
-## v0.6: API freeze
+- The server refuses requests from web pages of other sites (`Origin` check; trusted local tools can be allowed in the settings).
+- [Using Enginewright with Epic's MCP server](WITH_EPIC_MCP.md): both servers in one editor, one agent.
+- Documentation brought up to date.
 
-- Clean-up before 1.0.0: names, arguments and error codes are reviewed and fixed. No new tools.
+## v0.5.2 (next)
 
-## 1.0.0: the launch update
+- A reliability round for the 0.5 series and the release.
 
-Built on `dev` while the 0.x releases go out; none of it reaches the public `main` before 1.0.0. If a game needs one of these earlier, the feature is built on `dev` and the game uses `dev`.
+## Next series
 
-- A headless mode (the same tools with the editor closed).
-- Niagara and Sequencer.
-- Testing and prebuilt zips for UE 5.4 to 5.8 (and other platforms).
-- FAB listing and a release-ready agent skill.
-- A stability promise for the API: breaking changes only in 2.0.
-- A showcase: a demo video of a game built from start to end with Enginewright, and a new README.
+Each series is built for what the games that use Enginewright need next. The order of 0.6 and 0.7 can swap.
+
+| Series | Focus |
+|---|---|
+| 0.6 | Art pipeline: LOD import and mesh setup, FBX options, material variants, an art budget check, variant boards and capture tools |
+| 0.7 | Scene checks: language x screen size, scenarios, co-op sessions, a session report |
+| 0.8 | Demo builds and play testing: packaging, frame rate, bots, runs without the editor window, long runs |
+| 0.9 | Skeleton and animation |
+| 0.10 | AI testing and measuring |
+| 0.11 | Gameplay authoring and level tools |
+| 1.0.0 | Headless mode, an error code reference, API freeze with a stability promise (breaking changes only in 2.0), an example project |
+
+After 1.0.0, if needed: Niagara, Sequencer, plugin on / off, device testing.
 
 ## Requests
 

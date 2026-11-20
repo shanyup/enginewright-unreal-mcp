@@ -1,6 +1,8 @@
 # Enginewright
 
-[![Version](https://img.shields.io/badge/version-0.4.0-blue)](docs/release-notes/v0.4.0.md)
+**Build it. Play it. Prove it.**
+
+[![Version](https://img.shields.io/badge/version-0.5.1-blue)](CHANGELOG.md)
 [![Unreal Engine](https://img.shields.io/badge/Unreal%20Engine-5.8-black)](#supported-versions)
 [![Platform](https://img.shields.io/badge/platform-Win64-lightgrey)](#supported-versions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -11,9 +13,19 @@ An Unreal Engine editor plugin that runs a [Model Context Protocol](https://mode
 
 *Above: an agent calls Enginewright tools on a fresh UE 5.8 project. It creates a menu widget and checks each change with `widget_render`, starts Play In Editor, opens the menu, reads the buttons with `ui_state`, clicks Play, and gets `COVERED` when it tries a button that another widget draws over.*
 
-> **Early preview (v0.4).** One maintainer, APIs may change before 1.0. Use it on a project under version control and review what it changes. See the [v0.4.0 release notes](docs/release-notes/v0.4.0.md). Changes: [CHANGELOG.md](CHANGELOG.md). Supported Unreal features: [docs/SUPPORT.md](docs/SUPPORT.md).
+> **Early preview (v0.5).** One maintainer, APIs may change before 1.0. Use it on a project under version control and review what it changes. Changes: [CHANGELOG.md](CHANGELOG.md). Supported Unreal features: [docs/SUPPORT.md](docs/SUPPORT.md).
 
-## What's new in 0.4.0
+## What's new in 0.5
+
+- `text_overflow_audit` finds UI text that does not fit its slot, per language and screen size. In the editor it measures the translated game text.
+- `datatable_import` brings a CSV or JSON file into a DataTable with a diff and `dryRun`; `level_audit` lists hidden, idle and placeholder actors.
+- Every new tool was used on a real game project before the release; the problems found there are fixed (`stringtable_compare`, `asset_rename`, `datatable_import`).
+- The server refuses requests from web pages of other sites (`Origin` check).
+- [Use it together with Epic's MCP server](docs/WITH_EPIC_MCP.md): both in one editor, one agent.
+
+Changes: [CHANGELOG.md](CHANGELOG.md).
+
+### In 0.4.0
 
 - Localization loop: `loc_gather` takes a target through gather, compile and check while the editor is open, `stringtable_compare` reads `.po` and `.locres` files, `game_run` takes a `culture`, and `font_coverage` plus `game_run` `glyphMisses` find characters that would show as empty boxes.
 - Game testing: `ui_key`, `pie_walk_to` and `pie_travel` drive a running game, `ui_state` shows only what the player can use, and `ui_prompts` with `input_map_list` compares the on-screen hints with the real bindings.
@@ -21,7 +33,7 @@ An Unreal Engine editor plugin that runs a [Model Context Protocol](https://mode
 - Save games: `savegame_get` and `savegame_set` read and write a slot by reflection, and a slot with a game checksum is refused unless the game's own save function is passed.
 - Scene tools: `scene_dress` places hundreds of meshes in one undo step, and `actor_preview` photographs an actor class without Play In Editor.
 - MVVM: `viewmodel_*` tools edit view models and bindings, in an optional plugin.
-- Reliability sweep: every tool was run on a real game project (RagnaCook) with 11 fixes, see [docs/RELIABILITY_0.4.md](docs/RELIABILITY_0.4.md).
+- Reliability sweep: every tool was run on a real game project with 11 fixes, see [docs/RELIABILITY_0.4.md](docs/RELIABILITY_0.4.md).
 
 ![actor_preview: the same actor class with BeginPlay off and on, photographed without Play In Editor and put side by side by image_compose](docs/media/actor-preview.png)
 
@@ -41,11 +53,11 @@ The focus is on edits you can trust:
 - **Strict validation.** Unknown arguments, unknown properties or struct fields, wrong types and bad enum names are errors with a suggestion. They are never ignored.
 - **All or nothing.** If one value in a call is bad, nothing is written. Each write is one undo step and is read back and compared.
 - **Rollback.** `batch` runs several steps in one call; if a step fails, the earlier steps are undone.
-- **Safe by default.** Asset edits are refused while Play In Editor runs. Deleting an asset that is still used is refused, and the reply lists who uses it. A click on a button that another widget covers is refused. The server listens on localhost only and needs a per-project token.
+- **Safe by default.** Asset edits are refused while Play In Editor runs. Deleting an asset that is still used is refused, and the reply lists who uses it. A click on a button that another widget covers is refused. The server listens on localhost only, needs a per-project token and refuses requests from web pages of other sites.
 
 ### Compared with Epic's MCP toolset in UE 5.8
 
-UE 5.8 ships an experimental MCP toolset with a larger tool catalog than Enginewright. Enginewright makes a different trade-off. In our use of the 5.8 toolset, some writes reported success while a misspelled key was silently ignored, and some asset lookups gave misleading results during Play In Editor. Enginewright rejects those cases with an error. Epic's toolset exists only in 5.8; Enginewright does not depend on it.
+UE 5.8 ships an experimental MCP toolset with a larger tool catalog than Enginewright. Enginewright makes a different trade-off. In our use of the 5.8 toolset, some writes reported success while a misspelled key was silently ignored, and some asset lookups gave misleading results during Play In Editor. Enginewright rejects those cases with an error. Epic's toolset exists only in 5.8; Enginewright does not depend on it. You can run both in the same editor: [docs/WITH_EPIC_MCP.md](docs/WITH_EPIC_MCP.md).
 
 ## Screenshots
 
@@ -131,6 +143,8 @@ The client sees three meta tools: `search` (find a tool in plain words), `descri
 | Save games | `savegame_get` (a SaveGame slot's class and field values, or the list of slots; says when the file carries a game checksum or footer), `savegame_set` (writes fields by reflection, all or nothing, saves and reads back from disk; a slot with a game footer is refused unless you pass the game's own save function, so the checksum is never broken) |
 | Multiplayer | `pie_actors` (what the server and each client see: count, net roles, owner, property values; can wait for replication), `pie_net_emulation` (lag, loss, duplicates, reordering; profiles off / average / bad) |
 | Readability | `screen_coverage` (how big an actor looks from a player's camera: pixels and share of the screen) |
+| Performance | `perf_capture` (frame, game, render, RHI and GPU times with percentiles, hitches, draw calls; which side bounds the frame), `perf_scene` (cost census of the world: meshes, lights, shadows, translucency, widgets), `perf_gpu_profile` (costliest GPU passes of one frame) |
+| Movie Render Queue | `mrq_render` (a Level Sequence to PNG frames, optionally MP4; horizontal, vertical, square or 4k presets), `mrq_status` (progress of the last render) |
 | UMG | `widget_create`, `widget_tree`, `widget_get`, `widget_add` (widget + properties + slot layout, checked), `widget_set`, `widget_remove`, `widget_render` (a Widget Blueprint or a C++ UserWidget class to PNG at any resolution, no Play In Editor), `viewmodel_list`, `viewmodel_add`, `viewmodel_bind`, `viewmodel_unbind`, `viewmodel_remove` (MVVM view models and view bindings of a Widget Blueprint; needs the optional EnginewrightMVVM plugin, see below), `text_overflow_audit` (which TextBlocks do not fit their slot, per language; Auto Wrap and ScaleBox are not false alarms) |
 | Runtime UI (UMG + CommonUI) | `ui_state` (widgets in a player's viewport, CommonUI activatable widgets and stacks, and the buttons the player can use now: visible, on the top page of its stack, with label (the word, not an icon glyph), every text, tooltip, layer, selected state and rectangle; `includeHidden` adds the closed or covered ones with the reason), `ui_key` (a key or mouse button through Slate to the focused widget, for "press any key" panels; can move focus first), `ui_click` (by name, label, any text inside the button or tooltip, so a gear glyph works; refuses a covered button, or fires the click directly), `ui_open` / `ui_close` (show one screen in Play In Editor, or push it onto a running CommonUI stack), `ui_input_type` (switch a player to gamepad / mouse and keyboard / touch to check glyphs and focus), `ui_prompts` (compare the hints on screen with what the input is really bound to: CommonUI action widgets, key-like texts, and a `check` list of {prompt, action} that answers OK / MISMATCH / PROMPT_NOT_SHOWN / ACTION_NOT_BOUND for the current input type), `ui_input_audit` (CommonUI input wiring: missing action rows, Enhanced Input actions that never fire, duplicate actions, no input data asset). CommonUI is optional: it is used when the project has it. |
 | Localization | `loc_gather` / `loc_gather_status` (gather, export, import, compile and check a localization target with the GatherText commandlet while the editor is open; verdict from both exit codes and the log), `stringtable_list`, `stringtable_get`, `stringtable_set` (String Table assets), `stringtable_compare` (source String Table or CSV vs a translation String Table, `.po` or `.locres`: missing, extra, empty, untranslated, format argument / rich text tag differences, translations of an older source text, fuzzy entries), `font_coverage` (characters of a language or a text that a Font asset or a .ttf / .otf cannot draw: empty boxes in the game), `loc_culture` (preview another language in the editor; a game started by `game_run` gets its language from `game_run`'s `culture`) |
@@ -189,11 +203,11 @@ This is a one-maintainer project in early preview: requests and pull requests ar
 
 | Version | Status | Main items |
 |---|---|---|
-| 0.4 | done (this release) | Localization loop, game testing tools, save games, scene tools, reliability sweep |
-| 0.4.1 | next | Art pipeline: FBX / LOD / collision import, skeleton bind, IK retarget, sockets, Physics Asset, modular preview, master material and texture settings, animation import with Montage / BlendSpace, art budget check |
-| 0.5 | planned | Behavior Tree / StateTree editing, AnimBP state machines, Mutable (Customizable Object) tools |
-| 0.6 | planned | API freeze: names, arguments and error codes reviewed, no new tools |
-| 1.0.0 | planned | Headless mode, Niagara and Sequencer, UE 5.4-5.8 builds, FAB listing and agent skill, API stability promise |
+| 0.4 | done | Localization loop, game testing tools, save games, scene tools, reliability sweep |
+| 0.5 | this release | Text overflow, DataTable import and level audits; fixes from a real game run; `Origin` check; setup with Epic's MCP server |
+| 0.6 | next | Art pipeline: LOD import, FBX options, material variants, art budget check, capture tools |
+| 0.7 - 0.11 | planned | Scene checks, demo builds and play testing, skeleton and animation, AI testing, gameplay authoring |
+| 1.0.0 | planned | Headless mode, error code reference, API freeze and stability promise, example project |
 
 Details and how requests get onto it: [docs/ROADMAP.md](docs/ROADMAP.md). Requests come in through the [Tool request](https://github.com/shanyup/enginewright/issues/new?template=feature_request.yml) form.
 

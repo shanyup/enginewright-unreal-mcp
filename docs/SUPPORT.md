@@ -30,18 +30,22 @@ This table lists which Unreal Engine features Enginewright can read and write; e
 | Automation tests | 5.8 | `automation_list`, `automation_run` | full | 0.2 | `automation_list` matches anywhere in the name; `automation_run` matches the start. |
 | Validation and audits | 5.8 | `validate`, `id_audit`, `key_audit`, `asset_search_text` | full | 0.2 | `id_audit` and `key_audit` answer `ok: false` when they find something. |
 | Project settings and log | 5.8 | `settings_get`, `settings_set`, `log_read`, `log_wait`, `console_command`, `editor_state` | full | 0.1 | `settings_set` writes a file in source control. |
+| Text fit and level audits | 5.8 | `text_overflow_audit`, `level_audit` | full | 0.5 | `text_overflow_audit` lays a widget out per culture and screen size and reports text wider than its slot; in the editor it measures translated game text. `level_audit`: hidden, idle and placeholder actors. |
+| DataTable import (CSV / JSON) | 5.8 | `datatable_import` | full | 0.5 | Upsert with a strict column check, a diff of added / changed / removed rows, `dryRun` and a read-back. |
+| Performance | 5.8 | `perf_capture`, `perf_scene`, `perf_gpu_profile` | full | 0.4 | Frame and thread times with percentiles, scene cost census, costliest GPU passes of one frame. Best in Play In Editor. |
+| Movie Render Queue | 5.8 | `mrq_render`, `mrq_status` | partial | 0.4 | Level Sequence to PNG frames, optional MP4 with ffmpeg. The tests check arguments and progress; a full render is not in the test suite. |
 | Editor UI (status bar, panel) | 5.8 | `editor_capture`, Enginewright panel and status bar | full | 0.3.1 | Status bar indicator and panel; `editor_capture` takes the editor window or the panel to PNG. |
 
 ## Not supported yet
 
 | Feature | UE version | Tools | Status | Since | Notes |
 |---|---|---|---|---|---|
-| Art import pipeline (FBX / LOD / collision, skeleton bind, IK retarget, sockets, Physics Asset, animation import, Montage / BlendSpace, master material, art budget) | 5.8 | `asset_import`, `mesh_info` | partial | 0.2 | Only `asset_import` (scale, rotation, translation, meshType) and `mesh_info`. The rest is planned for 0.4.1. |
-| Behavior Tree / StateTree | 5.8 | none | none | n/a | Planned for 0.5. |
-| Animation Blueprints (state machines) | 5.8 | none | none | n/a | Planned for 0.5. |
-| Mutable (Customizable Object) | 5.8 | none | none | n/a | Planned for 0.5. |
-| Niagara | 5.8 | none | none | n/a | Planned for 1.0.0. |
-| Sequencer | 5.8 | none | none | n/a | Planned for 1.0.0. |
+| Art import pipeline (FBX / LOD / collision, skeleton bind, IK retarget, sockets, Physics Asset, animation import, Montage / BlendSpace, master material, art budget) | 5.8 | `asset_import`, `mesh_info` | partial | 0.2 | Only `asset_import` (scale, rotation, translation, meshType) and `mesh_info` today. Mesh, LOD and FBX import options, material variants and an art budget check are planned for 0.6; skeleton bind, retarget and animation import for 0.9. |
+| Behavior Tree / StateTree | 5.8 | none | none | n/a | Planned for 0.11 (gameplay authoring). |
+| Animation Blueprints (state machines) | 5.8 | none | none | n/a | Planned for 0.11 (gameplay authoring). |
+| Mutable (Customizable Object) | 5.8 | none | none | n/a | Not planned yet. |
+| Niagara | 5.8 | none | none | n/a | After 1.0.0, if needed. Epic's MCP toolsets cover parts of it (see [WITH_EPIC_MCP.md](WITH_EPIC_MCP.md)). |
+| Sequencer | 5.8 | none | none | n/a | After 1.0.0, if needed. Epic's MCP toolsets cover parts of it (see [WITH_EPIC_MCP.md](WITH_EPIC_MCP.md)). |
 | Headless mode (editor closed) | 5.8 | none | none | n/a | Planned for 1.0.0. Only `ewtool.py build` works with the editor closed today. |
 
 Missing something? Use the [Tool request form](https://github.com/shanyup/enginewright/issues/new?template=feature_request.yml).
