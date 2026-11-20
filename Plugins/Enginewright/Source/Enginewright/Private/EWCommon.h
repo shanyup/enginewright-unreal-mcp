@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Dom/JsonObject.h"
 
-#define ENGINEWRIGHT_VERSION TEXT("0.5.0")
+#define ENGINEWRIGHT_VERSION TEXT("0.5.1")
 
 class UWorld;
 class APlayerController;

@@ -119,6 +119,56 @@ namespace
 		R->Code = Code;
 		return R;
 	}
+
+	/**
+	 * Browsers send Origin with every cross-site request; MCP clients and scripts send none. A page on another site
+	 * (or a DNS rebinding attack) must not reach the editor, so only a missing Origin, a loopback origin
+	 * (http(s)://localhost, 127.0.0.1 or [::1], any port) or one listed in the settings passes.
+	 */
+	bool OriginAllowed(const FHttpServerRequest& Request, FString& OutOrigin)
+	{
+		const TArray<FString>* H = Request.Headers.Find(TEXT("Origin"));
+		if (!H || H->Num() == 0) { return true; }
+		OutOrigin = (*H)[0].TrimStartAndEnd();
+		if (OutOrigin.IsEmpty()) { return true; }
+		FString Rest;
+		if (OutOrigin.StartsWith(TEXT("http://"))) { Rest = OutOrigin.Mid(7); }
+		else if (OutOrigin.StartsWith(TEXT("https://"))) { Rest = OutOrigin.Mid(8); }
+		if (!Rest.IsEmpty() && !Rest.Contains(TEXT("/")) && !Rest.Contains(TEXT("@")))
+		{
+			FString HostPart = Rest;
+			if (HostPart.StartsWith(TEXT("[")))
+			{
+				int32 Close = INDEX_NONE;
+				HostPart.FindChar(TEXT(']'), Close);
+				const FString After = Close == INDEX_NONE ? FString() : HostPart.Mid(Close + 1);
+				if (Close != INDEX_NONE && (After.IsEmpty() || After.StartsWith(TEXT(":")))) { HostPart = HostPart.Left(Close + 1); }
+				else { HostPart.Reset(); }
+			}
+			else
+			{
+				int32 Colon = INDEX_NONE;
+				if (HostPart.FindChar(TEXT(':'), Colon)) { HostPart = HostPart.Left(Colon); }
+			}
+			if (HostPart.Equals(TEXT("localhost"), ESearchCase::IgnoreCase) || HostPart == TEXT("127.0.0.1") || HostPart == TEXT("[::1]"))
+			{
+				return true;
+			}
+		}
+		for (const FString& A : GetDefault<UEnginewrightSettings>()->AllowedOrigins)
+		{
+			FString Allowed = A.TrimStartAndEnd();
+			Allowed.RemoveFromEnd(TEXT("/"));
+			if (!Allowed.IsEmpty() && Allowed.Equals(OutOrigin, ESearchCase::IgnoreCase)) { return true; }
+		}
+		return false;
+	}
+
+	TUniquePtr<FHttpServerResponse> OriginRefused(const FString& Origin)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enginewright: refused a request from the web page origin '%s'. Add it to Allowed Origins in the settings if you trust it."), *Origin);
+		return Reply(EHttpServerResponseCodes::Forbidden, TEXT("{\"error\":\"Origin not allowed: add it to Allowed Origins (Project Settings > Plugins > Enginewright)\"}"));
+	}
 }
 
 FString FEnginewrightModule::GetUrl() const
@@ -248,8 +298,10 @@ void FEnginewrightModule::StartServer()
 	Routes.Add(Router->BindRoute(FHttpPath(TEXT("/mcp")), EHttpServerRequestVerbs::VERB_POST,
 		FHttpRequestHandler::CreateRaw(this, &FEnginewrightModule::HandlePost)));
 	Routes.Add(Router->BindRoute(FHttpPath(TEXT("/mcp")), EHttpServerRequestVerbs::VERB_GET | EHttpServerRequestVerbs::VERB_DELETE,
-		FHttpRequestHandler::CreateLambda([](const FHttpServerRequest&, const FHttpResultCallback& OnComplete)
+		FHttpRequestHandler::CreateLambda([](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 		{
+			FString Origin;
+			if (!OriginAllowed(Request, Origin)) { OnComplete(OriginRefused(Origin)); return true; }
 			// No server-sent stream: every reply comes back on the POST.
 			OnComplete(Reply(EHttpServerResponseCodes::BadMethod, TEXT("{}")));
 			return true;
@@ -324,6 +376,14 @@ void FEnginewrightModule::ShutdownModule()
 
 bool FEnginewrightModule::HandlePost(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
+	// Origin first: a refused web page learns nothing, not even whether its token guess was right.
+	FString Origin;
+	if (!OriginAllowed(Request, Origin))
+	{
+		OnComplete(OriginRefused(Origin));
+		return true;
+	}
+
 	// Auth
 	FString Presented;
 	if (const TArray<FString>* H = Request.Headers.Find(TEXT("X-Enginewright-Token")))

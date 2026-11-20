@@ -6,12 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Added (0.4.1, not released yet)
+
+## [0.5.1] - 2026-11-20
+### Security
+- The HTTP server refuses requests whose `Origin` header names another web site (403, before the token check), so a web page open in a browser cannot reach the editor. Requests without `Origin` (MCP clients, scripts) and from `localhost`, `127.0.0.1` or `[::1]` pass. Trusted local web tools can be listed in the new `AllowedOrigins` setting.
+
+### Added
+- [docs/WITH_EPIC_MCP.md](docs/WITH_EPIC_MCP.md): Enginewright and Epic's Unreal MCP server in the same editor, connected to one agent.
+
+### Changed
+- `pie_travel`: the `options` example uses a generic game mode.
+- README, SUPPORT, ROADMAP and RELIABILITY_0.4 brought up to date (tool table complete: 132 tools; roadmap follows the release series).
+
+## [0.5.0] - 2026-11-20
+### Added
 - `text_overflow_audit`: for each visible TextBlock of a Widget Blueprint or UserWidget class (or the open UI during Play In Editor), the width the text wants against the width its slot gives it, per language; lists the overflows. Auto Wrap Text and ScaleBox are not reported as overflow (a word wider than the slot is).
 - `datatable_import`: CSV or JSON file into a DataTable (upsert) with a strict field check, a diff of added / changed / removed rows, `dryRun`, and a read-back after the write.
 - `level_audit`: hidden actors, visible static-mesh actors with no gameplay component, and meshes that match placeholder / kit name patterns, with counts and actor paths; works on the open level or a saved map.
 
-### Changed (0.4.1, not released yet)
+### Changed
 - `asset_find` warns when the folder does not exist.
 - `asset_import` and `blueprint_create` warn about non-ASCII asset names and suggest an ASCII name.
 - `game_run` `keepRuns` (default 20) deletes the oldest run folders under `Saved/Enginewright/runs` before a run starts.
@@ -19,7 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pie_start`: the default `timeout` is 180 s for several players (60 s for one), the range is checked (1 to 900), and the TIMEOUT message says the session is still starting.
 - Tests: `perf_capture`, `perf_scene`, `perf_gpu_profile`, `mrq_render`, `mrq_status`, `asset_references` and `asset_save` have tests now (132 of 132 tools covered).
 
-- 0.4.1: art pipeline (FBX import with LODs, collision and pivot / scale checks; skeleton bind, IK retarget, sockets, Physics Asset; modular character preview; master material template and texture import settings; animation import, Anim Montage and BlendSpace, anim notifies; art budget check; `asset_find` and non-ASCII asset name warnings). See docs/ROADMAP.md.
+### Fixed (found by using the new tools on a real game project)
+- `text_overflow_audit` measured game text in the source language in the editor; it now turns on the game localization preview for each culture (and restores it), and warns when a translation was not applied.
+- `stringtable_compare`: a format argument used twice (`{0} {0}`) counted as two arguments; a CRLF line ending in the CSV source counted as a changed source.
+- `stringtable_compare`, `game_run`: file arguments resolve to full paths (no `../` in results).
+- `datatable_import`: no "did not change" warning for every kept field.
+- `asset_rename`: `referencersUpdated` was empty; it lists the assets whose references were fixed.
 
 ## [0.4.0] - 2026-11-10
 Release notes: [docs/release-notes/v0.4.0.md](docs/release-notes/v0.4.0.md)
@@ -130,7 +148,9 @@ Release notes: [docs/release-notes/v0.2.0.md](docs/release-notes/v0.2.0.md)
 - `doctor`.
 - Atomic `batch` with rollback.
 
-[Unreleased]: https://github.com/shanyup/enginewright/compare/v0.4.0...dev
+[Unreleased]: https://github.com/shanyup/enginewright/compare/v0.5.1...main
+[0.5.1]: https://github.com/shanyup/enginewright/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/shanyup/enginewright/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/shanyup/enginewright/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/shanyup/enginewright/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/shanyup/enginewright/compare/v0.2.0...v0.3.0

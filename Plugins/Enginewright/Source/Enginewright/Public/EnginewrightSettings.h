@@ -36,6 +36,14 @@ public:
 	int32 Port = 3100;
 
 	/**
+	 * Browser pages allowed to call the server, as exact origins (for example "http://localhost:5173").
+	 * Requests without an Origin header (MCP clients, scripts) and from localhost / 127.0.0.1 / [::1] are always allowed;
+	 * every other Origin is refused, so a web page you visit cannot reach the editor.
+	 */
+	UPROPERTY(config, EditAnywhere, Category = "Server", meta = (EditCondition = "bServerEnabled"))
+	TArray<FString> AllowedOrigins;
+
+	/**
 	 * Refuse every tool that changes assets, the level, files or the editor (writes, builds, console commands, game runs).
 	 * A guard against accidental changes, not a security boundary: an agent can turn it off again with settings_set on
 	 * this class, and that call shows up in the panel's recent calls.

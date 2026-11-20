@@ -482,7 +482,7 @@ void RegisterPieTools(FEWRegistry& R)
 		TEXT("Travel a running Play In Editor session to another map with URL options, like the ServerTravel console command but checked: map is a map asset path (/Game/Maps/MAP_Run) or a map name; options is the URL option string (?game=/Script/MyGame.MyGameMode?listen, or game=...,listen=...). The map must exist (MAP_NOT_FOUND with the closest names), options must be Key or Key=Value pairs without spaces. It travels the server (or standalone) world, then waits until the new map is loaded and every local player has a pawn (wait false returns right after the travel starts). Returns the travel URL and the Play In Editor state. Use pie_start to start a session and pie_state to read the map."),
 		TEXT(R"({"type":"object","properties":{
 			"map":{"type":"string","description":"Map asset path like /Game/Maps/MAP_Run, or just the map name."},
-			"options":{"type":"string","description":"URL options, e.g. ?game=/Script/RagnaCook.RC_RunGameMode?listen (a leading ? and ? or , between options are accepted)."},
+			"options":{"type":"string","description":"URL options, e.g. ?game=/Script/MyGame.MyGameMode?listen (a leading ? and ? or , between options are accepted)."},
 			"wait":{"type":"boolean","description":"Wait until the new map has loaded and every local player has a pawn (default true)."},
 			"timeout":{"type":"number","description":"Seconds to wait, default 60, max 600."}},
 			"required":["map"]})"),

@@ -36,7 +36,7 @@ r = c("blueprint_create", {"path": BP, "parent": "SaveGame"})
 check("SaveGame Blueprint created", r["ok"], r)
 r = c("blueprint_add_variables", {"path": BP, "variables": [
     {"name": "Score", "type": "int", "default": "1"},
-    {"name": "PlayerName", "type": "string", "default": "Ragna"},
+    {"name": "PlayerName", "type": "string", "default": "Player"},
     {"name": "Done", "type": "bool", "default": "false"}]})
 check("SaveGame variables added", r["ok"], r)
 cls = BP + ".BP_EWSave_C"

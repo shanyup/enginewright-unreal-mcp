@@ -12,10 +12,30 @@ INI = PROJ / "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini"
 
 
 def put_back():
-    c("settings_set", {"class": S, "values": {"bReadOnly": False, "DisabledCategories": [], "LogLevel": "Quiet"}})
+    c("settings_set", {"class": S, "values": {"bReadOnly": False, "DisabledCategories": [], "LogLevel": "Quiet", "AllowedOrigins": []}})
 
 
 put_back()
+
+# --- Origin: a web page on another site cannot reach the editor (DNS rebinding / drive-by); clients without Origin can
+def with_origin(origin, tok=None):
+    return rpc("ping", {}, tok=tok, headers={"Origin": origin} if origin is not None else None)[0]
+
+check("no Origin header: allowed", with_origin(None) == 200)
+check("empty Origin: allowed", with_origin("") == 200)
+for o in ["http://localhost", "http://localhost:5173", "https://127.0.0.1:8080", "http://[::1]:3000", "HTTP://LOCALHOST:1"]:
+    check(f"loopback Origin {o}: allowed", with_origin(o) == 200, o)
+for o in ["https://evil.example", "http://localhost.evil.example", "http://127.0.0.1.evil.example", "null",
+          "http://evil.example@localhost", "file://", "http://[::1].evil.example"]:
+    check(f"foreign Origin {o}: refused with 403", with_origin(o) == 403, o)
+check("foreign Origin is refused before the token check (wrong token still 403, not 401)", with_origin("https://evil.example", tok="wrong") == 403)
+check("loopback Origin with a wrong token: 401", with_origin("http://localhost", tok="wrong") == 401)
+r = c("settings_set", {"class": S, "values": {"AllowedOrigins": ["https://tools.example/"]}})
+check("settings_set AllowedOrigins", r["ok"], r)
+check("listed Origin: allowed (trailing slash in the setting ignored)", with_origin("https://tools.example") == 200)
+check("unlisted Origin still refused", with_origin("https://other.example") == 403)
+c("settings_set", {"class": S, "values": {"AllowedOrigins": []}})
+check("listed Origin refused again after removal", with_origin("https://tools.example") == 403)
 
 # --- read the settings
 r = c("settings_get", {"class": S})

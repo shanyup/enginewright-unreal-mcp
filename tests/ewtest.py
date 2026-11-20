@@ -28,13 +28,13 @@ def token():
     return (PROJ / "Saved/Enginewright/token").read_text().strip()
 
 
-def rpc(method, params=None, tok=None, timeout=300) -> tuple[int, Any]:
+def rpc(method, params=None, tok=None, timeout=300, headers=None) -> tuple[int, Any]:
     global _n
     _n += 1
     body = json.dumps({"jsonrpc": "2.0", "id": _n, "method": method, "params": params or {}}).encode()
     req = urllib.request.Request(URL, data=body, method="POST", headers={
         "Content-Type": "application/json", "Accept": "application/json, text/event-stream",
-        "X-Enginewright-Token": tok if tok is not None else token()})
+        "X-Enginewright-Token": tok if tok is not None else token(), **(headers or {})})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.status, json.loads(r.read() or b"{}")

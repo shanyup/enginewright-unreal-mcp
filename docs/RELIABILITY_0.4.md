@@ -1,6 +1,6 @@
 # Reliability sweep for 0.4.0
 
-Before 0.4.0 every tool in the README table was called on a real game project, **RagnaCook** (UE 5.8, C++ and
+Before 0.4.0 every tool in the README table was called on a real game project in development (UE 5.8, C++ and
 Blueprints, CommonUI, Enhanced Input, about 600 assets), with the editor open and the plugin from the `dev` branch.
 The sweep script made 330 calls: at least one real call per tool, plus wrong input for most tools, writes while Play In
 Editor runs, Turkish characters in paths, asset names and values, the game's heavy levels, and long jobs with
@@ -16,10 +16,10 @@ What each call was judged on:
 - **Leftovers**: is anything left behind (assets, actors, files, config) after cleanup?
 
 Status: **OK** works as described · **FIXED** a problem found here, fixed in 0.4.0 (tests added) · **NOTE** works,
-with a limit worth knowing · **0.4.1** small problem kept for the next patch.
+with a limit worth knowing · **0.5.0** small problem kept for later (done in 0.5.0).
 
 After the fixes the plugin's own suites pass on the test project (19 suites, 863 checks, real `-game` runs included;
-`build` suite 15/15), and the fixes were checked again on RagnaCook with a fresh editor: datatable rows, the linked
+`build` suite 15/15), and the fixes were checked again on the game project with a fresh editor: datatable rows, the linked
 delete set, `level_save` with `path` (the `.umap` lands in `Content/`, nothing is written to `C:/Game`), gameplay tag
 ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` text. Nothing was left in the project.
 
@@ -28,9 +28,9 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 | # | Tool | What was wrong | Fix |
 |---|---|---|---|
 | 1 | `datatable_set_rows` | A call that failed on one row restored the table from a JSON snapshot. UE's JSON import reads a field called `Name` as the row name, so every row's `Name` field was overwritten with its row name. | Rows are checked on copies first; the table is written only when every row passed. Nothing is touched on failure. |
-| 2 | `level_save` with `path` | The package path was passed where the engine wants a file name: the map was written to `C:/Game/...` (outside the project, no extension) and the call answered ok. | Converted to the project's `.umap` file name; the file is checked on disk and registered with the asset registry at once; the reply has `file` and `editorMap` (the editor may stay on the old map). `asset_exists` and `asset_delete` now also look for `.umap` files: before, a deleted map's file stayed on disk. Checked on RagnaCook: a save-as lands in `Content/`, nothing is written outside the project. The maps an earlier run had written to `C:/Game` were removed. |
+| 2 | `level_save` with `path` | The package path was passed where the engine wants a file name: the map was written to `C:/Game/...` (outside the project, no extension) and the call answered ok. | Converted to the project's `.umap` file name; the file is checked on disk and registered with the asset registry at once; the reply has `file` and `editorMap` (the editor may stay on the old map). `asset_exists` and `asset_delete` now also look for `.umap` files: before, a deleted map's file stayed on disk. Checked on the game project: a save-as lands in `Content/`, nothing is written outside the project. The maps an earlier run had written to `C:/Game` were removed. |
 | 3 | `asset_delete` | Deleting a set of assets that only use each other (enum → struct → DataTable, material → instance) failed with `deleted: 0`. A String Table could never be deleted without `force` (the engine keeps loaded String Tables in memory). | Referencers are deleted first, one package at a time with a garbage collection in between; String Tables and assets held only by the engine's transient copies (struct re-instancing) are released. The outside-reference check is unchanged. |
-| 4 | `gameplay_tag_add` / `gameplay_tag_remove` | Adding a tag to a project without a tag ini created `Config/DefaultGameplayTags.ini`; removing the tag left the file (an untracked file in the game repo). | A tag ini (and a `Config/Tags` folder) created by `gameplay_tag_add` in this session is deleted again when its last tag is removed (`createdFile` / `removedFile` / `removedFolder`). The file is also dropped from the editor's config cache, so the editor does not write it again when it quits (seen on RagnaCook: a settings-only `DefaultGameplayTags.ini` came back after exit). |
+| 4 | `gameplay_tag_add` / `gameplay_tag_remove` | Adding a tag to a project without a tag ini created `Config/DefaultGameplayTags.ini`; removing the tag left the file (an untracked file in the game repo). | A tag ini (and a `Config/Tags` folder) created by `gameplay_tag_add` in this session is deleted again when its last tag is removed (`createdFile` / `removedFile` / `removedFolder`). The file is also dropped from the editor's config cache, so the editor does not write it again when it quits (seen on the game project: a settings-only `DefaultGameplayTags.ini` came back after exit). |
 | 5 | `game_run` | Screenshots that the game writes to `Saved/Screenshots` were copied into the run folder and the originals stayed. | Moved instead (`originalRemoved`); files in your own `shots` folders are still copied. |
 | 6 | `game_run` | A `/Game` map in `url` that does not exist was not checked: the game started on its default map. `dryRun` said nothing. | `MAP_NOT_FOUND` with the closest maps, also in `dryRun`. |
 | 7 | `game_run` | The heavy-level warning of a `dryRun` said "Viewports were left running (editorViewports keep)" although the default pauses them. | The sentence matches what happens. |
@@ -45,7 +45,7 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 |---|---|
 | No editor running | The MCP server lives in the editor, so the client gets "connection refused". The test helper now says so in one line (fix 11). |
 | Writes during Play In Editor | `object_set`, `actor_spawn`, `asset_save`, `level_save`, `blueprint_compile`, `datatable_set_rows`, `scene_dress` and a `batch` with a write step: all refused with `PIE_RUNNING` and "Stop Play first (pie_stop)". Nothing changed. |
-| Wrong paths | Missing assets, maps, rows, components, pins, keys, classes, files: specific codes (`ASSET_NOT_FOUND`, `MAP_NOT_FOUND`, `ROW_NOT_FOUND`, `UNKNOWN_PIN`, ...) with suggestions where a close name exists. Exception: `asset_find` on a folder that does not exist answers an empty list without a warning (0.4.1). |
+| Wrong paths | Missing assets, maps, rows, components, pins, keys, classes, files: specific codes (`ASSET_NOT_FOUND`, `MAP_NOT_FOUND`, `ROW_NOT_FOUND`, `UNKNOWN_PIN`, ...) with suggestions where a close name exists. Exception: `asset_find` on a folder that does not exist answers an empty list without a warning (0.5.0). |
 | Turkish characters | Paths with `ç ğ ı ö ş ü` work for `asset_import`, `image_stats`, `image_compose`, `widget_render`, `stringtable_compare`. Turkish values read back unchanged in DataTables, String Tables, Blueprint pin defaults, widget texts and actor labels. Asset names with Turkish letters (`BP_Çaydanlık`) are accepted, as the engine allows them, without a warning (0.4.1: warn, since some platforms and tools handle them poorly). |
 | Big map (ER-08) | `MAP_Run` (Lumen, real-time sky light, volumetric clouds) is reported `heavy` with the warning; `scene_dress` placed 2,000 instances in one undo step in 0.05 s and they were removed again. |
 | Long jobs (ER-05 / ER-20) | `game_run` with `wait: 20` answered `STILL_RUNNING` with the id; `game_run_status {"wait": 30}` gave the result (PASSED, `SHOTS_DONE`, 1 PNG 1280x720, `culture` tr, `glyphMisses` 0, 48 s). `stop: true` ended a second run in 1.5 s. `loc_gather` `dryRun` and `check` answered at once; `loc_gather_status` returned the same report. |
@@ -57,15 +57,15 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 |---|---|---|
 | `actor_bounds` | FIXED | Bounds of a spawned actor. 2 argument(s) without a description (fix 9). 1 call(s), slowest 0.02 s. |
 | `actor_delete` | FIXED | Removed the 3 test actors; actor count back to 23. Unknown label: `ACTOR_NOT_FOUND`, nothing removed. 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.07 s. |
-| `actor_find` | FIXED | By label (Turkish label found), counts on the kitchen and Midgard maps. 1 argument(s) without a description (fix 9). 4 call(s), slowest 0.1 s. |
-| `actor_preview` | NOTE | BP_Viking rendered and cleaned up (`cleanedUp`), no Play In Editor. Framing is loose for a Character with a camera boom (0.4.1). 2 call(s), slowest 0.16 s. |
+| `actor_find` | FIXED | By label (Turkish label found), counts on two maps. 1 argument(s) without a description (fix 9). 4 call(s), slowest 0.1 s. |
+| `actor_preview` | NOTE | The player character Blueprint rendered and cleaned up (`cleanedUp`), no Play In Editor. Framing is loose for a Character with a camera boom (0.5.0). 2 call(s), slowest 0.16 s. |
 | `actor_set_transform` | FIXED | Works; `location` / `rotation` / `scale` had no type or description in the schema (fix 9). 2 call(s), slowest 0.03 s. |
 | `actor_spawn` | FIXED | Turkish label works; refused in Play In Editor. Vector arguments had no type (fix 9). 3 call(s), slowest 0.06 s. |
 | `asset_delete` | FIXED | Deleting the whole temp folder in one call failed (`deleted: 0`), String Tables only with force (fix 3). 1 call(s), slowest 6.76 s. |
 | `asset_duplicate` | FIXED | Copied SM_Wall. 1 argument(s) without a description (fix 9). 1 call(s), slowest 0.31 s. |
 | `asset_exists` | FIXED | A map saved with `level_save` `path` answered false until the editor rescanned; `.umap` files are now found (fix 2). 2 call(s), slowest 0.03 s. |
-| `asset_find` | NOTE | Works during Play In Editor. A folder that does not exist gives an empty list without a warning (0.4.1). 3 call(s), slowest 0.08 s. |
-| `asset_import` | NOTE | PNG from a Turkish folder imported; missing file: `FILE_NOT_FOUND`, nothing imported. A Turkish file name becomes a Turkish asset name without a warning (0.4.1). 3 call(s), slowest 0.5 s. |
+| `asset_find` | NOTE | Works during Play In Editor. A folder that does not exist gives an empty list without a warning (0.5.0). 3 call(s), slowest 0.08 s. |
+| `asset_import` | NOTE | PNG from a Turkish folder imported; missing file: `FILE_NOT_FOUND`, nothing imported. A Turkish file name becomes a Turkish asset name without a warning (0.5.0). 3 call(s), slowest 0.5 s. |
 | `asset_references` | FIXED | 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.03 s. |
 | `asset_rename` | OK | `dryRun`, rename, and rename onto an existing asset (`ASSET_EXISTS`). 3 call(s), slowest 0.65 s. |
 | `asset_save` | FIXED | Refused in Play In Editor. 1 argument(s) without a description (fix 9). 2 call(s), slowest 2.18 s. |
@@ -78,16 +78,16 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 | `blueprint_add_variables` | FIXED | Bad type lists the valid types. 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.17 s. |
 | `blueprint_compile` | FIXED | Refused in Play In Editor. 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.94 s. |
 | `blueprint_connect` | FIXED | Bad pin lists the node's pins. 2 argument(s) without a description (fix 9). 2 call(s), slowest 0.3 s. |
-| `blueprint_create` | NOTE | Unknown parent: `UNKNOWN_CLASS` with the name forms. `BP_Çaydanlık` is accepted without a warning (0.4.1). 3 call(s), slowest 0.3 s. |
-| `blueprint_graph_read` | FIXED | BP_Viking event graph. 1 argument(s) without a description (fix 9). 1 call(s), slowest 0.02 s. |
-| `blueprint_info` | FIXED | BP_Viking with inherited components. 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.02 s. |
+| `blueprint_create` | NOTE | Unknown parent: `UNKNOWN_CLASS` with the name forms. `BP_Çaydanlık` is accepted without a warning (0.5.0). 3 call(s), slowest 0.3 s. |
+| `blueprint_graph_read` | FIXED | The player character's event graph. 1 argument(s) without a description (fix 9). 1 call(s), slowest 0.02 s. |
+| `blueprint_info` | FIXED | The player character with inherited components. 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.02 s. |
 | `blueprint_remove_component` | FIXED | 2 argument(s) without a description (fix 9). 2 call(s), slowest 0.34 s. |
 | `blueprint_remove_node` | FIXED | 3 argument(s) without a description (fix 9). 1 call(s), slowest 0.29 s. |
 | `blueprint_remove_variables` | FIXED | 2 argument(s) without a description (fix 9). 1 call(s), slowest 0.25 s. |
 | `blueprint_set_component_defaults` | OK | Unknown component points to blueprint_info. 2 call(s), slowest 0.45 s. |
 | `blueprint_set_pin` | FIXED | Turkish string read back unchanged. 3 argument(s) without a description (fix 9). 1 call(s), slowest 0.2 s. |
 | `build_status` | OK | 1 call(s), slowest 0.05 s. |
-| `class_measure` | OK | BP_Viking without placing it. 2 call(s), slowest 0.06 s. |
+| `class_measure` | OK | The player character without placing it. 2 call(s), slowest 0.06 s. |
 | `client_config` | OK | Warns that the text holds the token. 2 call(s), slowest 0.05 s. |
 | `console_command` | OK | Editor and game target. 3 call(s), slowest 1.79 s. |
 | `datatable_create` | OK | 1 call(s), slowest 0.16 s. |
@@ -137,12 +137,12 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 | `pie_actors` | OK | Server and client worlds in a 2-player listen session. 3 call(s), slowest 8.75 s. |
 | `pie_input` | OK | IA_Interact injected; unknown action: `ACTION_NOT_FOUND`. 3 call(s), slowest 7.11 s. |
 | `pie_net_emulation` | OK | Standalone: `NOT_NETWORKED` says how to start a networked session; works in the listen session. 4 call(s), slowest 3.0 s. |
-| `pie_start` | NOTE | Kitchen: 1 player in 1-12 s, 2 players listen in 14 s. Main menu: 103 s (the game travels to the tutorial kitchen); 2 players there: clear `TIMEOUT`. 4 call(s), slowest 187.69 s. |
+| `pie_start` | NOTE | Gameplay map: 1 player in 1-12 s, 2 players listen in 14 s. Main menu: 103 s (the game travels to its first level); 2 players there: clear `TIMEOUT`. 4 call(s), slowest 187.69 s. |
 | `pie_state` | OK | 2 call(s), slowest 3.56 s. |
 | `pie_stop` | OK | A second stop answers ok, "was not running". 5 call(s), slowest 4.96 s. |
 | `pie_travel` | OK | MAP_Run with the game mode option in 12 s; missing map: `MAP_NOT_FOUND`. 2 call(s), slowest 13.42 s. |
 | `pie_walk_to` | OK | Reached a point 2 m away. 1 call(s), slowest 4.87 s. |
-| `savegame_get` | OK | Slot list; RC_Profile with the 28-byte game footer reported. 4 call(s), slowest 0.06 s. |
+| `savegame_get` | OK | Slot list; the game's profile slot with its 28-byte footer reported. 4 call(s), slowest 0.06 s. |
 | `savegame_set` | OK | A slot with a game footer is refused (`CUSTOM_SAVE_FORMAT`), so the game checksum is not broken. 1 call(s), slowest 0.06 s. |
 | `scene_dress` | FIXED | 24-mesh ring and 2,000-instance scatter in one call each, removed again; refused in Play In Editor. 2 argument(s) without a description (fix 9). 4 call(s), slowest 2.29 s. |
 | `screen_coverage` | OK | 2 call(s), slowest 0.08 s. |
@@ -162,7 +162,7 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 | `ui_input_audit` | OK | 1 call(s), slowest 0.04 s. |
 | `ui_input_type` | OK | 2 call(s), slowest 0.59 s. |
 | `ui_key` | OK | 1 call(s), slowest 4.77 s. |
-| `ui_open` | OK | RC_SettingsPage (C++ class) opened and closed. 1 call(s), slowest 0.09 s. |
+| `ui_open` | OK | A C++ settings page opened and closed. 1 call(s), slowest 0.09 s. |
 | `ui_prompts` | OK | 1 call(s), slowest 4.01 s. |
 | `ui_state` | OK | Player 1 in a listen session; player 9: `NO_PLAYER` with the player count. 7 call(s), slowest 8.36 s. |
 | `validate` | FIXED | Data folder and map check. 1 argument(s) without a description (fix 9). 2 call(s), slowest 0.19 s. |
@@ -175,15 +175,15 @@ ini and folder leftovers, the CSV namespace, `MAP_NOT_FOUND` and the `dryRun` te
 | `widget_create` | OK | 1 call(s), slowest 0.3 s. |
 | `widget_get` | OK | 1 call(s), slowest 0.13 s. |
 | `widget_remove` | OK | 1 call(s), slowest 0.21 s. |
-| `widget_render` | OK | C++ RC_RunHistoryPage and a Widget Blueprint to a Turkish path. 3 call(s), slowest 0.23 s. |
+| `widget_render` | OK | A C++ page and a Widget Blueprint to a Turkish path. 3 call(s), slowest 0.23 s. |
 | `widget_set` | OK | 1 call(s), slowest 0.23 s. |
 | `widget_tree` | OK | 1 call(s), slowest 0.03 s. |
 | `world_trace` | FIXED | Works; `start` / `end` had no type in the schema (fix 9). 1 call(s), slowest 0.06 s. |
 
-## 0.4.1 additions (Enginewright test project, not RagnaCook)
+## Added after 0.4.0 (Enginewright test project)
 
 These rows were measured on the Enginewright test project (UE 5.8, empty C++ project) with the tests in `tests/`, not on
-RagnaCook. A run on a real game project is a separate step (`docs/oyun_kosulari/`).
+the game project. These tools were run on a real game project before 0.5.0.
 
 The five tools that had no test and no row in the sweep above:
 
@@ -195,7 +195,7 @@ The five tools that had no test and no row in the sweep above:
 | `mrq_render` | NOTE | Tested up to the arguments and asset checks only: no `sequence` gives `MISSING_ARGUMENT`; a missing sequence is refused and nothing starts. A real render takes minutes and is not in the suite. `width` / `height` had no description (fixed). |
 | `mrq_status` | OK | Idle state with zero frames when nothing renders. Test: `test_perf_mrq.py`. |
 
-New tools of 0.4.1:
+New tools after 0.4.0 (released in 0.5.0):
 
 | Tool | Status | Note |
 |---|---|---|
@@ -203,19 +203,19 @@ New tools of 0.4.1:
 | `datatable_import` | OK | CSV (quoted comma) and JSON (array and object form): `dryRun` diff equals what the write does, nothing written on an unknown column, bad number, bad enum, duplicate row or short line; `deleteMissing`; file outside the project: `INVALID_PATH`. Test: `test_datatable_import.py`. |
 | `level_audit` | OK | One hidden actor and one idle static mesh found; the actor with a collision box is clean; filters by class and tag; a saved map that is not open is audited without changing the open level. A new Actor Blueprint has three disabled event nodes: they do not count as logic. Test: `test_level_audit.py`. |
 
-The "Kept for 0.4.1" list below is done: `asset_find` folder warning, non-ASCII name warning (`asset_import`,
+The "Kept for later" list below is done: `asset_find` folder warning, non-ASCII name warning (`asset_import`,
 `blueprint_create`), `game_run` `keepRuns`, `actor_preview` camera rig left out of the bounds, `pie_start` timeout
 (default 180 s for several players, range 1 to 900, the TIMEOUT message names the wait). Tests: `test_polish.py`.
-The `actor_preview` fix could not be shown on RagnaCook's character: a synthetic Character with a boom already framed
+The `actor_preview` fix could not be shown on the game's character: a synthetic Character with a boom already framed
 the body in the test project, so the test pins the result (the boom does not count) instead of a before / after.
 
-## Kept for 0.4.1
+## Kept for later (done in 0.5.0)
 
 - `asset_find`: warn when the folder does not exist.
 - Asset names with non-ASCII letters: accept, but warn.
-- `game_run` keeps every run under `Saved/Enginewright/runs` (145 runs, 243 MB on RagnaCook): a retention rule (keep the last N).
+- `game_run` keeps every run under `Saved/Enginewright/runs` (145 runs, 243 MB on the game project): a retention rule (keep the last N).
 - `actor_preview`: a Character with a camera boom is framed loosely (the boom counts in the bounds).
-- Play In Editor reads (`ui_state`, `input_map_list`) take 0.05 s to 8 s on RagnaCook: the time is the game's frame
-  hitches, not the tool. Waiting tools (`pie_start`, `pie_travel`) depend on the game: RagnaCook's main menu travels to
-  the tutorial kitchen, so the first `pie_start` there took 103 s, and a 2-player listen session on that map timed out
-  with a clear `TIMEOUT` (on the kitchen map: 2 players in 14 s).
+- Play In Editor reads (`ui_state`, `input_map_list`) take 0.05 s to 8 s on the game project: the time is the game's frame
+  hitches, not the tool. Waiting tools (`pie_start`, `pie_travel`) depend on the game: its main menu travels to
+  its first level, so the first `pie_start` there took 103 s, and a 2-player listen session on that map timed out
+  with a clear `TIMEOUT` (on the gameplay map: 2 players in 14 s).
