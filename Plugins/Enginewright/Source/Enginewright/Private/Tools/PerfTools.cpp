@@ -105,7 +105,7 @@ void RegisterPerfTools(FEWRegistry& R)
 	R.RegisterAsync(TEXT("perf_capture"),
 		TEXT("Measure frame time for some seconds in Play In Editor (or the editor level when PIE is off): frame, game thread, render thread, RHI thread and GPU milliseconds (avg / p50 / p95 / max), FPS, hitches, draw calls and triangles per frame, and which side bounds the frame (game, render or GPU). Editor background throttling is switched off during the capture so an unfocused editor still measures real numbers."),
 		TEXT(R"({"type":"object","properties":{
-			"seconds":{"type":"number","description":"Capture length, default 5, max 60."},
+			"seconds":{"type":"number","minimum":0.5,"maximum":60,"description":"Capture length, default 5, max 60."},
 			"warmup":{"type":"number","description":"Seconds to skip first (shader compile / streaming spikes), default 1."}}})"),
 		false,
 		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
@@ -303,7 +303,7 @@ void RegisterPerfTools(FEWRegistry& R)
 	R.RegisterAsync(TEXT("perf_gpu_profile"),
 		TEXT("Profile one rendered frame on the GPU (the engine's ProfileGPU, without its window) and return the costliest passes in milliseconds, e.g. Lumen, shadow depths, base pass, translucency, post processing. Works best in Play In Editor."),
 		TEXT(R"({"type":"object","properties":{
-			"top":{"type":"integer","description":"How many passes to return, default 20."}}})"),
+			"top":{"type":"integer","minimum":1,"maximum":100,"description":"How many passes to return, default 20."}}})"),
 		false,
 		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
 		{

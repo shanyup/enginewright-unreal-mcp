@@ -104,6 +104,13 @@ seq = r["data"].get("lastSeq", 0)
 c("asset_exists", {"path": ROOT})
 r = c("log_read", {"pattern": "Enginewright: call asset_exists", "since": seq})
 check("Quiet level writes no call lines", r["ok"] and len(r["data"]["lines"]) == 0, r)
+# 0.5.2: colour-change calls had no level bits and came back as "Log" lines through every minVerbosity filter.
+r = c("log_read", {"minVerbosity": "Warning", "limit": 200})
+check("log_read minVerbosity Warning returns only Warning/Error/Fatal lines",
+      r["ok"] and all(l.get("verbosity") in ("Warning", "Error", "Fatal") for l in r["data"]["lines"]), r)
+# 0.5.2: number bounds from the schema are enforced (negative maxWidth went through).
+r = c("editor_capture", {"target": "panel", "inline": False, "maxWidth": -5})
+check("editor_capture negative maxWidth -> INVALID_ARGUMENT", not r["ok"] and r["errorCode"] == "INVALID_ARGUMENT", r)
 
 # --- editor UI capture: panel and main window (with the status bar)
 for target in ("panel", "window"):

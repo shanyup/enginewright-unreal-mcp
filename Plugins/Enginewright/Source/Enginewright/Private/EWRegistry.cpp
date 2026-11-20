@@ -231,6 +231,23 @@ FEWResult FEWRegistry::Check(const FString& Name, const TSharedPtr<FJsonObject>&
 					EW::Suggest(Got, Options));
 			}
 		}
+		// Number bounds from the schema (minimum / maximum). Before this only the type was checked, so a negative
+		// maxWidth or seconds went through to the tool (tur 0.5).
+		if (Pair.Value->Type == EJson::Number)
+		{
+			const double Num = Pair.Value->AsNumber();
+			double Bound = 0;
+			if ((*PropSchema)->TryGetNumberField(TEXT("minimum"), Bound) && Num < Bound)
+			{
+				return FEWResult::Error(TEXT("INVALID_ARGUMENT"),
+					FString::Printf(TEXT("'%s' argument '%s' must be at least %s, got %s."), *Tool->Name, *Key, *FString::SanitizeFloat(Bound), *FString::SanitizeFloat(Num)));
+			}
+			if ((*PropSchema)->TryGetNumberField(TEXT("maximum"), Bound) && Num > Bound)
+			{
+				return FEWResult::Error(TEXT("INVALID_ARGUMENT"),
+					FString::Printf(TEXT("'%s' argument '%s' must be at most %s, got %s."), *Tool->Name, *Key, *FString::SanitizeFloat(Bound), *FString::SanitizeFloat(Num)));
+			}
+		}
 	}
 	const TArray<TSharedPtr<FJsonValue>>* Required = nullptr;
 	if (Tool->InputSchema->TryGetArrayField(TEXT("required"), Required))

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-21
+### Added
+- [docs/RELIABILITY_0.5.md](docs/RELIABILITY_0.5.md): all 132 tools called on a real game project (996 checked calls), with the result for every tool.
+
+### Changed
+- `EnginewrightMVVM` carries the same version as Enginewright (0.5.2); its code did not change.
+
+### Fixed
+- `widget_get` without `properties` on a panel widget crashed the editor (stack overflow): reading every property followed the widget's `Slot` back to the widget forever. Each subobject is now exported once; repeats and the owner itself are written as their path. The same reader serves `object_get`, `settings_get` and `savegame_get`.
+- `widget_set` (and every property write) accepted an enum number outside the enum, e.g. `Visibility: 12345`, and the next widget render hit an engine assert. Out-of-range numbers are refused with `INVALID_VALUE` and the valid names.
+- `log_read` with `minVerbosity` also returned empty `Log` lines (console colour changes); these are no longer stored.
+- Number arguments are checked against the schema `minimum` / `maximum` (e.g. negative `maxWidth` in `editor_capture`, negative `seconds` in `perf_capture`, `top: 0` in `perf_gpu_profile`, holds above the limit in `ui_key` and `pie_input`).
+- `asset_search_text`, `id_audit` and `ui_input_audit` answer `FOLDER_NOT_FOUND` for a missing content folder instead of an empty result.
+- `id_audit` refuses a broken `fieldPattern` regex with `INVALID_ARGUMENT` instead of matching nothing.
+- `blueprint_info` returned empty variable defaults after a compile; it now reads them from the class defaults.
+- `mrq_render` answers `MAP_NOT_FOUND` for a map that does not exist instead of starting a render that cannot load it.
+
 ## [0.5.1] - 2026-11-20
 ### Security
 - The HTTP server refuses requests whose `Origin` header names another web site (403, before the token check), so a web page open in a browser cannot reach the editor. Requests without `Origin` (MCP clients, scripts) and from `localhost`, `127.0.0.1` or `[::1]` pass. Trusted local web tools can be listed in the new `AllowedOrigins` setting.
@@ -148,11 +165,11 @@ Release notes: [docs/release-notes/v0.2.0.md](docs/release-notes/v0.2.0.md)
 - `doctor`.
 - Atomic `batch` with rollback.
 
-[Unreleased]: https://github.com/shanyup/enginewright/compare/v0.5.1...main
-[0.5.1]: https://github.com/shanyup/enginewright/compare/v0.5.0...v0.5.1
-[0.5.0]: https://github.com/shanyup/enginewright/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/shanyup/enginewright/compare/v0.3.1...v0.4.0
-[0.3.1]: https://github.com/shanyup/enginewright/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/shanyup/enginewright/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/shanyup/enginewright/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/shanyup/enginewright/releases/tag/v0.1.0
+[Unreleased]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.5.1...main
+[0.5.1]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/shanyup/enginewright-unreal-mcp/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/shanyup/enginewright-unreal-mcp/releases/tag/v0.1.0

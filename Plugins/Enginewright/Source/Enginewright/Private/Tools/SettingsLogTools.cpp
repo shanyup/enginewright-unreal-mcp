@@ -32,6 +32,9 @@ namespace
 	public:
 		virtual void Serialize(const TCHAR* V, ELogVerbosity::Type Verbosity, const FName& Category) override
 		{
+			// SetColor calls (console colour codes) have no level bits: masked they read as 0 and passed every
+			// minVerbosity filter as empty "Log" lines. They are not log lines; skip them.
+			if ((Verbosity & ELogVerbosity::SetColor) != 0 || (Verbosity & ELogVerbosity::VerbosityMask) == ELogVerbosity::NoLogging) { return; }
 			FScopeLock Lock(&Guard);
 			Lines.Add({ ++Seq, Category.ToString(), Verbosity, V });
 			if (Lines.Num() > 20000) { Lines.RemoveAt(0, 2000, EAllowShrinking::No); }

@@ -310,7 +310,7 @@ void RegisterPieTools(FEWRegistry& R)
 			"action":{"type":"string","description":"Input Action asset path, e.g. /Game/Input/IA_Jump."},
 			"key":{"type":"string","description":"Key name, e.g. SpaceBar."},
 			"value":{"type":["boolean","number","array"],"description":"Action value: true, 0.5, [x,y] or [x,y,z]. Default true / 1."},
-			"seconds":{"type":"number","description":"Hold time; default 0.1. Max 30."}}})"),
+			"seconds":{"type":"number","minimum":0,"maximum":30,"description":"Hold time; default 0.1. Max 30."}}})"),
 		false,
 		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
 		{

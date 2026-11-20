@@ -112,7 +112,19 @@ namespace
 		J->SetStringField(TEXT("type"), EW::PinTypeToString(V.VarType));
 		J->SetStringField(TEXT("category"), V.Category.ToString());
 		J->SetBoolField(TEXT("instanceEditable"), !(V.PropertyFlags & CPF_DisableEditOnInstance));
-		J->SetStringField(TEXT("default"), V.DefaultValue);
+		// Compiling moves the default onto the class default object and clears V.DefaultValue, so after the first
+		// compile every variable read back as "" (tur 0.5). Prefer the compiled value when the class has the property.
+		FString Default = V.DefaultValue;
+		if (UClass* C = BP->GeneratedClass)
+		{
+			UObject* CDO = C->GetDefaultObject(false);
+			if (FProperty* P = CDO ? FindFProperty<FProperty>(C, V.VarName) : nullptr)
+			{
+				Default.Reset();
+				P->ExportText_InContainer(0, Default, CDO, nullptr, nullptr, PPF_None);
+			}
+		}
+		J->SetStringField(TEXT("default"), Default);
 		return J;
 	}
 

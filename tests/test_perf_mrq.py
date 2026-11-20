@@ -51,6 +51,11 @@ check("perf_capture: frames, fps and frame-time spread", r["ok"] and d["frames"]
 check("perf_capture says which side bounds the frame", d.get("boundBy") in ("game", "render", "gpu"), d)
 r = c("perf_capture", {"seconds": 1, "bogus": 1})
 check("perf_capture unknown argument -> UNKNOWN_ARGUMENT", not r["ok"] and r["errorCode"] == "UNKNOWN_ARGUMENT", r)
+for args in ({"seconds": -1}, {"seconds": 61}):
+    r = c("perf_capture", args)
+    check(f"perf_capture {args} out of bounds -> INVALID_ARGUMENT (0.5.2)", not r["ok"] and r["errorCode"] == "INVALID_ARGUMENT", r)
+r = c("perf_gpu_profile", {"top": 0})
+check("perf_gpu_profile top 0 -> INVALID_ARGUMENT (0.5.2)", not r["ok"] and r["errorCode"] == "INVALID_ARGUMENT", r)
 r = c("perf_gpu_profile", {"top": 3})
 d = r.get("data") or {}
 check("perf_gpu_profile: total GPU ms and at most 3 passes", r["ok"] and d["totalGpuMs"] > 0 and 1 <= len(d["top"]) <= 3 and "ms" in d["top"][0], r)
@@ -62,6 +67,8 @@ r = c("mrq_render", {})
 check("mrq_render without sequence -> MISSING_ARGUMENT", not r["ok"] and r["errorCode"] == "MISSING_ARGUMENT", r)
 r = c("mrq_render", {"sequence": ROOT + "/LS_DoesNotExist"})
 check("mrq_render with a missing sequence is refused, nothing started", not r["ok"] and c("mrq_status")["data"]["state"] == "idle", r)
+r = c("mrq_render", {"sequence": ROOT + "/LS_DoesNotExist", "map": "/Game/NoSuchMap_EW"})
+check("mrq_render with a missing map -> MAP_NOT_FOUND (0.5.2)", not r["ok"] and r["errorCode"] == "MAP_NOT_FOUND", r)
 
 delete_if_exists(BP)
 done()

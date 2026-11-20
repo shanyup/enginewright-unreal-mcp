@@ -62,6 +62,8 @@ r = c("pie_input", {"key": "W", "seconds": 1.0})
 after = c("pie_state")["data"]["worlds"][0]["players"][0]["location"]
 moved = sum((a - b) ** 2 for a, b in zip(after, before)) ** 0.5
 check("pie_input key W held 1 s moves the default pawn", r["ok"] and moved > 50, {"r": r, "before": before, "after": after})
+r = c("pie_input", {"key": "W", "seconds": 31})
+check("pie_input hold above 30 s -> INVALID_ARGUMENT at once (0.5.2)", not r["ok"] and r["errorCode"] == "INVALID_ARGUMENT", r)
 # pie_walk_to (ER-22): the pawn walks to a position with movement input
 def loc():
     return c("pie_state")["data"]["worlds"][0]["players"][0]["location"]

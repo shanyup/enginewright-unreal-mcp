@@ -91,7 +91,7 @@ namespace
 		{
 			FProperty* P = EW::FindPropertyLoose(C, N);
 			if (!P) { OutError = FString::Printf(TEXT("%s has no field '%s'."), *C->GetName(), *N); OutSug = EW::Suggest(N, SaveFieldNames(C)); return V; }
-			V->SetField(C->GetAuthoredNameForField(P), FJsonObjectConverter::UPropertyToJsonValue(P, P->ContainerPtrToValuePtr<void>(Obj)));
+			V->SetField(C->GetAuthoredNameForField(P), EW::PropertyToJson(P, P->ContainerPtrToValuePtr<void>(Obj), Obj));
 		}
 		return V;
 	}

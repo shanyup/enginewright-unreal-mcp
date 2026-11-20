@@ -59,6 +59,13 @@ r = c("widget_set", {"path": W, "name": root, "slot": {"position": [0, 0]}})
 check("slot on the root -> NO_SLOT", not r["ok"] and r["errorCode"] == "NO_SLOT", r)
 r = c("widget_get", {"path": W, "name": "Title", "properties": ["Text"]})
 check("widget_get reads Text", r["ok"] and "Main Menu" in str(r["data"]["values"]["Text"]), r)
+# 0.5.2: reading all properties of a panel followed widget -> Slot -> widget until the stack overflowed (editor crash).
+r = c("widget_get", {"path": W, "name": "Menu"})
+check("widget_get without properties on a panel reads all values (no crash)", r["ok"] and len(r["data"].get("values") or {}) > 3, r)
+# 0.5.2: an out-of-range enum number was stored as is and the next render hit check(false) in UWidget.
+r = c("widget_set", {"path": W, "name": "Menu", "properties": {"Visibility": 12345}})
+check("widget_set enum number out of range -> error with the valid names, value unchanged",
+      not r["ok"] and "Visible" in str(r.get("suggestions")) and c("widget_get", {"path": W, "name": "Menu", "properties": ["Visibility"]})["data"]["values"]["Visibility"] == "Visible", r)
 
 t = tree()
 check("widget_tree: 5 widgets with parents", len(t) == 5 and t["PlayLabel"]["parent"] == "PlayButton" and t["Title"]["parent"] == "Menu", list(t))
