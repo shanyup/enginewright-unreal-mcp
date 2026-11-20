@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Number arguments are checked against the schema `minimum` / `maximum` (e.g. negative `maxWidth` in `editor_capture`, negative `seconds` in `perf_capture`, `top: 0` in `perf_gpu_profile`, holds above the limit in `ui_key` and `pie_input`).
 - `asset_search_text`, `id_audit` and `ui_input_audit` answer `FOLDER_NOT_FOUND` for a missing content folder instead of an empty result.
 - `id_audit` refuses a broken `fieldPattern` regex with `INVALID_ARGUMENT` instead of matching nothing.
+- `blueprint_info` returned empty variable defaults after a compile; it now reads them from the class defaults.
 - `mrq_render` answers `MAP_NOT_FOUND` for a map that does not exist instead of starting a render that cannot load it.
 
 ## [0.5.1] - 2026-11-20
