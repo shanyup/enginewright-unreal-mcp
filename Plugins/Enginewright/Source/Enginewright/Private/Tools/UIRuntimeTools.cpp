@@ -14,6 +14,9 @@
 #include "Engine/GameViewportClient.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
+#include "Engine/HitResult.h"
+#include "Slate/SceneViewport.h"
 #include "EnhancedActionKeyMapping.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedPlayerInput.h"
@@ -1241,5 +1244,200 @@ void RegisterUIRuntimeTools(FEWRegistry& R)
 			Data->SetArrayField(TEXT("issues"), Issues);
 			Data->SetNumberField(TEXT("issueCount"), Issues.Num());
 			return FEWResult::Ok(Data);
+		});
+
+	R.RegisterAsync(TEXT("pie_cursor"),
+		TEXT("Move a Play In Editor player's mouse cursor onto an actor, a world point or a screen pixel, the way a mouse does (through Slate, so the game viewport and the UI both see it: hover, UMG OnMouseEnter, the cursor position the game reads). actor/class aims at the centre of the actor's visible bounds (offset moves the aim point in world units, e.g. [0,0,50] for the head); location is a world point; screen is [x, y] in viewport pixels. click (Left, Right, Middle) then presses and releases there. Returns the screen point, whether it is on screen, what a click would hit there (the actor under the cursor by the Visibility trace, onTarget when it is the aimed actor), whether a UI widget is under the cursor (uiOver: game clicks would land on the UI), and the cursor position the game itself reads (gameCursor) after settleSeconds. Errors: OFF_SCREEN (behind the camera or outside the view, with the projected point), ACTOR_NOT_FOUND, NO_PLAYER. Use ui_click for buttons by name."),
+		TEXT(R"({"type":"object","properties":{
+			"actor":{"type":"string","description":"Actor label or name in the play world (wildcards allowed); the first match is used."},
+			"class":{"type":"string","description":"Or: the first actor of this class (with actor: the first of this class that matches)."},
+			"location":{"type":"array","items":{"type":"number"},"description":"Or: a world point [x, y, z]."},
+			"screen":{"type":"array","items":{"type":"number"},"description":"Or: viewport pixels [x, y] (0,0 = top left)."},
+			"offset":{"type":"array","items":{"type":"number"},"description":"World offset [x, y, z] added to the actor or location aim point."},
+			"click":{"type":"string","enum":["Left","Right","Middle"],"description":"Optional: press and release this mouse button at the cursor."},
+			"player":{"type":"integer","minimum":0,"description":"Local player index (0 = first / host). Default 0."},
+			"settleSeconds":{"type":"number","minimum":0,"maximum":10,"description":"Hold the cursor there this long (re-sent every frame), then read the result; default 0.2."},
+			"realCursor":{"type":"boolean","description":"Also move the real Windows mouse pointer there, so the cursor stays after the call (default false: Slate puts the cursor back where the real mouse is after settleSeconds)."}}})"),
+		false,
+		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
+		{
+			FString Err;
+			const int32 PlayerIndex = (int32)EW::Num(Args, TEXT("player"), 0);
+			APlayerController* PC = EW::PiePlayer(PlayerIndex, Err);
+			if (!PC) { Done(Bad(TEXT("NO_PLAYER"), Err)); return; }
+			const FString Key = EW::Str(Args, TEXT("actor"));
+			const FString ClassArg = EW::Str(Args, TEXT("class"));
+			const TArray<TSharedPtr<FJsonValue>>* LocArr = nullptr;
+			const TArray<TSharedPtr<FJsonValue>>* ScrArr = nullptr;
+			const TArray<TSharedPtr<FJsonValue>>* OffArr = nullptr;
+			const bool bLoc = Args->TryGetArrayField(TEXT("location"), LocArr);
+			const bool bScr = Args->TryGetArrayField(TEXT("screen"), ScrArr);
+			const bool bActor = !Key.IsEmpty() || !ClassArg.IsEmpty();
+			if ((int32)bActor + (int32)bLoc + (int32)bScr != 1) { Done(Bad(TEXT("INVALID_ARGUMENT"), TEXT("Pass exactly one target: actor/class, location or screen."))); return; }
+			if (bLoc && LocArr->Num() != 3) { Done(Bad(TEXT("INVALID_ARGUMENT"), TEXT("location must be [x, y, z]."))); return; }
+			if (bScr && ScrArr->Num() != 2) { Done(Bad(TEXT("INVALID_ARGUMENT"), TEXT("screen must be [x, y]."))); return; }
+			FVector Offset = FVector::ZeroVector;
+			if (Args->TryGetArrayField(TEXT("offset"), OffArr))
+			{
+				if (bScr) { Done(Bad(TEXT("INVALID_ARGUMENT"), TEXT("offset is in world units; it cannot be used with screen."))); return; }
+				if (OffArr->Num() != 3) { Done(Bad(TEXT("INVALID_ARGUMENT"), TEXT("offset must be [x, y, z]."))); return; }
+				Offset = FVector((*OffArr)[0]->AsNumber(), (*OffArr)[1]->AsNumber(), (*OffArr)[2]->AsNumber());
+			}
+			const FString ClickName = EW::Str(Args, TEXT("click"));
+			if (!ClickName.IsEmpty() && ClickName != TEXT("Left") && ClickName != TEXT("Right") && ClickName != TEXT("Middle")) { Done(Bad(TEXT("INVALID_ARGUMENT"), TEXT("click must be Left, Right or Middle."))); return; }
+			const float Settle = FMath::Clamp((float)EW::Num(Args, TEXT("settleSeconds"), 0.2), 0.f, 10.f);
+			const bool bReal = EW::Bool(Args, TEXT("realCursor"), false);
+
+			ULocalPlayer* LP = PC->GetLocalPlayer();
+			FViewport* V = LP && LP->ViewportClient ? LP->ViewportClient->Viewport : nullptr;
+			FGeometry VPGeo;
+			if (!V || !ViewportGeometry(PC, VPGeo)) { Done(Bad(TEXT("NO_VIEWPORT"), TEXT("The player has no game viewport."))); return; }
+			const FIntPoint Size = V->GetSizeXY();
+			if (Size.X <= 0 || Size.Y <= 0) { Done(Bad(TEXT("NO_VIEWPORT"), TEXT("The game viewport has no size (minimized?)."))); return; }
+
+			TSharedRef<FJsonObject> Data = MakeShared<FJsonObject>();
+			AActor* Target = nullptr;
+			FVector2D Pixel;
+			if (bScr) { Pixel = FVector2D((*ScrArr)[0]->AsNumber(), (*ScrArr)[1]->AsNumber()); }
+			else
+			{
+				FVector World;
+				if (bActor)
+				{
+					UClass* Class = nullptr;
+					if (!ClassArg.IsEmpty())
+					{
+						TArray<FString> Sug;
+						Class = EW::FindClass(ClassArg, Err, &Sug);
+						if (!Class) { Done(Bad(TEXT("UNKNOWN_CLASS"), Err, Sug)); return; }
+					}
+					TArray<FString> Names;
+					for (TActorIterator<AActor> It(PC->GetWorld(), Class ? Class : AActor::StaticClass()); It; ++It)
+					{
+						if (!IsValid(*It)) { continue; }
+						if (Names.Num() < 400) { Names.Add(It->GetActorLabel()); }
+						if (!Target && (Key.IsEmpty() || It->GetActorLabel() == Key || It->GetName() == Key || It->GetActorLabel().MatchesWildcard(Key) || It->GetName().MatchesWildcard(Key))) { Target = *It; }
+					}
+					if (!Target) { Done(Bad(TEXT("ACTOR_NOT_FOUND"), FString::Printf(TEXT("No actor matching '%s' in player %d's world."), *(Key.IsEmpty() ? ClassArg : Key), PlayerIndex), EW::Suggest(Key, Names))); return; }
+					FVector Origin, Extent;
+					Target->GetActorBounds(/*bOnlyColliding*/ false, Origin, Extent, /*bIncludeFromChildActors*/ true);
+					World = Extent.IsNearlyZero() ? Target->GetActorLocation() : Origin;
+					Data->SetStringField(TEXT("actor"), Target->GetActorLabel());
+				}
+				else { World = FVector((*LocArr)[0]->AsNumber(), (*LocArr)[1]->AsNumber(), (*LocArr)[2]->AsNumber()); }
+				World += Offset;
+				Data->SetArrayField(TEXT("aimAt"), { MakeShared<FJsonValueNumber>(FMath::RoundToDouble(World.X)), MakeShared<FJsonValueNumber>(FMath::RoundToDouble(World.Y)), MakeShared<FJsonValueNumber>(FMath::RoundToDouble(World.Z)) });
+				const bool bFront = PC->ProjectWorldLocationToScreen(World, Pixel, /*bPlayerViewportRelative*/ true);
+				if (!bFront)
+				{
+					Done(Bad(TEXT("OFF_SCREEN"), TEXT("The point is behind the camera. Turn the camera or walk closer (pie_walk_to) first.")));
+					return;
+				}
+			}
+			Data->SetArrayField(TEXT("screen"), { MakeShared<FJsonValueNumber>(FMath::RoundToDouble(Pixel.X)), MakeShared<FJsonValueNumber>(FMath::RoundToDouble(Pixel.Y)) });
+			Data->SetArrayField(TEXT("viewport"), { MakeShared<FJsonValueNumber>(Size.X), MakeShared<FJsonValueNumber>(Size.Y) });
+			if (Pixel.X < 0 || Pixel.Y < 0 || Pixel.X >= Size.X || Pixel.Y >= Size.Y)
+			{
+				FEWResult R = Bad(TEXT("OFF_SCREEN"), FString::Printf(TEXT("The point projects to (%.0f, %.0f), outside the %dx%d view."), Pixel.X, Pixel.Y, Size.X, Size.Y));
+				R.Data = Data;
+				Done(R);
+				return;
+			}
+
+			// Viewport pixels -> desktop space through the geometry the scene viewport receives mouse events in
+			// (cursor pixel = local * scale there). The game's own reading is then checked and corrected once,
+			// so DPI scale, tab borders or a stale layout cannot leave the cursor off by an offset.
+			UGameViewportClient* GVC = PC->GetWorld()->GetGameViewport();
+			FSceneViewport* SV = GVC ? GVC->GetGameViewport() : nullptr;
+			TSharedPtr<SWindow> Window = GVC && GVC->GetGameViewportWidget().IsValid() ? FSlateApplication::Get().FindWidgetWindow(GVC->GetGameViewportWidget().ToSharedRef()) : nullptr;
+			if (!SV || !Window.IsValid() || !Window->GetNativeWindow().IsValid()) { Done(Bad(TEXT("NO_VIEWPORT"), TEXT("The game viewport has no window."))); return; }
+			const FGeometry& G = SV->GetCachedGeometry();
+			const float Scale = G.Scale > 0 ? G.Scale : 1.f;
+			FVector2D Abs = FVector2D(G.LocalToAbsolute(FVector2D(Pixel.X / Scale, Pixel.Y / Scale)));
+			const int32 UserIndex = (LP->GetSlateUser().IsValid()) ? LP->GetSlateUser()->GetUserIndex() : 0;
+			FSlateApplication& Slate = FSlateApplication::Get();
+			auto MoveTo = [&Slate, UserIndex](const FVector2D& To)
+			{
+				const FVector2D Prev = Slate.GetCursorPos();
+				Slate.ProcessMouseMoveEvent(FPointerEvent(UserIndex, 0, To, Prev, TSet<FKey>(), FKey(), 0.f, FModifierKeysState()), /*bIsSynthetic*/ false);
+			};
+			MoveTo(Abs);
+			for (int32 Try = 0; Try < 2; ++Try)
+			{
+				FIntPoint Got(-1, -1);
+				SV->GetMousePos(Got, /*bLocalPosition*/ true);
+				const FVector2D Miss(Pixel.X - Got.X, Pixel.Y - Got.Y);
+				if (Got.X < 0 || Got.Y < 0 || Miss.GetAbsMax() <= 1.0) { break; }
+				// Desktop units per cursor pixel: the absolute geometry scale over the local one.
+				const double Per = G.GetAccumulatedLayoutTransform().GetScale() / Scale;
+				Abs += Miss * (Per > 0 ? Per : 1.0);
+				MoveTo(Abs);
+			}
+			if (bReal) { Slate.SetCursorPos(Abs); }
+			Data->SetBoolField(TEXT("realCursor"), bReal);
+
+			if (!ClickName.IsEmpty())
+			{
+				const FKey Mouse = ClickName == TEXT("Left") ? EKeys::LeftMouseButton : ClickName == TEXT("Right") ? EKeys::RightMouseButton : EKeys::MiddleMouseButton;
+				const TSet<FKey> Pressed({ Mouse });
+				Data->SetBoolField(TEXT("clickHandled"), Slate.ProcessMouseButtonDownEvent(Window->GetNativeWindow(), FPointerEvent(UserIndex, 0, Abs, Abs, Pressed, Mouse, 0.f, FModifierKeysState())));
+				Slate.ProcessMouseButtonUpEvent(FPointerEvent(UserIndex, 0, Abs, Abs, TSet<FKey>(), Mouse, 0.f, FModifierKeysState()));
+				Data->SetStringField(TEXT("click"), ClickName);
+			}
+
+			TWeakObjectPtr<APlayerController> WeakPC = PC;
+			TWeakObjectPtr<AActor> WeakTarget = Target;
+			TSharedPtr<SWidget> GameVP = GVC ? StaticCastSharedPtr<SWidget>(GVC->GetGameViewportWidget()) : nullptr;
+			// Slate re-sends the real mouse position every frame; keep sending ours while the game settles.
+			const FVector2D Held = Abs;
+			EW::PollUntil(Settle, [Held, UserIndex]()
+			{
+				FSlateApplication& S = FSlateApplication::Get();
+				S.ProcessMouseMoveEvent(FPointerEvent(UserIndex, 0, Held, Held, TSet<FKey>(), FKey(), 0.f, FModifierKeysState()), /*bIsSynthetic*/ false);
+				return false;
+			}, [Done, Data, WeakPC, WeakTarget, Pixel, Abs, Window, UserIndex, bActor, GameVP]()
+			{
+				APlayerController* P = WeakPC.Get();
+				if (!P) { Done(Bad(TEXT("NO_PLAYER"), TEXT("The player went away."))); return; }
+				FHitResult Hit;
+				if (P->GetHitResultAtScreenPosition(Pixel, ECC_Visibility, /*bTraceComplex*/ false, Hit) && Hit.GetActor())
+				{
+					Data->SetStringField(TEXT("hitActor"), Hit.GetActor()->GetActorLabel());
+					if (Hit.GetComponent()) { Data->SetStringField(TEXT("hitComponent"), Hit.GetComponent()->GetName()); }
+					Data->SetNumberField(TEXT("hitDistance"), FMath::RoundToDouble(Hit.Distance));
+				}
+				if (bActor)
+				{
+					const bool bOn = WeakTarget.IsValid() && Hit.GetActor() && (Hit.GetActor() == WeakTarget.Get() || Hit.GetActor()->IsAttachedTo(WeakTarget.Get()) || Hit.GetActor()->GetOwner() == WeakTarget.Get());
+					Data->SetBoolField(TEXT("onTarget"), bOn);
+				}
+				// The top widget under the cursor: anything but the viewport itself means the UI would take the click.
+				FString TopType;
+				if (Window.IsValid())
+				{
+					const FWidgetPath Path = FSlateApplication::Get().LocateWindowUnderMouse(Abs, { Window.ToSharedRef() }, false, UserIndex);
+					// The path ends at the topmost hit-testable widget; the game viewport itself (or its layer manager)
+					// there means no UI is under the cursor.
+					if (Path.IsValid())
+					{
+						const TSharedRef<SWidget> Top = Path.Widgets.Last().Widget;
+						const FName T = Top->GetType();
+						const bool bViewport = GameVP.IsValid() && &Top.Get() == GameVP.Get();
+						if (!bViewport && T != TEXT("SViewport") && T != TEXT("SPIEViewport") && T != TEXT("SGameLayerManager") && T != TEXT("SWindow")) { TopType = Top->GetTypeAsString(); }
+					}
+				}
+				Data->SetBoolField(TEXT("uiOver"), !TopType.IsEmpty());
+				if (!TopType.IsEmpty()) { Data->SetStringField(TEXT("uiWidget"), TopType); }
+				float MX = 0, MY = 0;
+				if (P->GetMousePosition(MX, MY)) { Data->SetArrayField(TEXT("gameCursor"), { MakeShared<FJsonValueNumber>(FMath::RoundToDouble(MX)), MakeShared<FJsonValueNumber>(FMath::RoundToDouble(MY)) }); }
+				Data->SetBoolField(TEXT("showMouseCursor"), P->bShowMouseCursor);
+				FEWResult R = FEWResult::Ok(Data, FString::Printf(TEXT("Cursor at (%.0f, %.0f)%s."), Pixel.X, Pixel.Y,
+					Data->HasField(TEXT("hitActor")) ? *FString::Printf(TEXT(", over %s"), *Data->GetStringField(TEXT("hitActor"))) : TEXT("")));
+				if (!Data->HasField(TEXT("gameCursor"))) { R.Warnings.Add(TEXT("The game does not read a cursor position from this viewport (mouse not attached or the viewport has no focus); hover in the game may not react.")); }
+				else if (FMath::Abs(MX - Pixel.X) > 3 || FMath::Abs(MY - Pixel.Y) > 3) { R.Warnings.Add(FString::Printf(TEXT("The game reads the cursor at (%.0f, %.0f), not at the aimed (%.0f, %.0f)."), MX, MY, Pixel.X, Pixel.Y)); }
+				if (!Data->GetBoolField(TEXT("realCursor"))) { R.Warnings.Add(TEXT("The cursor returns to the real mouse position after this call; use realCursor true (or a longer settleSeconds) when the game must see it longer.")); }
+				if (bActor && !Data->GetBoolField(TEXT("onTarget"))) { R.Warnings.Add(TEXT("Something else is under the cursor (see hitActor): the actor is covered, or has no Visibility collision. Use offset to aim at another part.")); }
+				Done(R);
+			});
 		});
 }

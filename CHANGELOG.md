@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `pie_record`: a short MP4 (H.264, 0.5–30 s, 5–30 fps) of what a Play In Editor player sees, UI included. Frames are read inside the editor, not grabbed from the screen. With UI (the default) the window's back buffer is read back without stalling the GPU, so a background editor still reaches the requested fps; when the window presents nothing (minimized), or with `ui: false`, frames are read synchronously (slower, about 9 fps). Frames are timed by when they were really taken, so the video plays at real speed; `capture` says which path was used. `steps` run tool calls at given seconds during the recording (e.g. `pie_input`, `pie_cursor`, `console_command`), so input and picture stay in sync. The reply has the real fps, `distinctFrames` and `frozen` (every frame the same picture), a 2x2 contact sheet image, and each step's result. Needs ffmpeg (PATH or WinGet); without it the JPEG frames are kept.
+- `pie_cursor`: moves a Play In Editor player's mouse cursor onto an actor (centre of its bounds, with an optional world `offset`), a world point or a viewport pixel, through Slate so the game and the UI both see it; optional `click`. Returns the screen point, what a click would hit there (`hitActor`, `onTarget`), whether UI covers the point (`uiOver`), and the cursor position the game itself reads (`gameCursor`). `OFF_SCREEN` for a point behind the camera or outside the view. `realCursor` also moves the Windows pointer so the cursor stays after the call.
 
 ## [0.5.2] - 2026-11-21
 ### Added

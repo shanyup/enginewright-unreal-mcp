@@ -20,7 +20,7 @@ public class Enginewright : ModuleRules
 			"MaterialEditor", "LevelEditor", "EditorSubsystem", "DataValidation", "RenderCore", "RHI", "PhysicsCore",
 			"UMG", "UMGEditor", "GameplayTags", "GameplayTagsEditor", "NavigationSystem",
 			"ToolMenus", "WorkspaceMenuStructure", "Settings", "ApplicationCore", "MeshDescription", "StaticMeshDescription",
-			"LevelSequence", "MovieScene", "MovieRenderPipelineCore", "MovieRenderPipelineEditor", "MovieRenderPipelineRenderPasses", "MovieRenderPipelineSettings"
+			"LevelSequence", "MovieScene", "MovieRenderPipelineCore", "MovieRenderPipelineEditor", "MovieRenderPipelineRenderPasses", "MovieRenderPipelineSettings", "MovieSceneCapture"
 		});
 
 		if (Target.Platform == UnrealTargetPlatform.Win64)

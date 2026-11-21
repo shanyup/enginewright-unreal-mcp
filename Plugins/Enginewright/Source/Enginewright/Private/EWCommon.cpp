@@ -11,9 +11,11 @@
 #include "EnhancedPlayerInput.h"
 #include "InputMappingContext.h"
 #include "GameFramework/PlayerController.h"
+#include "HAL/FileManager.h"
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
 #include "Misc/PackageName.h"
+#include "Misc/Paths.h"
 #include "Modules/ModuleManager.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -399,6 +401,25 @@ namespace EW
 			return nullptr;
 		}
 		return Players[Index];
+	}
+
+	FString FindFfmpeg()
+	{
+		if (FPlatformMisc::GetEnvironmentVariable(TEXT("PATH")).Len() > 0)
+		{
+			TArray<FString> Dirs;
+			FPlatformMisc::GetEnvironmentVariable(TEXT("PATH")).ParseIntoArray(Dirs, TEXT(";"), true);
+			for (const FString& D : Dirs)
+			{
+				const FString C = FPaths::Combine(D, TEXT("ffmpeg.exe"));
+				if (FPaths::FileExists(C)) { return C; }
+			}
+		}
+		// winget installs ffmpeg under the user's package folder without always updating the editor's PATH.
+		const FString Local = FPlatformMisc::GetEnvironmentVariable(TEXT("LOCALAPPDATA")) / TEXT("Microsoft/WinGet/Packages");
+		TArray<FString> Found;
+		IFileManager::Get().FindFilesRecursive(Found, *Local, TEXT("ffmpeg.exe"), true, false);
+		return Found.Num() ? Found[0] : FString();
 	}
 
 	bool EncodePng(const TArray<FColor>& Pixels, int32 Width, int32 Height, TArray64<uint8>& OutPng)

@@ -87,6 +87,9 @@ namespace EW
 	/** Captured log lines after Seq ("Category: text"), optionally of one category. */
 	TArray<FString> LogLinesSince(uint64 Seq, const FString& Category = FString(), const FString& Contains = FString());
 
+	/** Full path of ffmpeg.exe: PATH first, then the WinGet package folder. Empty when not found. */
+	FString FindFfmpeg();
+
 	/** Encodes RGBA8 pixels as PNG. */
 	bool EncodePng(const TArray<FColor>& Pixels, int32 Width, int32 Height, TArray64<uint8>& OutPng);
 

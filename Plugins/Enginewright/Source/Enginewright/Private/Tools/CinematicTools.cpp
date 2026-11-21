@@ -50,29 +50,9 @@ namespace
 		return Files.Num();
 	}
 
-	FString FindFfmpeg()
-	{
-		FString Path;
-		if (FPlatformMisc::GetEnvironmentVariable(TEXT("PATH")).Len() > 0)
-		{
-			TArray<FString> Dirs;
-			FPlatformMisc::GetEnvironmentVariable(TEXT("PATH")).ParseIntoArray(Dirs, TEXT(";"), true);
-			for (const FString& D : Dirs)
-			{
-				const FString C = FPaths::Combine(D, TEXT("ffmpeg.exe"));
-				if (FPaths::FileExists(C)) { return C; }
-			}
-		}
-		// winget installs ffmpeg under the user's package folder without always updating the editor's PATH.
-		const FString Local = FPlatformMisc::GetEnvironmentVariable(TEXT("LOCALAPPDATA")) / TEXT("Microsoft/WinGet/Packages");
-		TArray<FString> Found;
-		IFileManager::Get().FindFilesRecursive(Found, *Local, TEXT("ffmpeg.exe"), true, false);
-		return Found.Num() ? Found[0] : FString();
-	}
-
 	void EncodeMp4()
 	{
-		const FString Ff = FindFfmpeg();
+		const FString Ff = EW::FindFfmpeg();
 		if (Ff.IsEmpty()) { GRender.Mp4Error = TEXT("ffmpeg not found (PATH or WinGet packages). Frames are kept as PNG."); return; }
 		GRender.Mp4 = GRender.OutDir + TEXT(".mp4");
 		const FString Args = FString::Printf(TEXT("-y -framerate %d -start_number 0 -i \"%s/frame.%%04d.png\" -c:v libx264 -preset medium -crf 16 -pix_fmt yuv420p -movflags +faststart \"%s\""),

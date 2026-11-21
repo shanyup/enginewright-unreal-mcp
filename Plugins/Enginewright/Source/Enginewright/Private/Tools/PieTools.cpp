@@ -31,6 +31,15 @@
 #include "Settings/LevelEditorPlaySettings.h"
 #include "UnrealClient.h"
 #include "Widgets/SViewport.h"
+#include "Async/Async.h"
+#include "Editor/EditorPerformanceSettings.h"
+#include "FrameGrabber.h"
+#include "IAssetViewport.h"
+#include "Slate/SceneViewport.h"
+#include "HAL/PlatformProcess.h"
+#include "IImageWrapper.h"
+#include "IImageWrapperModule.h"
+#include "Modules/ModuleManager.h"
 
 namespace
 {
@@ -225,6 +234,268 @@ namespace
 		}
 		OutError = TEXT("value must be true/false, a number, [x, y] or [x, y, z].");
 		return FInputActionValue();
+	}
+}
+
+namespace
+{
+	/** One pie_record run. Frames are read on the game thread and written as JPEG on worker threads;
+	 *  ffmpeg then joins them with their real timestamps, so the video plays at real speed even when
+	 *  the editor could not keep the asked frame rate. */
+	struct FEWRecording
+	{
+		struct FStep
+		{
+			FString Tool;
+			TSharedPtr<FJsonObject> Args;
+			double At = 0;
+		};
+
+		TWeakObjectPtr<APlayerController> PC;
+		bool bUI = true, bKeepFrames = false, bOldThrottle = true, bStopped = false, bAllUI = true;
+		int32 MaxWidth = 960, Fps = 15, Frames = 0, Distinct = 0, W = 0, H = 0;
+		double Seconds = 5, T0 = 0, Elapsed = 0, GrabSeconds = 0;
+		/** Asynchronous back-buffer reader (UI included, no GPU stall); null when it could not start. */
+		TSharedPtr<FFrameGrabber> Grabber;
+		int32 Requested = 0;
+		FString Path = TEXT("sync");
+		FString Dir, FramesDir;
+		TArray<FColor> Last;
+		TArray<TArray<FColor>> Sheet;
+		TArray<double> SheetAt;
+		TArray<double> Times;
+		TArray<FStep> Steps;
+		int32 NextStep = 0;
+		TArray<TSharedPtr<FJsonValue>> StepResults;
+		TAtomic<int32> Pending{0};
+		TAtomic<int32> WriteFailed{0};
+		IImageWrapperModule* Wrapper = nullptr;
+	};
+
+	struct FEWFramePayload : IFramePayload
+	{
+		double T = 0;
+	};
+
+	/** The scene viewport (shared) a PIE player draws into: its own window, or the level editor viewport. */
+	TSharedPtr<FSceneViewport> PieSceneViewport(APlayerController* PC, FViewport* V)
+	{
+		if (!GEditor || !PC || !V) { return nullptr; }
+		const FWorldContext* Ctx = GEditor->GetWorldContextFromWorld(PC->GetWorld());
+		const FSlatePlayInEditorInfo* Info = Ctx ? GEditor->SlatePlayInEditorMap.Find(Ctx->ContextHandle) : nullptr;
+		if (!Info) { return nullptr; }
+		TSharedPtr<FSceneViewport> SV = Info->SlatePlayInEditorWindowViewport;
+		if (!SV.IsValid())
+		{
+			TSharedPtr<IAssetViewport> AV = Info->DestinationSlateViewport.Pin();
+			if (AV.IsValid()) { SV = AV->GetSharedActiveViewport(); }
+		}
+		return SV.IsValid() && static_cast<FViewport*>(SV.Get()) == V ? SV : nullptr;
+	}
+
+	/** True when two frames differ in a visible way (sampled: 1 pixel in 7, more than 0.2 % of them changed). */
+	bool FramesDiffer(const TArray<FColor>& A, const TArray<FColor>& B)
+	{
+		if (A.Num() != B.Num() || A.Num() == 0) { return true; }
+		int32 Samples = 0, Changed = 0;
+		for (int32 i = 0; i < A.Num(); i += 7)
+		{
+			++Samples;
+			if (FMath::Abs(A[i].R - B[i].R) + FMath::Abs(A[i].G - B[i].G) + FMath::Abs(A[i].B - B[i].B) > 30) { ++Changed; }
+		}
+		return Changed * 500 > Samples;
+	}
+
+	/** 2x2 grid of four frames at half size each, 4 px gap. */
+	TArray<FColor> ContactSheet(const TArray<TArray<FColor>>& Shots, int32 W, int32 H, int32& OutW, int32& OutH)
+	{
+		const int32 HW = FMath::Max(1, W / 2), HH = FMath::Max(1, H / 2), Gap = 4;
+		OutW = HW * 2 + Gap; OutH = HH * 2 + Gap;
+		TArray<FColor> Out;
+		Out.Init(FColor(24, 24, 24, 255), OutW * OutH);
+		for (int32 k = 0; k < Shots.Num() && k < 4; ++k)
+		{
+			if (Shots[k].Num() != W * H) { continue; }
+			TArray<FColor> Small;
+			FImageUtils::ImageResize(W, H, Shots[k], HW, HH, Small, false, true);
+			const int32 OX = (k % 2) * (HW + Gap), OY = (k / 2) * (HH + Gap);
+			for (int32 y = 0; y < HH; ++y) { FMemory::Memcpy(&Out[(OY + y) * OutW + OX], &Small[y * HW], HW * sizeof(FColor)); }
+		}
+		for (FColor& C : Out) { C.A = 255; }
+		return Out;
+	}
+
+	double R2(double V) { return FMath::RoundToDouble(V * 100) / 100; }
+
+	/** Joins the frames into an MP4 off the game thread, then replies on the game thread. */
+	void EncodeAndReply(TSharedRef<FEWRecording> Rec, FEWDone Done)
+	{
+		// Concat list: every frame shown until the next one was taken (the last one for one frame period).
+		FString List;
+		for (int32 i = 0; i < Rec->Frames; ++i)
+		{
+			const double Dur = i + 1 < Rec->Times.Num() ? Rec->Times[i + 1] - Rec->Times[i] : 1.0 / Rec->Fps;
+			List += FString::Printf(TEXT("file 'frames/frame_%04d.jpg'\nduration %.4f\n"), i, FMath::Max(0.001, Dur));
+		}
+		List += FString::Printf(TEXT("file 'frames/frame_%04d.jpg'\n"), Rec->Frames - 1);
+		const FString ListFile = Rec->Dir / TEXT("frames.txt");
+		FFileHelper::SaveStringToFile(List, *ListFile);
+
+		int32 SW = 0, SH = 0;
+		const TArray<FColor> Sheet = ContactSheet(Rec->Sheet, Rec->W, Rec->H, SW, SH);
+		TArray64<uint8> SheetPng;
+		const FString SheetFile = Rec->Dir / TEXT("sheet.png");
+		if (EW::EncodePng(Sheet, SW, SH, SheetPng)) { FFileHelper::SaveArrayToFile(SheetPng, *SheetFile); }
+		TSharedRef<TArray64<uint8>> SheetBytes = MakeShared<TArray64<uint8>>(MoveTemp(SheetPng));
+
+		const FString Ff = EW::FindFfmpeg();
+		const FString Video = Rec->Dir / TEXT("video.mp4");
+		Async(EAsyncExecution::Thread, [Rec, Done, Ff, Video, ListFile, SheetFile, SheetBytes]()
+		{
+			FString Mp4Error;
+			if (Ff.IsEmpty()) { Mp4Error = TEXT("ffmpeg not found (PATH or WinGet packages); the frames are kept as JPEG."); }
+			else
+			{
+				const FString A = FString::Printf(TEXT("-y -hide_banner -loglevel error -f concat -safe 0 -i \"%s\" -vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" -fps_mode cfr -r %d -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -movflags +faststart \"%s\""),
+					*ListFile, Rec->Fps, *Video);
+				int32 Code = -1; FString Out, Err;
+				FPlatformProcess::ExecProcess(*Ff, *A, &Code, &Out, &Err);
+				if (Code != 0 || !FPaths::FileExists(Video)) { Mp4Error = FString::Printf(TEXT("ffmpeg exit %d: %s"), Code, *Err.Right(300)); }
+			}
+			AsyncTask(ENamedThreads::GameThread, [Rec, Done, Video, ListFile, SheetFile, SheetBytes, Mp4Error]()
+			{
+				const bool bVideo = Mp4Error.IsEmpty();
+				const bool bKeep = Rec->bKeepFrames || !bVideo;
+				if (!bKeep)
+				{
+					IFileManager::Get().DeleteDirectory(*Rec->FramesDir, false, true);
+					IFileManager::Get().Delete(*ListFile);
+				}
+				const double RealFps = Rec->Elapsed > 0 ? Rec->Frames / Rec->Elapsed : 0;
+				const bool bFrozen = Rec->Frames > 1 && Rec->Distinct <= 1;
+				TSharedRef<FJsonObject> D = MakeShared<FJsonObject>();
+				D->SetStringField(TEXT("summary"), FString::Printf(TEXT("%d frames in %.1f s (%.1f fps), %d distinct%s."),
+					Rec->Frames, Rec->Elapsed, RealFps, Rec->Distinct, bVideo ? TEXT("; MP4 written") : TEXT("; no MP4")));
+				if (bVideo) { D->SetStringField(TEXT("video"), FPaths::ConvertRelativePathToFull(Video)); }
+				else { D->SetStringField(TEXT("videoError"), Mp4Error); }
+				D->SetStringField(TEXT("runDir"), FPaths::ConvertRelativePathToFull(Rec->Dir));
+				if (bKeep) { D->SetStringField(TEXT("framesDir"), FPaths::ConvertRelativePathToFull(Rec->FramesDir)); }
+				D->SetStringField(TEXT("sheet"), FPaths::ConvertRelativePathToFull(SheetFile));
+				D->SetNumberField(TEXT("frames"), Rec->Frames);
+				D->SetNumberField(TEXT("distinctFrames"), Rec->Distinct);
+				D->SetBoolField(TEXT("frozen"), bFrozen);
+				D->SetNumberField(TEXT("seconds"), R2(Rec->Elapsed));
+				D->SetNumberField(TEXT("fps"), FMath::RoundToDouble(RealFps * 10) / 10);
+				D->SetNumberField(TEXT("requestedFps"), Rec->Fps);
+				D->SetStringField(TEXT("capture"), Rec->Path);
+				D->SetNumberField(TEXT("grabMs"), Rec->Frames > 0 ? FMath::RoundToDouble(Rec->GrabSeconds * 1000.0 / Rec->Frames) : 0.0);
+				D->SetNumberField(TEXT("width"), Rec->W);
+				D->SetNumberField(TEXT("height"), Rec->H);
+				D->SetBoolField(TEXT("ui"), Rec->bUI && Rec->bAllUI);
+				D->SetBoolField(TEXT("stoppedEarly"), Rec->bStopped);
+				TArray<TSharedPtr<FJsonValue>> SheetTimes;
+				for (double T : Rec->SheetAt) { SheetTimes.Add(MakeShared<FJsonValueNumber>(R2(T))); }
+				D->SetArrayField(TEXT("sheetAt"), SheetTimes);
+				D->SetArrayField(TEXT("steps"), Rec->StepResults);
+				TArray<TSharedPtr<FJsonValue>> Failed;
+				for (const TSharedPtr<FJsonValue>& S : Rec->StepResults)
+				{
+					const TSharedPtr<FJsonObject> O = S->AsObject();
+					if (O.IsValid() && O->HasField(TEXT("errorCode"))) { Failed.Add(S); }
+				}
+				D->SetArrayField(TEXT("failed"), Failed);
+
+				FEWResult Res = FEWResult::Ok(D, D->GetStringField(TEXT("summary")));
+				if (!bVideo) { Res.Warnings.Add(Mp4Error); }
+				if (bFrozen) { Res.Warnings.Add(TEXT("Every frame is the same picture: the view did not change, or the window was not redrawn (minimized or hidden?). Look at the sheet before using the video.")); }
+				if (RealFps < Rec->Fps * 0.8) { Res.Warnings.Add(FString::Printf(TEXT("Only %.1f of %d fps were reached (the editor is busy or throttled); timing in the video is still real, motion is less smooth. Lower maxWidth or fps."), RealFps, Rec->Fps)); }
+				if (Rec->bUI && !Rec->bAllUI) { Res.Warnings.Add(TEXT("Some frames could not be read through Slate and show the scene without the UI.")); }
+				if (Rec->bStopped) { Res.Warnings.Add(TEXT("Play In Editor or the player went away before the end; the video is shorter.")); }
+				if (Rec->WriteFailed.Load() > 0) { Res.Warnings.Add(FString::Printf(TEXT("%d frame file(s) could not be written."), Rec->WriteFailed.Load())); }
+				if (Failed.Num() > 0) { Res.Warnings.Add(FString::Printf(TEXT("%d step(s) failed; see data.failed."), Failed.Num())); }
+				for (const TSharedPtr<FJsonValue>& S : Rec->StepResults)
+				{
+					const TSharedPtr<FJsonObject> O = S->AsObject();
+					FString State;
+					if (O.IsValid() && O->TryGetStringField(TEXT("state"), State) && State == TEXT("running")) { Res.Warnings.Add(TEXT("A step was still running when the recording ended; its result is not in this reply.")); break; }
+				}
+				if (SheetBytes->Num() > 0) { Res.Images.Emplace(TEXT("image/png"), FBase64::Encode(SheetBytes->GetData(), SheetBytes->Num())); }
+				Done(Res);
+			});
+		});
+	}
+
+	void AddFrame(TSharedRef<FEWRecording> Rec, TArray<FColor>& Px, int32 W, int32 H, bool bUIOk, double T)
+	{
+		if (Rec->MaxWidth > 0 && W > Rec->MaxWidth && Rec->Frames == 0)
+		{
+			const int32 NW = Rec->MaxWidth, NH = FMath::Max(1, FMath::RoundToInt((double)H * NW / W));
+			TArray<FColor> Small;
+			FImageUtils::ImageResize(W, H, Px, NW, NH, Small, false, true);
+			Px = MoveTemp(Small);
+			W = NW; H = NH;
+		}
+		for (FColor& C : Px) { C.A = 255; }
+		if (Rec->Frames == 0) { Rec->W = W; Rec->H = H; }
+		else if (W != Rec->W || H != Rec->H)
+		{
+			TArray<FColor> Fit;
+			FImageUtils::ImageResize(W, H, Px, Rec->W, Rec->H, Fit, false, true);
+			Px = MoveTemp(Fit);
+		}
+		if (Rec->bUI && !bUIOk) { Rec->bAllUI = false; }
+		if (Rec->Frames == 0 || FramesDiffer(Px, Rec->Last)) { ++Rec->Distinct; }
+		if (Rec->Sheet.Num() < 3 && T >= Rec->Sheet.Num() * Rec->Seconds / 3.0) { Rec->Sheet.Add(Px); Rec->SheetAt.Add(T); }
+		Rec->Times.Add(T);
+
+		const FString File = Rec->FramesDir / FString::Printf(TEXT("frame_%04d.jpg"), Rec->Frames++);
+		++Rec->Pending;
+		Async(EAsyncExecution::ThreadPool, [Rec, Pixels = Px, File]()
+		{
+			TSharedPtr<IImageWrapper> IW = Rec->Wrapper->CreateImageWrapper(EImageFormat::JPEG);
+			bool bOk = IW.IsValid() && IW->SetRaw(Pixels.GetData(), Pixels.Num() * sizeof(FColor), Rec->W, Rec->H, ERGBFormat::BGRA, 8);
+			if (bOk)
+			{
+				const TArray64<uint8> Jpg = IW->GetCompressed(92);
+				bOk = Jpg.Num() > 0 && FFileHelper::SaveArrayToFile(Jpg, *File);
+			}
+			if (!bOk) { ++Rec->WriteFailed; }
+			--Rec->Pending;
+		});
+		Rec->Last = MoveTemp(Px);
+	}
+
+	void FinishRecording(TSharedRef<FEWRecording> Rec, FEWDone Done)
+	{
+		if (Rec->Grabber.IsValid())
+		{
+			// Collect the frames still on their way back from the GPU (one or two), then let the grabber go.
+			TSharedPtr<FFrameGrabber> G = Rec->Grabber;
+			Rec->Grabber.Reset();
+			G->StopCapturingFrames();
+			Rec->Elapsed = FPlatformTime::Seconds() - Rec->T0;
+			const double Until = FPlatformTime::Seconds() + 1.0;
+			EW::PollUntil(2.f, [Rec, Done, G, Until]() -> bool
+			{
+				for (FCapturedFrameData& F : G->GetCapturedFrames())
+				{
+					if (F.ColorBuffer.Num() == F.BufferSize.X * F.BufferSize.Y) { AddFrame(Rec, F.ColorBuffer, F.BufferSize.X, F.BufferSize.Y, true, F.GetPayload<FEWFramePayload>()->T); }
+				}
+				if (G->HasOutstandingFrames() && FPlatformTime::Seconds() < Until) { return false; }
+				G->Shutdown();
+				FinishRecording(Rec, Done);
+				return true;
+			}, [Rec, Done, G]() { G->Shutdown(); FinishRecording(Rec, Done); });
+			return;
+		}
+		GetMutableDefault<UEditorPerformanceSettings>()->bThrottleCPUWhenNotForeground = Rec->bOldThrottle;
+		if (Rec->Elapsed <= 0) { Rec->Elapsed = FPlatformTime::Seconds() - Rec->T0; }
+		if (Rec->Frames == 0) { Done(FEWResult::Error(TEXT("CAPTURE_FAILED"), TEXT("No frame was recorded: Play In Editor stopped right away. Start it again (pie_start) and record."))); return; }
+		Rec->Sheet.Add(Rec->Last);
+		Rec->SheetAt.Add(Rec->Times.Last());
+		EW::PollUntil(30.f,
+			[Rec, Done]() -> bool { if (Rec->Pending.Load() > 0) { return false; } EncodeAndReply(Rec, Done); return true; },
+			[Done]() { Done(FEWResult::Error(TEXT("CAPTURE_FAILED"), TEXT("The frame files were not written within 30 s (disk busy or full?)."))); });
 	}
 }
 
@@ -738,5 +1009,186 @@ void RegisterPieTools(FEWRegistry& R)
 				Res.Images.Emplace(TEXT("image/png"), FBase64::Encode(Png.GetData(), Png.Num()));
 				Done(Res);
 			});
+		});
+
+	R.RegisterAsync(TEXT("pie_record"),
+		TEXT("Record a short video of what a Play In Editor player sees, UI included: frames are read from the game viewport for seconds (default 5, max 30) at fps (default 15) and joined into an MP4 (H.264) with ffmpeg, each frame timed by when it was really taken, so the video plays at real speed. steps run tool calls at given times during the recording (pie_input, pie_walk_to, console_command ...), so input and picture stay in sync; use screenshot for a single moment. Returns: video path, frames, real fps, distinctFrames (frozen true when every frame is the same picture), a 2x2 contact sheet image (start, 1/3, 2/3, end), each step's result. Writes: files under Saved/Enginewright/runs/pie_record/ only. Async: waits for the recording and the encode. Editor only. Errors: NO_PLAYER, INVALID_ARGUMENT, UNKNOWN_TOOL."),
+		TEXT(R"({"type":"object","properties":{
+			"seconds":{"type":"number","minimum":0.5,"maximum":30,"description":"Recording length; default 5."},
+			"fps":{"type":"integer","minimum":5,"maximum":30,"description":"Frames per second to read; default 15."},
+			"player":{"type":"integer","minimum":0,"description":"Local player index (0 = first / host). Default 0."},
+			"ui":{"type":"boolean","description":"Include the UI drawn over the scene (default true); false = the 3D scene only."},
+			"maxWidth":{"type":"integer","minimum":0,"maximum":3840,"description":"Downsize frames to this width; default 960, 0 = full size."},
+			"keepFrames":{"type":"boolean","description":"Keep the JPEG frames next to the video (default false; they are always kept when no MP4 could be made)."},
+			"steps":{"type":"array","items":{"type":"object"},"description":"[{tool, args, at}] tool calls started at 'at' seconds after the recording starts (default 0), e.g. {tool:'pie_input', args:{key:'LeftMouseButton'}, at:1}. Async tools are allowed; the recording does not wait for them."}}})"),
+		false,
+		[](const TSharedPtr<FJsonObject>& Args, FEWDone Done)
+		{
+			FString Err;
+			const int32 Player = (int32)EW::Num(Args, TEXT("player"), 0);
+			APlayerController* PC = EW::PiePlayer(Player, Err);
+			if (!PC) { Done(FEWResult::Error(TEXT("NO_PLAYER"), Err.IsEmpty() ? TEXT("Play In Editor is not running (pie_start first).") : Err)); return; }
+			ULocalPlayer* LP = PC->GetLocalPlayer();
+			if (!LP || !LP->ViewportClient || !LP->ViewportClient->Viewport) { Done(FEWResult::Error(TEXT("NO_VIEWPORT"), TEXT("This player has no game viewport to record."))); return; }
+
+			TSharedRef<FEWRecording> Rec = MakeShared<FEWRecording>();
+			Rec->PC = PC;
+			Rec->Seconds = EW::Num(Args, TEXT("seconds"), 5);
+			Rec->Fps = (int32)EW::Num(Args, TEXT("fps"), 15);
+			Rec->MaxWidth = (int32)EW::Num(Args, TEXT("maxWidth"), 960);
+			Rec->bUI = EW::Bool(Args, TEXT("ui"), true);
+			Rec->bKeepFrames = EW::Bool(Args, TEXT("keepFrames"), false);
+			if (Rec->MaxWidth != 0 && Rec->MaxWidth < 160) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), TEXT("maxWidth must be 0 (full size) or 160 to 3840."))); return; }
+
+			const TArray<TSharedPtr<FJsonValue>>* StepsIn = nullptr;
+			if (Args.IsValid() && Args->TryGetArrayField(TEXT("steps"), StepsIn))
+			{
+				for (int32 i = 0; i < StepsIn->Num(); ++i)
+				{
+					const TSharedPtr<FJsonObject>* S = nullptr;
+					if (!(*StepsIn)[i]->TryGetObject(S)) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), FString::Printf(TEXT("steps[%d] is not an object; use {tool, args, at}."), i))); return; }
+					for (const auto& KV : (*S)->Values)
+					{
+						if (KV.Key != TEXT("tool") && KV.Key != TEXT("args") && KV.Key != TEXT("at")) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), FString::Printf(TEXT("steps[%d] has an unknown key '%s'; use tool, args and at."), i, *KV.Key))); return; }
+					}
+					FEWRecording::FStep Step;
+					(*S)->TryGetStringField(TEXT("tool"), Step.Tool);
+					Step.Tool.TrimStartAndEndInline();
+					if (Step.Tool.IsEmpty()) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), FString::Printf(TEXT("steps[%d] has no tool."), i))); return; }
+					if (!FEWRegistry::Get().Find(Step.Tool))
+					{
+						TArray<FString> Names;
+						for (const FEWTool& T : FEWRegistry::Get().All()) { Names.Add(T.Name); }
+						Done(FEWResult::Error(TEXT("UNKNOWN_TOOL"), FString::Printf(TEXT("steps[%d]: no tool named '%s'."), i, *Step.Tool), EW::Suggest(Step.Tool, Names))); return;
+					}
+					if (Step.Tool == TEXT("pie_record") || Step.Tool == TEXT("pie_start") || Step.Tool == TEXT("pie_stop") || Step.Tool == TEXT("batch"))
+					{
+						Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), FString::Printf(TEXT("steps[%d]: %s cannot run inside a recording."), i, *Step.Tool))); return;
+					}
+					const TSharedPtr<FJsonObject>* StepArgs = nullptr;
+					Step.Args = (*S)->TryGetObjectField(TEXT("args"), StepArgs) ? *StepArgs : MakeShared<FJsonObject>();
+					double At = 0;
+					(*S)->TryGetNumberField(TEXT("at"), At);
+					if (At < 0 || At > Rec->Seconds) { Done(FEWResult::Error(TEXT("INVALID_ARGUMENT"), FString::Printf(TEXT("steps[%d].at is %.2f; it must be 0 to seconds (%.2f)."), i, At, Rec->Seconds))); return; }
+					Step.At = At;
+					Rec->Steps.Add(Step);
+				}
+				Rec->Steps.StableSort([](const FEWRecording::FStep& A, const FEWRecording::FStep& B) { return A.At < B.At; });
+			}
+
+			Rec->Dir = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("Enginewright/runs/pie_record") / FDateTime::Now().ToString(TEXT("%Y%m%d_%H%M%S_%s")));
+			Rec->FramesDir = Rec->Dir / TEXT("frames");
+			if (!IFileManager::Get().MakeDirectory(*Rec->FramesDir, true)) { Done(FEWResult::Error(TEXT("SAVE_FAILED"), FString::Printf(TEXT("Could not create %s."), *Rec->FramesDir))); return; }
+			Rec->Wrapper = &FModuleManager::LoadModuleChecked<IImageWrapperModule>(TEXT("ImageWrapper"));
+
+			// A background editor is throttled to a few frames per second; keep it at full speed while recording.
+			UEditorPerformanceSettings* Perf = GetMutableDefault<UEditorPerformanceSettings>();
+			Rec->bOldThrottle = Perf->bThrottleCPUWhenNotForeground;
+			Perf->bThrottleCPUWhenNotForeground = false;
+			if (Rec->bUI)
+			{
+				FViewport* V0 = LP->ViewportClient->Viewport;
+				if (TSharedPtr<FSceneViewport> SV = PieSceneViewport(PC, V0))
+				{
+					// The grabber must read at the viewport's size on the back buffer: a smaller buffer is not scaled,
+					// it gets the top-left part of the picture. Engine bug (UE 5.8, still in ue5-main 2026-11): FrameGrabber.cpp,
+					// FViewportSurfaceReader::ResolveRenderTarget passes the capture rect size instead of TargetSize to
+					// DrawRectangle as the target buffer size. Frames are made smaller on the CPU instead.
+					FIntPoint Full = V0->GetSizeXY();
+					if (TSharedPtr<SViewport> VW = SV->GetViewportWidget().Pin())
+					{
+						const FVector2D Abs = VW->GetTickSpaceGeometry().GetAbsoluteSize();
+						if (Abs.X >= 1 && Abs.Y >= 1) { Full = FIntPoint((int32)Abs.X, (int32)Abs.Y); }
+					}
+					Rec->Grabber = MakeShared<FFrameGrabber>(SV.ToSharedRef(), Full, PF_B8G8R8A8, 3);
+					Rec->Grabber->StartCapturingFrames();
+					Rec->Path = TEXT("async");
+				}
+			}
+			Rec->T0 = FPlatformTime::Seconds();
+			TSharedRef<double> NextAt = MakeShared<double>(0.0);
+
+			FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([Rec, Done, NextAt](float) -> bool
+			{
+				const double Now = FPlatformTime::Seconds();
+				const double T = Now - Rec->T0;
+				APlayerController* Ctl = Rec->PC.Get();
+				if (!Ctl || !EW::IsPlaying()) { Rec->bStopped = true; FinishRecording(Rec, Done); return false; }
+				if (Rec->Grabber.IsValid())
+				{
+					for (FCapturedFrameData& F : Rec->Grabber->GetCapturedFrames())
+					{
+						if (F.ColorBuffer.Num() == F.BufferSize.X * F.BufferSize.Y) { AddFrame(Rec, F.ColorBuffer, F.BufferSize.X, F.BufferSize.Y, true, F.GetPayload<FEWFramePayload>()->T); }
+					}
+					// No frame back after half a second (window hidden or minimized: nothing is presented): read synchronously.
+					if (Rec->Frames == 0 && Rec->Requested >= 3 && T > 0.5)
+					{
+						Rec->Grabber->StopCapturingFrames();
+						Rec->Grabber->Shutdown();
+						Rec->Grabber.Reset();
+						Rec->Path = TEXT("sync (no presented frames)");
+					}
+				}
+				if (T >= Rec->Seconds && (Rec->Frames > 0 || Rec->Requested > 0)) { FinishRecording(Rec, Done); return false; }
+
+				while (Rec->NextStep < Rec->Steps.Num() && Rec->Steps[Rec->NextStep].At <= T)
+				{
+					const FEWRecording::FStep& S = Rec->Steps[Rec->NextStep++];
+					TSharedRef<FJsonObject> J = MakeShared<FJsonObject>();
+					J->SetStringField(TEXT("tool"), S.Tool);
+					J->SetNumberField(TEXT("at"), R2(T));
+					J->SetStringField(TEXT("state"), TEXT("running"));
+					Rec->StepResults.Add(MakeShared<FJsonValueObject>(J));
+					const double RecStart = Rec->T0;
+					FEWRegistry::Get().CallAsync(S.Tool, S.Args, [J, RecStart](FEWResult Res)
+					{
+						J->SetStringField(TEXT("state"), Res.bOk ? TEXT("ok") : TEXT("failed"));
+						J->SetBoolField(TEXT("ok"), Res.bOk);
+						J->SetNumberField(TEXT("endedAt"), R2(FPlatformTime::Seconds() - RecStart));
+						if (!Res.bOk) { J->SetStringField(TEXT("errorCode"), Res.ErrorCode); J->SetStringField(TEXT("message"), Res.Message); }
+					});
+					if (!Rec->PC.IsValid() || !EW::IsPlaying()) { break; }
+				}
+
+				// A frame when three quarters of a period passed since the last one: irregular editor ticks
+				// (40 ms, then 110 ms) would otherwise miss slots on a fixed grid and halve the fps.
+				const double Period = 1.0 / Rec->Fps;
+				if (*NextAt > 0 && T < *NextAt + Period * 0.75) { return true; }
+				*NextAt = FMath::Max(T, 1e-6);
+
+				ULocalPlayer* LP = Rec->PC.IsValid() ? Rec->PC->GetLocalPlayer() : nullptr;
+				FViewport* V = LP && LP->ViewportClient ? LP->ViewportClient->Viewport : nullptr;
+				if (Rec->Grabber.IsValid())
+				{
+					// Ask for this frame; earlier requests come back from the GPU a frame or two later.
+					TSharedRef<FEWFramePayload, ESPMode::ThreadSafe> Pay = MakeShared<FEWFramePayload, ESPMode::ThreadSafe>();
+					Pay->T = T;
+					Rec->Grabber->CaptureThisFrame(Pay);
+					++Rec->Requested;
+					return true;
+				}
+				TSharedPtr<SWidget> UIW = (V && Rec->bUI) ? LP->ViewportClient->GetGameViewportWidget() : nullptr;
+				TArray<FColor> Px;
+				int32 W = 0, H = 0;
+				FEWResult GrabErr;
+				bool bUIOk = false;
+				const double GrabStart = FPlatformTime::Seconds();
+				const bool bGrabbed = Grab(V, Rec->MaxWidth, Px, W, H, GrabErr, UIW, &bUIOk);
+				Rec->GrabSeconds += FPlatformTime::Seconds() - GrabStart;
+				if (!bGrabbed)
+				{
+					if (Rec->Frames == 0)
+					{
+						GetMutableDefault<UEditorPerformanceSettings>()->bThrottleCPUWhenNotForeground = Rec->bOldThrottle;
+						Done(GrabErr);
+						return false;
+					}
+					Rec->bStopped = true;
+					FinishRecording(Rec, Done);
+					return false;
+				}
+				AddFrame(Rec, Px, W, H, bUIOk, T);
+				return true;
+			}));
 		});
 }
