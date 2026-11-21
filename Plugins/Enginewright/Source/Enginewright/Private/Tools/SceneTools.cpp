@@ -2,11 +2,15 @@
 #include "EWCommon.h"
 #include "EWProps.h"
 
+#include "ActorFactories/ActorFactory.h"
+#include "Builders/CubeBuilder.h"
 #include "Editor.h"
+#include "Engine/Polys.h"
 #include "Engine/Blueprint.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Volume.h"
 #include "ScopedTransaction.h"
 
 namespace
@@ -140,13 +144,14 @@ void RegisterSceneTools(FEWRegistry& R)
 		});
 
 	R.Register(TEXT("actor_spawn"),
-		TEXT("Place an actor in the open editor level (one undo step). The level is not saved; use asset_save."),
+		TEXT("Place an actor in the open editor level (one undo step). Volumes (trigger, nav mesh bounds, post process, ...) get a box brush of `size`, as Place Actors does. The level is not saved; use asset_save."),
 		TEXT(R"({"type":"object","properties":{
 			"class":{"type":"string","description":"Short class name, /Script path or Blueprint path."},
 			"label":{"type":"string","description":"Outliner label for the actor; default from the class name."},
 			"location":{"type":["array","object"],"description":"World position in cm, [x, y, z] or {\"x\":..,\"y\":..,\"z\":..}. Default 0,0,0."},
 			"rotation":{"type":["array","object"],"description":"Rotation in degrees, [pitch, yaw, roll] or {\"pitch\":..,\"yaw\":..,\"roll\":..}. Default 0,0,0."},
-			"scale":{"type":["array","object"],"description":"Scale [x, y, z] or {\"x\":..,\"y\":..,\"z\":..}. Default 1,1,1."}},
+			"scale":{"type":["array","object"],"description":"Scale [x, y, z] or {\"x\":..,\"y\":..,\"z\":..}. Default 1,1,1."},
+			"size":{"type":["array","object"],"description":"Volumes only: box size in cm (full size, before scale), [x, y, z]. Default 200,200,200 like Place Actors."}},
 			"required":["class"]})"),
 		true,
 		[](const TSharedPtr<FJsonObject>& Args) -> FEWResult
@@ -171,10 +176,52 @@ void RegisterSceneTools(FEWRegistry& R)
 			const FTransform Xf(FRotator(Rot.X, Rot.Y, Rot.Z), Loc, Scale);
 			AActor* A = World->SpawnActor(Class, &Xf, Params);
 			if (!A) { EW::CancelUnlessBatch(Tx); return FEWResult::Error(TEXT("SPAWN_FAILED"), TEXT("The engine did not spawn the actor.")); }
+			FVector Size(200.0);
+			const bool bSize = ReadVector(Args, TEXT("size"), Size);
+			TArray<FString> Warnings;
+			if (AVolume* Vol = Cast<AVolume>(A))
+			{
+				// SpawnActor leaves a volume without a brush: it stands in the level with no area and does nothing
+				// (a nav mesh bounds volume builds no nav mesh). Build the box brush the editor's Place Actors builds.
+				if (Size.X <= 0 || Size.Y <= 0 || Size.Z <= 0)
+				{
+					World->EditorDestroyActor(A, true);
+					EW::CancelUnlessBatch(Tx);
+					return FEWResult::Error(TEXT("INVALID_ARGUMENT"), TEXT("size must be greater than 0 on every axis, e.g. [400, 400, 200]."));
+				}
+				UCubeBuilder* Builder = NewObject<UCubeBuilder>();
+				Builder->X = Size.X; Builder->Y = Size.Y; Builder->Z = Size.Z;
+				UActorFactory::CreateBrushForVolumeActor(Vol, Builder);
+				if (!Vol->Brush || !Vol->Brush->Polys || Vol->Brush->Polys->Element.Num() == 0)
+				{
+					World->EditorDestroyActor(A, true);
+					EW::CancelUnlessBatch(Tx);
+					return FEWResult::Error(TEXT("NO_BRUSH"), FString::Printf(TEXT("The box brush for %s could not be built; nothing was placed."), *Class->GetName()));
+				}
+			}
+			else if (A->IsA<ABrush>())
+			{
+				World->EditorDestroyActor(A, true);
+				EW::CancelUnlessBatch(Tx);
+				return FEWResult::Error(TEXT("NOT_SPAWNABLE"), FString::Printf(TEXT("%s is BSP brush geometry; actor_spawn places volumes and actors, not BSP brushes."), *Class->GetName()));
+			}
+			else if (bSize)
+			{
+				Warnings.Add(FString::Printf(TEXT("size is for volumes only; %s is not a volume, so it was ignored (use scale)."), *Class->GetName()));
+			}
 			const FString Label = EW::Str(Args, TEXT("label"));
 			if (!Label.IsEmpty()) { A->SetActorLabel(Label); }
 			A->MarkPackageDirty();
-			return FEWResult::Ok(Describe(A));
+			FEWResult Res = FEWResult::Ok(Describe(A));
+			if (AVolume* Vol = Cast<AVolume>(A))
+			{
+				FVector Origin, Extent;
+				Vol->GetActorBounds(false, Origin, Extent);
+				Res.Data->SetArrayField(TEXT("brushSize"), Vec(Size));
+				Res.Data->SetArrayField(TEXT("worldSize"), Vec(Extent * 2.0));
+			}
+			Res.Warnings = Warnings;
+			return Res;
 		});
 
 	R.Register(TEXT("actor_set_transform"),
