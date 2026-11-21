@@ -51,6 +51,17 @@ which job, for example in your `CLAUDE.md` / `AGENTS.md`:
   audits, writes that must be read back: **Enginewright**.
 - Editor areas Enginewright does not cover (see [SUPPORT.md](SUPPORT.md)): **Epic's toolsets**.
 
+## 5. Niagara: build with Epic, save and film with Enginewright
+
+Epic's `NiagaraToolsets` (enable **Niagara Toolsets** next to **Unreal MCP**) creates and edits systems. What it leaves
+out, Enginewright covers:
+
+- Saving: Epic's toolset does not save. Call Enginewright `asset_save` with the system paths.
+- Hidden inputs: Epic refuses inputs behind a static switch. Set the parent switch or enum input first.
+- Enum inputs take `<EnumName>::NewEnumeratorN`; read the input back and check its `displayName`.
+- Seeing the result: `pie_record` films Play In Editor, `pie_cursor` aims and clicks for the game, so one recording
+  shows the effect where the game spawns it.
+
 ## Notes
 
 - Both servers accept requests only from this computer. Enginewright also refuses browser requests from other web
